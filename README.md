@@ -274,6 +274,7 @@ cd [NOME_DO_REPOSITORIO]
 | Integrante         | Papel              |                                                                         GitHub                                                                          |                                                                               LinkedIn                                                                                |
 | :----------------- | :----------------- | :-----------------------------------------------------------------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
 | **Fernando Gomes** | Master / Developer | <a href="https://github.com/ihfernando"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" width="30"></a> | <a href="https://www.linkedin.com/in/ihfernando/"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg" width="30"></a> |
+| **Rafael Matheus** |  Developer | <a href="https://github.com/RafaelM-sants"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" width="30"></a> | <a href="www.linkedin.com/in/rafael-matheus-dos-santos-7a9344397"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg" width="30"></a> |
 
 ---
 
