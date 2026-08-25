@@ -117,34 +117,84 @@
 
 # 🔄 Integração e Entrega Contínua — CI/CD <a id="cicd"></a>
 
-[Definir após escolha das tecnologias e infraestrutura.]
+A estratégia de CI é dividida em duas camadas: **hooks locais** (executados na máquina do desenvolvedor antes do commit/push) e **workflows remotos** (executados no GitHub a cada push ou PR).
 
 ## Pipeline
 
-[Adicionar descrição e/ou diagrama do pipeline.]
+### Hooks Locais — Lefthook
+
+O [Lefthook](https://github.com/evilmartians/lefthook) gerencia os hooks do Git localmente. Ele é configurado pelo arquivo `lefthook.yml` na raiz do repositório e instalado automaticamente ao rodar `npm install`.
+
+| Hook | Quando executa | O que faz |
+| :--- | :--- | :--- |
+| `pre-commit` | A cada `git commit` | Roda ESLint + Prettier nos arquivos `.ts`/`.tsx` do frontend e Ruff nos arquivos `.py` do backend que estão em stage. Arquivos corrigidos automaticamente são re-adicionados ao stage. |
+| `pre-push` | A cada `git push` | Valida se o nome da branch segue o padrão obrigatório. Bloqueia o push caso contrário. |
+| `commit-msg` | A cada `git commit` | Valida se a mensagem de commit segue o padrão Conventional Commits com ticket Jira. |
+
+### Workflows Remotos — GitHub Actions
+
+Três workflows são executados no GitHub em resposta a pushes e pull requests:
+
+| Workflow | Arquivo | Gatilho | O que faz |
+| :--- | :--- | :--- | :--- |
+| **Frontend CI** | `.github/workflows/frontend.yml` | Push ou PR com mudanças em `frontend/**` | Instala dependências, roda lint e build |
+| **Backend CI** | `.github/workflows/backend.yml` | Push ou PR com mudanças em `backend/**` | Roda `ruff check` e `ruff format --check` |
+| **Branch Name Check** | `.github/workflows/branch-name.yml` | Abertura de PR para `main`, `stg` ou `develop` | Valida o nome da branch de origem |
+
+> Os workflows de frontend e backend são disparados **apenas quando arquivos da respectiva pasta mudam**, evitando execuções desnecessárias.
 
 ## Ferramentas
 
-[Preencher.]
+| Ferramenta | Finalidade |
+| :--- | :--- |
+| [Lefthook](https://github.com/evilmartians/lefthook) | Gerenciador de hooks Git (local) |
+| [commitlint](https://commitlint.js.org/) | Validação de mensagens de commit |
+| [ESLint](https://eslint.org/) + [Prettier](https://prettier.io/) | Lint e formatação do frontend |
+| [Ruff](https://docs.astral.sh/ruff/) | Lint e formatação do backend Python |
+| [GitHub Actions](https://docs.github.com/en/actions) | CI remoto |
 
 ---
 
 # 🌿 Estratégia de Branch <a id="branch"></a>
 
-[Definir estratégia após alinhamento com a disciplina de Entrega Contínua.]
-
 ## Nomenclatura de Branches
 
+Toda branch deve seguir o padrão abaixo. O hook `pre-push` bloqueia automaticamente qualquer push que não respeite o formato, e o workflow **Branch Name Check** faz a mesma validação no GitHub ao abrir um PR.
+
 ```text
-[Definir]
+<tipo>/<JIRA-TICKET>_titulo-do-ticket
 ```
+
+**Tipos válidos:** `feat`, `fix`, `hotfix`, `refactor`, `chore`, `docs`, `test`, `style`, `perf`, `ci`, `build`
+
+**Exemplos:**
+
+```text
+feat/SCRUM-42_criar-tela-de-login
+fix/SCRUM-7_corrigir-autenticacao
+chore/SCRUM-1_configurar-repositorio
+docs/SCRUM-10_atualizar-readme
+```
+
+> Branches `main`, `stg` e `develop` são exceções e não passam por essa validação.
 
 ## Padrão de Commits
 
-Padrão de commits seguindo a definição do Conventional Commits definida na documentação oficial: [Conventional Commit](https://www.conventionalcommits.org/pt-br/v1.0.0/https://www.conventionalcommits.org/pt-br/v1.0.0/)
+Padrão de commits seguindo o [Conventional Commits](https://www.conventionalcommits.org/pt-br/v1.0.0/), com o ticket Jira como escopo **obrigatório**. O hook `commit-msg` valida automaticamente cada mensagem de commit.
 
 ```text
-<tipo>[escopo opcional]: <descrição>
+<tipo>(<JIRA-TICKET>): <descrição>
+```
+
+**Tipos válidos:** `feat`, `fix`, `hotfix`, `refactor`, `chore`, `docs`, `test`, `style`, `perf`, `ci`, `build`, `revert`
+
+**Exemplos:**
+
+```text
+feat(SCRUM-42): criar tela de login
+fix(SCRUM-7): corrigir validacao de token
+chore(SCRUM-1): configurar lefthook e commitlint
+docs(SCRUM-10): atualizar readme com instrucoes de instalacao
 ```
 
 ## Pull Requests
@@ -155,17 +205,17 @@ Padrão de commits seguindo a definição do Conventional Commits definida na do
 
 ## Padrão de identificação
 
+O ticket Jira deve estar presente tanto no nome da branch quanto na mensagem de commit, conforme os padrões acima. A chave do projeto no Jira é **SCRUM**.
+
 ```text
-[CHAVE-JIRA] descrição
+SCRUM-<numero>
 ```
 
 Exemplo:
 
 ```text
-PROJ-01 descricao-da-funcionalidade
+SCRUM-42
 ```
-
-[Atualizar o padrão quando a chave definitiva do projeto Jira for definida.]
 
 ---
 
@@ -191,7 +241,8 @@ PROJ-01 descricao-da-funcionalidade
 
 ## ⚙️ Pré-requisitos
 
-[Preencher.]
+- [Node.js 20+](https://nodejs.org/) — necessário para todos os membros (instala os hooks Git automaticamente)
+- [Ruff](https://docs.astral.sh/ruff/installation/) — necessário apenas para quem trabalha no backend Python
 
 ---
 
@@ -204,16 +255,18 @@ git clone [URL_DO_REPOSITORIO]
 cd [NOME_DO_REPOSITORIO]
 ```
 
-### 2. Instalar dependências
+### 2. Instalar dependências e ativar os hooks Git
 
 ```bash
-[COMANDO]
+npm install
 ```
+
+> O `npm install` já instala os hooks Git automaticamente via Lefthook (script `prepare`). Após isso, as validações de commit, branch e lint passam a funcionar localmente.
 
 ### 3. Configurar ambiente
 
 ```text
-[Preencher.]
+[Preencher após o Kick-off — variáveis de ambiente, .env, etc.]
 ```
 
 ### 4. Executar aplicação
@@ -262,10 +315,13 @@ cd [NOME_DO_REPOSITORIO]
 
 [Preencher.]
 
-## Gestão
+## Gestão e Qualidade de Código
 
-- GitHub
-- Jira
+- GitHub — versionamento e CI/CD
+- Jira — gerenciamento de tarefas e sprints
+- Lefthook — hooks Git locais (lint, validação de branch e commit)
+- commitlint — padronização de mensagens de commit
+- GitHub Actions — integração contínua remota
 
 ---
 
