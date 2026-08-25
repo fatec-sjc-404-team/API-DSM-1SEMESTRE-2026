@@ -279,6 +279,7 @@ cd [NOME_DO_REPOSITORIO]
 | **Pedro Henrique** | Developer | <a href="https://github.com/pedrohl45"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" width="30"></a> | <a href="https://www.linkedin.com/in/pedrohl45/"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg" width="30"></a> |
  **Lucas Vinicius** | Developer | <a href="https://github.com/lucasvn1"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" width="30"></a> | <a href="https://www.linkedin.com/in/lucasviniciusant"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg" width="30"></a> |
 | **Isabela Alves** | Developer | <a href="https://github.com/isa-alvxs"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" width="30"></a> | <a href="https://www.linkedin.com/in/isabela-alves-778402316/"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg" width="30"></a> |
+| **Fernando Ferreira** | Developer | <a href="https://github.com/fesafer"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" width="30"></a> | <a href="https://www.linkedin.com/in/fernando-henrique-de-s%C3%A1-ferreira-250623352/"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg" width="30"></a> |
 # 📚 Documentação
 
 ## Documentação Geral
