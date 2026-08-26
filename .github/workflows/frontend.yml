@@ -1,0 +1,48 @@
+name: Frontend CI
+
+on:
+  push:
+    branches: [main, stg, develop]
+    paths:
+      - 'frontend/**'
+  pull_request:
+    paths:
+      - 'frontend/**'
+
+jobs:
+  lint-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verificar se o frontend esta inicializado
+        id: check
+        run: |
+          if [ -f frontend/package.json ]; then
+            echo "ready=true" >> $GITHUB_OUTPUT
+          else
+            echo "ready=false" >> $GITHUB_OUTPUT
+            echo "frontend/package.json nao encontrado — pulando lint e build."
+          fi
+
+      - uses: actions/setup-node@v4
+        if: steps.check.outputs.ready == 'true'
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        if: steps.check.outputs.ready == 'true'
+        run: cd frontend && npm ci
+
+      - name: Lint
+        if: steps.check.outputs.ready == 'true'
+        run: cd frontend && npm run lint
+
+      - name: Build
+        if: steps.check.outputs.ready == 'true'
+        run: cd frontend && npm run build
+
+      # Descomentar quando o ambiente de deploy estiver definido
+      # - name: Deploy
+      #   if: github.ref == 'refs/heads/main'
+      #   run: echo "adicionar comando de deploy aqui"
