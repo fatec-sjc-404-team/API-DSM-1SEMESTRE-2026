@@ -1,0 +1,46 @@
+# Lefthook — Git hooks manager (linguagem-agnóstico)
+# Docs: https://github.com/evilmartians/lefthook
+#
+# Instalação: npm install (o script "prepare" roda `lefthook install` automaticamente)
+# Para instalar manualmente: npx lefthook install
+
+pre-commit:
+  parallel: true
+  commands:
+    frontend-lint:
+      root: "frontend/"
+      glob: "**/*.{ts,tsx}"
+      run: npx eslint --fix {staged_files} && npx prettier --write {staged_files}
+      stage_fixed: true
+
+    backend-lint:
+      root: "backend/"
+      glob: "**/*.py"
+      run: ruff check --fix {staged_files} && ruff format {staged_files}
+      stage_fixed: true
+
+pre-push:
+  commands:
+    validate-branch-name:
+      run: |
+        branch=$(git symbolic-ref --short HEAD)
+        # branches protegidas ficam fora da regra
+        if echo "$branch" | grep -qE "^(main|stg|develop)$"; then
+          exit 0
+        fi
+        pattern="^(feat|fix|hotfix|refactor|chore|docs|test|style|perf|ci|build)/[A-Z]+-[0-9]+_[a-z0-9][a-z0-9-]*$"
+        if ! echo "$branch" | grep -qE "$pattern"; then
+          echo ""
+          echo "  Branch '$branch' nao segue o padrao obrigatorio:"
+          echo "  <tipo>/<JIRA-TICKET>_titulo-do-ticket"
+          echo ""
+          echo "  Tipos validos: feat, fix, hotfix, refactor, chore, docs, test, style, perf, ci, build"
+          echo "  Exemplo: feat/SCRUM-42_criar-tela-de-login"
+          echo ""
+          exit 1
+        fi
+
+commit-msg:
+  commands:
+    commitlint:
+      run: npx --no -- commitlint --edit {1}
