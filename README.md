@@ -305,6 +305,7 @@ npm install
 
 - [Fluxo Git — Convenções de Branch, Commit e Hooks](docs/workflows/fluxo-git.md)
 - [Processo de Pull Request, Code Review e Definition of Done](docs/workflows/processo-pr.md)
+- [Jira — Fluxo de Trabalho e Gestão de Cards](docs/workflows/jira.md)
 
 ## Atas de Reunião
 

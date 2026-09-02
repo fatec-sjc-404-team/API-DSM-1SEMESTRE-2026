@@ -8,12 +8,28 @@ Para convenções de branch, commit e hooks locais, veja [fluxo-git.md](fluxo-gi
 
 ## 1. Fluxo de Trabalho
 
+O fluxo tem duas fases: **desenvolvimento** (contínuo durante a Sprint) e **promoção de ambiente** (ao final da Sprint).
+
 ```text
-develop
-  └─► feat/FC404-XX_titulo
-            └─► [PR aprovado + CI verde] ─► develop
-                                                └─► [PR fechamento da Sprint] ─► stg ─► main
+── DESENVOLVIMENTO (durante a Sprint) ──────────────────────────────
+
+  develop
+    └─► feat/FC404-XX_titulo
+              └─► [PR: 2 aprovações + CI verde] ─► develop
+
+
+── PROMOÇÃO DE AMBIENTE (fechamento da Sprint) ──────────────────────
+
+  develop ──► [PR] ──► stg  (validação pelo cliente)
+                         │
+                    ┌────┴────────────────────┐
+                    │ bugs encontrados        │ tudo aprovado
+                    ▼                         ▼
+              novo ticket de bug         [PR] ──► main (produção)
+              aberto na Sprint
 ```
+
+### Fase 1 — Desenvolvimento (durante a Sprint)
 
 1. **Crie** sua branch a partir de `develop` seguindo o padrão de nomenclatura.
 2. **Desenvolva** a funcionalidade de forma vertical e completa (backend + frontend + banco, conforme necessário).
@@ -21,9 +37,15 @@ develop
 4. **Preencha o template** que o GitHub carrega automaticamente: descrição, como testar e checklist.
 5. **Aguarde revisão:** são necessárias **2 aprovações** de colegas antes do merge.
 6. **Resolva todos os comentários** em aberto — o merge é bloqueado enquanto houver threads não resolvidas.
-7. **Merge:** após CI verde e aprovações completas. Métodos permitidos: merge commit, squash ou rebase.
+7. **Merge** após CI verde e aprovações completas. Métodos permitidos: merge commit, squash ou rebase.
 
-> O merge para `main` só ocorre no fechamento da Sprint, após validação completa pela equipe.
+### Fase 2 — Promoção de Ambiente (fechamento da Sprint)
+
+Após o PO/SM aprovar todas as tarefas da Sprint no Jira (status **Done**), o código sobe para os ambientes superiores:
+
+1. **develop → stg:** abre-se um PR de `develop` para `stg`. Após merge, o cliente valida a entrega no ambiente de homologação.
+2. **Bugs encontrados em stg:** se o cliente identificar problemas, **não se corrige diretamente em `stg`**. Abre-se um novo ticket de bug na Sprint, o fluxo normal de desenvolvimento é seguido (`fix/FC404-XX_...` → `develop`) e uma nova promoção para `stg` é feita.
+3. **stg → main:** somente após aprovação completa do cliente em `stg`, abre-se um PR de `stg` para `main`. Esse merge representa a entrega oficial da Sprint em produção.
 
 ---
 
