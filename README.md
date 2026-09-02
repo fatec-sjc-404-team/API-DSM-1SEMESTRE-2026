@@ -25,7 +25,7 @@
 >
 > **Documentação:** [Adicionar link]
 >
-> **Jira:** [Acessar o Jira do projeto](https://fatec-sjc-404-team.atlassian.net/jira/software/projects/SCRUM/boards/1/backlog)
+> **Jira:** [Acessar o Jira do projeto](https://fatec-sjc-404-team.atlassian.net/jira/software/projects/FC404/boards/1/backlog)
 >
 > **Vídeo do Projeto:** [Adicionar link]
 
@@ -75,7 +75,9 @@
 
 ## 🏆 DoD — Definition of Done <a id="dod"></a>
 
-[Definir após o Kick-off.]
+Os criterios de conclusao de cada tarefa estao documentados em **[docs/workflows/processo-pr.md](docs/workflows/processo-pr.md#5-definition-of-done-dod)**.
+
+Os criterios especificos de cada User Story estao no card correspondente no [Jira](https://fatec-sjc-404-team.atlassian.net/jira/software/projects/FC404/boards/1/backlog).
 
 ---
 
@@ -157,65 +159,25 @@ Três workflows são executados no GitHub em resposta a pushes e pull requests:
 
 # 🌿 Estratégia de Branch <a id="branch"></a>
 
-## Nomenclatura de Branches
+As convencoes de branches, commits e rastreabilidade com Jira estao documentadas em detalhes em:
 
-Toda branch deve seguir o padrão abaixo. O hook `pre-push` bloqueia automaticamente qualquer push que não respeite o formato, e o workflow **Branch Name Check** faz a mesma validação no GitHub ao abrir um PR.
+**[docs/workflows/fluxo-git.md](docs/workflows/fluxo-git.md)**
 
-```text
-<tipo>/<JIRA-TICKET>_titulo-do-ticket
-```
+## Resumo rapido
 
-**Tipos válidos:** `feat`, `fix`, `hotfix`, `refactor`, `chore`, `docs`, `test`, `style`, `perf`, `ci`, `build`
+| O que | Padrao |
+| :---- | :----- |
+| Branch | `<tipo>/FC404-XX_titulo-do-ticket` |
+| Commit | `<tipo>(FC404-XX): descricao curta` |
+| Tipos validos | `feat`, `fix`, `hotfix`, `refactor`, `chore`, `docs`, `test`, `style`, `perf`, `ci`, `build` |
 
-**Exemplos:**
-
-```text
-feat/SCRUM-42_criar-tela-de-login
-fix/SCRUM-7_corrigir-autenticacao
-chore/SCRUM-1_configurar-repositorio
-docs/SCRUM-10_atualizar-readme
-```
-
-> Branches `main`, `stg` e `develop` são exceções e não passam por essa validação.
-
-## Padrão de Commits
-
-Padrão de commits seguindo o [Conventional Commits](https://www.conventionalcommits.org/pt-br/v1.0.0/), com o ticket Jira como escopo **obrigatório**. O hook `commit-msg` valida automaticamente cada mensagem de commit.
-
-```text
-<tipo>(<JIRA-TICKET>): <descrição>
-```
-
-**Tipos válidos:** `feat`, `fix`, `hotfix`, `refactor`, `chore`, `docs`, `test`, `style`, `perf`, `ci`, `build`, `revert`
-
-**Exemplos:**
-
-```text
-feat(SCRUM-42): criar tela de login
-fix(SCRUM-7): corrigir validacao de token
-chore(SCRUM-1): configurar lefthook e commitlint
-docs(SCRUM-10): atualizar readme com instrucoes de instalacao
-```
+Branches `main`, `stg` e `develop` sao protegidas — nao aceitam push direto nem delecao.
 
 ## Pull Requests
 
-[Definir política de revisão e aprovação.]
+O fluxo de PR, regras de protecao do GitHub, criterios de Code Review e Definition of Done estao em:
 
----
-
-## Padrão de identificação
-
-O ticket Jira deve estar presente tanto no nome da branch quanto na mensagem de commit, conforme os padrões acima. A chave do projeto no Jira é **SCRUM**.
-
-```text
-SCRUM-<numero>
-```
-
-Exemplo:
-
-```text
-SCRUM-42
-```
+**[docs/workflows/processo-pr.md](docs/workflows/processo-pr.md)**
 
 ---
 
@@ -341,7 +303,8 @@ npm install
 
 ## Documentação Geral
 
-[Adicionar links.]
+- [Fluxo Git — Convencoes de Branch, Commit e Hooks](docs/workflows/fluxo-git.md)
+- [Processo de Pull Request, Code Review e Definition of Done](docs/workflows/processo-pr.md)
 
 ## Atas de Reunião
 

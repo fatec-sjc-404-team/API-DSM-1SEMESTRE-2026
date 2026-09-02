@@ -4,8 +4,8 @@ module.exports = {
     {
       rules: {
         'jira-scope': ({ scope }) => {
-          const valid = /^[A-Z]+-\d+$/.test(scope ?? '');
-          return [valid, 'O escopo deve ser um ticket Jira valido (ex: SCRUM-42)'];
+          const valid = /^[A-Z][A-Z0-9]*-\d+$/.test(scope ?? '');
+          return [valid, 'O escopo deve ser um ticket Jira valido (ex: FC404-42)'];
         },
       },
     },
