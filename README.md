@@ -75,9 +75,9 @@
 
 ## 🏆 DoD — Definition of Done <a id="dod"></a>
 
-Os criterios de conclusao de cada tarefa estao documentados em **[docs/workflows/processo-pr.md](docs/workflows/processo-pr.md#5-definition-of-done-dod)**.
+Os critérios de conclusão de cada tarefa estão documentados em **[docs/workflows/processo-pr.md](docs/workflows/processo-pr.md#5-definition-of-done-dod)**.
 
-Os criterios especificos de cada User Story estao no card correspondente no [Jira](https://fatec-sjc-404-team.atlassian.net/jira/software/projects/FC404/boards/1/backlog).
+Os critérios específicos de cada User Story estão no card correspondente no [Jira](https://fatec-sjc-404-team.atlassian.net/jira/software/projects/FC404/boards/1/backlog).
 
 ---
 
@@ -159,23 +159,23 @@ Três workflows são executados no GitHub em resposta a pushes e pull requests:
 
 # 🌿 Estratégia de Branch <a id="branch"></a>
 
-As convencoes de branches, commits e rastreabilidade com Jira estao documentadas em detalhes em:
+As convenções de branches, commits e rastreabilidade com Jira estão documentadas em detalhes em:
 
 **[docs/workflows/fluxo-git.md](docs/workflows/fluxo-git.md)**
 
-## Resumo rapido
+## Resumo rápido
 
-| O que | Padrao |
+| O que | Padrão |
 | :---- | :----- |
 | Branch | `<tipo>/FC404-XX_titulo-do-ticket` |
 | Commit | `<tipo>(FC404-XX): descricao curta` |
-| Tipos validos | `feat`, `fix`, `hotfix`, `refactor`, `chore`, `docs`, `test`, `style`, `perf`, `ci`, `build` |
+| Tipos válidos | `feat`, `fix`, `hotfix`, `refactor`, `chore`, `docs`, `test`, `style`, `perf`, `ci`, `build` |
 
-Branches `main`, `stg` e `develop` sao protegidas — nao aceitam push direto nem delecao.
+Branches `main`, `stg` e `develop` são protegidas — não aceitam push direto nem deleção.
 
 ## Pull Requests
 
-O fluxo de PR, regras de protecao do GitHub, criterios de Code Review e Definition of Done estao em:
+O fluxo de PR, regras de proteção do GitHub, critérios de Code Review e Definition of Done estão em:
 
 **[docs/workflows/processo-pr.md](docs/workflows/processo-pr.md)**
 
@@ -303,7 +303,7 @@ npm install
 
 ## Documentação Geral
 
-- [Fluxo Git — Convencoes de Branch, Commit e Hooks](docs/workflows/fluxo-git.md)
+- [Fluxo Git — Convenções de Branch, Commit e Hooks](docs/workflows/fluxo-git.md)
 - [Processo de Pull Request, Code Review e Definition of Done](docs/workflows/processo-pr.md)
 
 ## Atas de Reunião
