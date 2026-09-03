@@ -1,6 +1,6 @@
 <h1 align="center">API DSM 1º SEMESTRE 2026</h1>
 
-<h2 align="center"> [PROJETO - A DEFINIR] </h2>
+<h2 align="center">Negado pelo Banco: Crédito Inclusivo com Dados do BCB</h2>
 
 <p align="center">
   <a href="#cliente">Cliente</a> |
@@ -21,9 +21,9 @@
   <a href="#equipe">Equipe</a>
 </p>
 
-> **Status do Projeto:** Planejamento / Pré-Kick-off ⏳
+> **Status do Projeto:** Planejamento / Kick-off ⏳
 >
-> **Documentação:** [Adicionar link]
+> **Documentação:** [Acessar documentação geral](docs/README.md)
 >
 > **Jira:** [Acessar o Jira do projeto](https://fatec-sjc-404-team.atlassian.net/jira/software/projects/FC404/boards/1/backlog)
 >
@@ -33,19 +33,19 @@
 
 ## 🏢 Cliente <a id="cliente"></a>
 
-[Preencher após o Kick-off.]
+**Interno (Fernando Masanori)**
 
 ---
 
 ## 😢 Dor do Cliente <a id="dor"></a>
 
-[Preencher após o Kick-off.]
+Populações historicamente recusadas por grandes instituições financeiras não têm acesso a crédito, não por falta de capacidade de pagamento, mas por falta de dados que a comprovem. A visão tradicional de risco ignora o consumo reprimido e a capacidade real de pagamento sustentável dessas pessoas.
 
 ---
 
 ## 🏅 Desafio <a id="desafio"></a>
 
-[Preencher após o Kick-off.]
+Transformar dados econômicos públicos do Banco Central do Brasil (BCB) e BACEN em inteligência territorial para apoiar decisões de crédito mais inclusivas e responsáveis, identificando onde residem o consumo reprimido e a capacidade real de pagamento sustentável.
 
 ---
 
@@ -213,8 +213,8 @@ O fluxo de PR, regras de proteção do GitHub, critérios de Code Review e Defin
 ### 1. Clonar o repositório
 
 ```bash
-git clone [URL_DO_REPOSITORIO]
-cd [NOME_DO_REPOSITORIO]
+git clone git@github.com:fatec-sjc-404-team/API-DSM-1SEMESTRE-2026.git
+cd API-DSM-1SEMESTRE-2026
 ```
 
 ### 2. Instalar dependências e ativar os hooks Git
@@ -247,13 +247,17 @@ npm install
 
 # 🗓️ Cronograma de Sprints <a id="sprint"></a>
 
-[Preencher após definição oficial do calendário.]
-
-|  Sprint  | Período | Objetivo | Status |
-| :------: | ------- | -------- | :----: |
-| Sprint 1 |         |          |   ⏳   |
-| Sprint 2 |         |          |   ⏳   |
-| Sprint 3 |         |          |   ⏳   |
+| Evento                           | Período           | Status |
+| :------------------------------- | :---------------- | :----: |
+| Kick-off geral                   | 24/08 a 28/08     |   ✅   |
+| Construção do Backlog / Planning | 31/08 a 04/09     |   ✅   |
+| **Sprint 1**                     | **07/09 a 27/09** |   ⏳   |
+| Sprint Review / Planning         | 28/09 a 02/10     |   ⏳   |
+| **Sprint 2**                     | **05/10 a 25/10** |   ⏳   |
+| Sprint Review / Planning         | 26/10 a 30/10     |   ⏳   |
+| **Sprint 3**                     | **02/11 a 22/11** |   ⏳   |
+| Sprint Review                    | 23/11 a 27/11     |   ⏳   |
+| Feira de Soluções                | 03/12             |   ⏳   |
 
 ---
 
@@ -304,6 +308,7 @@ npm install
 
 ## Documentação Geral
 
+- [Acordos do Time](docs/workflows/acordos.md)
 - [Fluxo Git — Convenções de Branch, Commit e Hooks](docs/workflows/fluxo-git.md)
 - [Processo de Pull Request, Code Review e Definition of Done](docs/workflows/processo-pr.md)
 - [Jira — Fluxo de Trabalho e Gestão de Cards](docs/workflows/jira.md)
@@ -334,6 +339,6 @@ npm install
 
 # 📌 Status do Projeto
 
-**Fase atual:** Pré-Kick-off.
+**Fase atual:** Kick-off.
 
 O conteúdo técnico e funcional deste README será atualizado após o Kick-off oficial, conforme definição do problema, requisitos, arquitetura, tecnologias e planejamento das Sprints.
