@@ -1,6 +1,6 @@
 <h1 align="center">API DSM 1º SEMESTRE 2026</h1>
 
-<h2 align="center"> [PROJETO - A DEFINIR] </h2>
+<h2 align="center">Negado pelo Banco: Crédito Inclusivo com Dados do BCB</h2>
 
 <p align="center">
   <a href="#cliente">Cliente</a> |
@@ -21,9 +21,9 @@
   <a href="#equipe">Equipe</a>
 </p>
 
-> **Status do Projeto:** Planejamento / Pré-Kick-off ⏳
+> **Status do Projeto:** Planejamento / Kick-off ⏳
 >
-> **Documentação:** [Adicionar link]
+> **Documentação:** [Acessar documentação geral](docs/README.md)
 >
 > **Jira:** [Acessar o Jira do projeto](https://fatec-sjc-404-team.atlassian.net/jira/software/projects/FC404/boards/1/backlog)
 >
@@ -33,19 +33,19 @@
 
 ## 🏢 Cliente <a id="cliente"></a>
 
-[Preencher após o Kick-off.]
+**Interno (Fernando Masanori)**
 
 ---
 
 ## 😢 Dor do Cliente <a id="dor"></a>
 
-[Preencher após o Kick-off.]
+Populações historicamente recusadas por grandes instituições financeiras não têm acesso a crédito, não por falta de capacidade de pagamento, mas por falta de dados que a comprovem. A visão tradicional de risco ignora o consumo reprimido e a capacidade real de pagamento sustentável dessas pessoas.
 
 ---
 
 ## 🏅 Desafio <a id="desafio"></a>
 
-[Preencher após o Kick-off.]
+Transformar dados econômicos públicos do Banco Central do Brasil (BCB) e BACEN em inteligência territorial para apoiar decisões de crédito mais inclusivas e responsáveis, identificando onde residem o consumo reprimido e a capacidade real de pagamento sustentável.
 
 ---
 
@@ -127,33 +127,33 @@ A estratégia de CI é dividida em duas camadas: **hooks locais** (executados na
 
 O [Lefthook](https://github.com/evilmartians/lefthook) gerencia os hooks do Git localmente. Ele é configurado pelo arquivo `lefthook.yml` na raiz do repositório e instalado automaticamente ao rodar `npm install`.
 
-| Hook | Quando executa | O que faz |
-| :--- | :--- | :--- |
+| Hook         | Quando executa      | O que faz                                                                                                                                                                              |
+| :----------- | :------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `pre-commit` | A cada `git commit` | Roda ESLint + Prettier nos arquivos `.ts`/`.tsx` do frontend e Ruff nos arquivos `.py` do backend que estão em stage. Arquivos corrigidos automaticamente são re-adicionados ao stage. |
-| `pre-push` | A cada `git push` | Valida se o nome da branch segue o padrão obrigatório. Bloqueia o push caso contrário. |
-| `commit-msg` | A cada `git commit` | Valida se a mensagem de commit segue o padrão Conventional Commits com ticket Jira. |
+| `pre-push`   | A cada `git push`   | Valida se o nome da branch segue o padrão obrigatório. Bloqueia o push caso contrário.                                                                                                 |
+| `commit-msg` | A cada `git commit` | Valida se a mensagem de commit segue o padrão Conventional Commits com ticket Jira.                                                                                                    |
 
 ### Workflows Remotos — GitHub Actions
 
 Três workflows são executados no GitHub em resposta a pushes e pull requests:
 
-| Workflow | Arquivo | Gatilho | O que faz |
-| :--- | :--- | :--- | :--- |
-| **Frontend CI** | `.github/workflows/frontend.yml` | Push ou PR com mudanças em `frontend/**` | Instala dependências, roda lint e build |
-| **Backend CI** | `.github/workflows/backend.yml` | Push ou PR com mudanças em `backend/**` | Roda `ruff check` e `ruff format --check` |
-| **Branch Name Check** | `.github/workflows/branch-name.yml` | Abertura de PR para `main`, `stg` ou `develop` | Valida o nome da branch de origem |
+| Workflow              | Arquivo                             | Gatilho                                        | O que faz                                 |
+| :-------------------- | :---------------------------------- | :--------------------------------------------- | :---------------------------------------- |
+| **Frontend CI**       | `.github/workflows/frontend.yml`    | Push ou PR com mudanças em `frontend/**`       | Instala dependências, roda lint e build   |
+| **Backend CI**        | `.github/workflows/backend.yml`     | Push ou PR com mudanças em `backend/**`        | Roda `ruff check` e `ruff format --check` |
+| **Branch Name Check** | `.github/workflows/branch-name.yml` | Abertura de PR para `main`, `stg` ou `develop` | Valida o nome da branch de origem         |
 
 > Os workflows de frontend e backend são disparados **apenas quando arquivos da respectiva pasta mudam**, evitando execuções desnecessárias.
 
 ## Ferramentas
 
-| Ferramenta | Finalidade |
-| :--- | :--- |
-| [Lefthook](https://github.com/evilmartians/lefthook) | Gerenciador de hooks Git (local) |
-| [commitlint](https://commitlint.js.org/) | Validação de mensagens de commit |
-| [ESLint](https://eslint.org/) + [Prettier](https://prettier.io/) | Lint e formatação do frontend |
-| [Ruff](https://docs.astral.sh/ruff/) | Lint e formatação do backend Python |
-| [GitHub Actions](https://docs.github.com/en/actions) | CI remoto |
+| Ferramenta                                                       | Finalidade                          |
+| :--------------------------------------------------------------- | :---------------------------------- |
+| [Lefthook](https://github.com/evilmartians/lefthook)             | Gerenciador de hooks Git (local)    |
+| [commitlint](https://commitlint.js.org/)                         | Validação de mensagens de commit    |
+| [ESLint](https://eslint.org/) + [Prettier](https://prettier.io/) | Lint e formatação do frontend       |
+| [Ruff](https://docs.astral.sh/ruff/)                             | Lint e formatação do backend Python |
+| [GitHub Actions](https://docs.github.com/en/actions)             | CI remoto                           |
 
 ---
 
@@ -165,10 +165,10 @@ As convenções de branches, commits e rastreabilidade com Jira estão documenta
 
 ## Resumo rápido
 
-| O que | Padrão |
-| :---- | :----- |
-| Branch | `<tipo>/FC404-XX_titulo-do-ticket` |
-| Commit | `<tipo>(FC404-XX): descricao curta` |
+| O que         | Padrão                                                                                       |
+| :------------ | :------------------------------------------------------------------------------------------- |
+| Branch        | `<tipo>/FC404-XX_titulo-do-ticket`                                                           |
+| Commit        | `<tipo>(FC404-XX): descricao curta`                                                          |
 | Tipos válidos | `feat`, `fix`, `hotfix`, `refactor`, `chore`, `docs`, `test`, `style`, `perf`, `ci`, `build` |
 
 Branches `main`, `stg` e `develop` são protegidas — não aceitam push direto nem deleção.
@@ -213,8 +213,8 @@ O fluxo de PR, regras de proteção do GitHub, critérios de Code Review e Defin
 ### 1. Clonar o repositório
 
 ```bash
-git clone [URL_DO_REPOSITORIO]
-cd [NOME_DO_REPOSITORIO]
+git clone git@github.com:fatec-sjc-404-team/API-DSM-1SEMESTRE-2026.git
+cd API-DSM-1SEMESTRE-2026
 ```
 
 ### 2. Instalar dependências e ativar os hooks Git
@@ -247,13 +247,17 @@ npm install
 
 # 🗓️ Cronograma de Sprints <a id="sprint"></a>
 
-[Preencher após definição oficial do calendário.]
-
-|  Sprint  | Período | Objetivo | Status |
-| :------: | ------- | -------- | :----: |
-| Sprint 1 |         |          |   ⏳   |
-| Sprint 2 |         |          |   ⏳   |
-| Sprint 3 |         |          |   ⏳   |
+| Evento                           | Período           | Status |
+| :------------------------------- | :---------------- | :----: |
+| Kick-off geral                   | 24/08 a 28/08     |   ✅   |
+| Construção do Backlog / Planning | 31/08 a 04/09     |   ✅   |
+| **Sprint 1**                     | **07/09 a 27/09** |   ⏳   |
+| Sprint Review / Planning         | 28/09 a 02/10     |   ⏳   |
+| **Sprint 2**                     | **05/10 a 25/10** |   ⏳   |
+| Sprint Review / Planning         | 26/10 a 30/10     |   ⏳   |
+| **Sprint 3**                     | **02/11 a 22/11** |   ⏳   |
+| Sprint Review                    | 23/11 a 27/11     |   ⏳   |
+| Feira de Soluções                | 03/12             |   ⏳   |
 
 ---
 
@@ -289,20 +293,22 @@ npm install
 
 ## 👥 Equipe <a id="equipe"></a>
 
-| Integrante         | Papel              |                                                                         GitHub                                                                          |                                                                               LinkedIn                                                                                |
-| :----------------- | :----------------- | :-----------------------------------------------------------------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------: 
-| **Iago Lima** | PO / Developer | <a href="https://github.com/zixx0080"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" width="30"></a> | <a href="https://www.linkedin.com/in/iago-lima-940376358/"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg" width="30"></a> |
-| **Fernando Gomes** | Master / Developer | <a href="https://github.com/ihfernando"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" width="30"></a> | <a href="https://www.linkedin.com/in/ihfernando/"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg" width="30"></a> |
-| **Rafael Matheus** |  Developer | <a href="https://github.com/RafaelM-sants"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" width="30"></a> | <a href="https://www.linkedin.com/in/rafael-matheus-dos-santos-7a9344397"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg" width="30"></a> |
-| **Pedro Henrique** | Developer | <a href="https://github.com/pedrohl45"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" width="30"></a> | <a href="https://www.linkedin.com/in/pedrohl45/"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg" width="30"></a> |
- **Lucas Vinicius** | Developer | <a href="https://github.com/lucasvn1"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" width="30"></a> | <a href="https://www.linkedin.com/in/lucasviniciusant"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg" width="30"></a> |
-| **Isabela Alves** | Developer | <a href="https://github.com/isa-alvxs"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" width="30"></a> | <a href="https://www.linkedin.com/in/isabela-alves-778402316/"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg" width="30"></a> |
-| **Fernando Ferreira** | Developer | <a href="https://github.com/fesafer"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" width="30"></a> | <a href="https://www.linkedin.com/in/fernando-henrique-de-s%C3%A1-ferreira-250623352/"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg" width="30"></a> |
-| **Khalil Ayoub** | Developer | <a href="https://github.com/KhaosKhalil"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" width="30"></a> | <a href="https://www.linkedin.com/in/khalil-ayoub-083767429/"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg" width="30"></a> |
+| Integrante            | Papel              |                                                                           GitHub                                                                           |                                                                                                  LinkedIn                                                                                                  |
+| :-------------------- | :----------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+| **Iago Lima**         | PO / Developer     |   <a href="https://github.com/zixx0080"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" width="30"></a>    |               <a href="https://www.linkedin.com/in/iago-lima-940376358/"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg" width="30"></a>               |
+| **Fernando Gomes**    | Master / Developer |  <a href="https://github.com/ihfernando"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" width="30"></a>   |                   <a href="https://www.linkedin.com/in/ihfernando/"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg" width="30"></a>                    |
+| **Rafael Matheus**    | Developer          | <a href="https://github.com/RafaelM-sants"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" width="30"></a> |       <a href="https://www.linkedin.com/in/rafael-matheus-dos-santos-7a9344397"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg" width="30"></a>        |
+| **Pedro Henrique**    | Developer          |   <a href="https://github.com/pedrohl45"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" width="30"></a>   |                    <a href="https://www.linkedin.com/in/pedrohl45/"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg" width="30"></a>                    |
+| **Lucas Vinicius**    | Developer          |   <a href="https://github.com/lucasvn1"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" width="30"></a>    |                 <a href="https://www.linkedin.com/in/lucasviniciusant"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg" width="30"></a>                 |
+| **Isabela Alves**     | Developer          |   <a href="https://github.com/isa-alvxs"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" width="30"></a>   |             <a href="https://www.linkedin.com/in/isabela-alves-778402316/"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg" width="30"></a>             |
+| **Fernando Ferreira** | Developer          |    <a href="https://github.com/fesafer"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" width="30"></a>    | <a href="https://www.linkedin.com/in/fernando-henrique-de-s%C3%A1-ferreira-250623352/"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg" width="30"></a> |
+| **Khalil Ayoub**      | Developer          |  <a href="https://github.com/KhaosKhalil"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" width="30"></a>  |             <a href="https://www.linkedin.com/in/khalil-ayoub-083767429/"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg" width="30"></a>              |
+
 # 📚 Documentação
 
 ## Documentação Geral
 
+- [Acordos do Time](docs/workflows/acordos.md)
 - [Fluxo Git — Convenções de Branch, Commit e Hooks](docs/workflows/fluxo-git.md)
 - [Processo de Pull Request, Code Review e Definition of Done](docs/workflows/processo-pr.md)
 - [Jira — Fluxo de Trabalho e Gestão de Cards](docs/workflows/jira.md)
@@ -333,6 +339,6 @@ npm install
 
 # 📌 Status do Projeto
 
-**Fase atual:** Pré-Kick-off.
+**Fase atual:** Kick-off.
 
 O conteúdo técnico e funcional deste README será atualizado após o Kick-off oficial, conforme definição do problema, requisitos, arquitetura, tecnologias e planejamento das Sprints.
