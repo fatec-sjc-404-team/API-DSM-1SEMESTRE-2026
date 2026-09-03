@@ -2,24 +2,17 @@
 
 ## Título
 
-Use o formato: `<tipo>: [#numero-ticket] Descrição clara do que foi feito`
+Use o mesmo formato dos commits: `<tipo>(FC404-XX): descrição clara do que foi feito`
 
-**Tipos válidos:**
+**Tipos válidos:** `feat`, `fix`, `hotfix`, `refactor`, `chore`, `docs`, `test`, `style`, `perf`, `ci`, `build`, `revert`
 
-- `feat` — nova funcionalidade
-- `fix` — correção de bug
-- `refactor` — refatoração sem mudança de comportamento
-- `style` — mudanças visuais/CSS
-- `docs` — documentação
-- `chore` — tarefas de manutenção (configs, dependências)
-
-**Exemplo:** `feat: [#42] Adicionar componente de botão`
+**Exemplo:** `feat(FC404-42): adicionar componente de botão`
 
 ---
 
 ## Tarefa
 
-Ticket relacionado: #
+Ticket Jira: <!-- FC404-XX -->
 
 ---
 
@@ -43,11 +36,13 @@ Ticket relacionado: #
 
 ## Checklist
 
-- [ ] O código segue o padrão do projeto
+- [ ] A funcionalidade está completa e testável de ponta a ponta (backend + frontend + banco, conforme necessário)
 - [ ] Testei localmente e está funcionando
-- [ ] Não deixei `console.log` ou código de debug
-- [ ] Os critérios de aceite do ticket foram atendidos
-- [ ] Adicionei comentários em trechos complexos (se necessário)
+- [ ] Não há `console.log` ou código de debug no código
+- [ ] Os critérios de aceite do ticket Jira foram atendidos
+- [ ] A branch segue o padrão `<tipo>/FC404-XX_titulo-do-ticket`
+- [ ] Os commits seguem o padrão `tipo(FC404-XX): descricao`
+- [ ] Adicionei comentários em trechos de lógica não evidente (se necessário)
 
 ---
 

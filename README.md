@@ -25,7 +25,7 @@
 >
 > **Documentação:** [Adicionar link]
 >
-> **Jira:** [Acessar o Jira do projeto](https://fatec-sjc-404-team.atlassian.net/jira/software/projects/SCRUM/boards/1/backlog)
+> **Jira:** [Acessar o Jira do projeto](https://fatec-sjc-404-team.atlassian.net/jira/software/projects/FC404/boards/1/backlog)
 >
 > **Vídeo do Projeto:** [Adicionar link]
 
@@ -75,7 +75,9 @@
 
 ## 🏆 DoD — Definition of Done <a id="dod"></a>
 
-[Definir após o Kick-off.]
+Os critérios de conclusão de cada tarefa estão documentados em **[docs/workflows/processo-pr.md](docs/workflows/processo-pr.md#5-definition-of-done-dod)**.
+
+Os critérios específicos de cada User Story estão no card correspondente no [Jira](https://fatec-sjc-404-team.atlassian.net/jira/software/projects/FC404/boards/1/backlog).
 
 ---
 
@@ -125,97 +127,57 @@ A estratégia de CI é dividida em duas camadas: **hooks locais** (executados na
 
 O [Lefthook](https://github.com/evilmartians/lefthook) gerencia os hooks do Git localmente. Ele é configurado pelo arquivo `lefthook.yml` na raiz do repositório e instalado automaticamente ao rodar `npm install`.
 
-| Hook | Quando executa | O que faz |
-| :--- | :--- | :--- |
+| Hook         | Quando executa      | O que faz                                                                                                                                                                              |
+| :----------- | :------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `pre-commit` | A cada `git commit` | Roda ESLint + Prettier nos arquivos `.ts`/`.tsx` do frontend e Ruff nos arquivos `.py` do backend que estão em stage. Arquivos corrigidos automaticamente são re-adicionados ao stage. |
-| `pre-push` | A cada `git push` | Valida se o nome da branch segue o padrão obrigatório. Bloqueia o push caso contrário. |
-| `commit-msg` | A cada `git commit` | Valida se a mensagem de commit segue o padrão Conventional Commits com ticket Jira. |
+| `pre-push`   | A cada `git push`   | Valida se o nome da branch segue o padrão obrigatório. Bloqueia o push caso contrário.                                                                                                 |
+| `commit-msg` | A cada `git commit` | Valida se a mensagem de commit segue o padrão Conventional Commits com ticket Jira.                                                                                                    |
 
 ### Workflows Remotos — GitHub Actions
 
 Três workflows são executados no GitHub em resposta a pushes e pull requests:
 
-| Workflow | Arquivo | Gatilho | O que faz |
-| :--- | :--- | :--- | :--- |
-| **Frontend CI** | `.github/workflows/frontend.yml` | Push ou PR com mudanças em `frontend/**` | Instala dependências, roda lint e build |
-| **Backend CI** | `.github/workflows/backend.yml` | Push ou PR com mudanças em `backend/**` | Roda `ruff check` e `ruff format --check` |
-| **Branch Name Check** | `.github/workflows/branch-name.yml` | Abertura de PR para `main`, `stg` ou `develop` | Valida o nome da branch de origem |
+| Workflow              | Arquivo                             | Gatilho                                        | O que faz                                 |
+| :-------------------- | :---------------------------------- | :--------------------------------------------- | :---------------------------------------- |
+| **Frontend CI**       | `.github/workflows/frontend.yml`    | Push ou PR com mudanças em `frontend/**`       | Instala dependências, roda lint e build   |
+| **Backend CI**        | `.github/workflows/backend.yml`     | Push ou PR com mudanças em `backend/**`        | Roda `ruff check` e `ruff format --check` |
+| **Branch Name Check** | `.github/workflows/branch-name.yml` | Abertura de PR para `main`, `stg` ou `develop` | Valida o nome da branch de origem         |
 
 > Os workflows de frontend e backend são disparados **apenas quando arquivos da respectiva pasta mudam**, evitando execuções desnecessárias.
 
 ## Ferramentas
 
-| Ferramenta | Finalidade |
-| :--- | :--- |
-| [Lefthook](https://github.com/evilmartians/lefthook) | Gerenciador de hooks Git (local) |
-| [commitlint](https://commitlint.js.org/) | Validação de mensagens de commit |
-| [ESLint](https://eslint.org/) + [Prettier](https://prettier.io/) | Lint e formatação do frontend |
-| [Ruff](https://docs.astral.sh/ruff/) | Lint e formatação do backend Python |
-| [GitHub Actions](https://docs.github.com/en/actions) | CI remoto |
+| Ferramenta                                                       | Finalidade                          |
+| :--------------------------------------------------------------- | :---------------------------------- |
+| [Lefthook](https://github.com/evilmartians/lefthook)             | Gerenciador de hooks Git (local)    |
+| [commitlint](https://commitlint.js.org/)                         | Validação de mensagens de commit    |
+| [ESLint](https://eslint.org/) + [Prettier](https://prettier.io/) | Lint e formatação do frontend       |
+| [Ruff](https://docs.astral.sh/ruff/)                             | Lint e formatação do backend Python |
+| [GitHub Actions](https://docs.github.com/en/actions)             | CI remoto                           |
 
 ---
 
 # 🌿 Estratégia de Branch <a id="branch"></a>
 
-## Nomenclatura de Branches
+As convenções de branches, commits e rastreabilidade com Jira estão documentadas em detalhes em:
 
-Toda branch deve seguir o padrão abaixo. O hook `pre-push` bloqueia automaticamente qualquer push que não respeite o formato, e o workflow **Branch Name Check** faz a mesma validação no GitHub ao abrir um PR.
+**[docs/workflows/fluxo-git.md](docs/workflows/fluxo-git.md)**
 
-```text
-<tipo>/<JIRA-TICKET>_titulo-do-ticket
-```
+## Resumo rápido
 
-**Tipos válidos:** `feat`, `fix`, `hotfix`, `refactor`, `chore`, `docs`, `test`, `style`, `perf`, `ci`, `build`
+| O que         | Padrão                                                                                       |
+| :------------ | :------------------------------------------------------------------------------------------- |
+| Branch        | `<tipo>/FC404-XX_titulo-do-ticket`                                                           |
+| Commit        | `<tipo>(FC404-XX): descricao curta`                                                          |
+| Tipos válidos | `feat`, `fix`, `hotfix`, `refactor`, `chore`, `docs`, `test`, `style`, `perf`, `ci`, `build` |
 
-**Exemplos:**
-
-```text
-feat/SCRUM-42_criar-tela-de-login
-fix/SCRUM-7_corrigir-autenticacao
-chore/SCRUM-1_configurar-repositorio
-docs/SCRUM-10_atualizar-readme
-```
-
-> Branches `main`, `stg` e `develop` são exceções e não passam por essa validação.
-
-## Padrão de Commits
-
-Padrão de commits seguindo o [Conventional Commits](https://www.conventionalcommits.org/pt-br/v1.0.0/), com o ticket Jira como escopo **obrigatório**. O hook `commit-msg` valida automaticamente cada mensagem de commit.
-
-```text
-<tipo>(<JIRA-TICKET>): <descrição>
-```
-
-**Tipos válidos:** `feat`, `fix`, `hotfix`, `refactor`, `chore`, `docs`, `test`, `style`, `perf`, `ci`, `build`, `revert`
-
-**Exemplos:**
-
-```text
-feat(SCRUM-42): criar tela de login
-fix(SCRUM-7): corrigir validacao de token
-chore(SCRUM-1): configurar lefthook e commitlint
-docs(SCRUM-10): atualizar readme com instrucoes de instalacao
-```
+Branches `main`, `stg` e `develop` são protegidas — não aceitam push direto nem deleção.
 
 ## Pull Requests
 
-[Definir política de revisão e aprovação.]
+O fluxo de PR, regras de proteção do GitHub, critérios de Code Review e Definition of Done estão em:
 
----
-
-## Padrão de identificação
-
-O ticket Jira deve estar presente tanto no nome da branch quanto na mensagem de commit, conforme os padrões acima. A chave do projeto no Jira é **SCRUM**.
-
-```text
-SCRUM-<numero>
-```
-
-Exemplo:
-
-```text
-SCRUM-42
-```
+**[docs/workflows/processo-pr.md](docs/workflows/processo-pr.md)**
 
 ---
 
@@ -327,21 +289,24 @@ npm install
 
 ## 👥 Equipe <a id="equipe"></a>
 
-| Integrante         | Papel              |                                                                         GitHub                                                                          |                                                                               LinkedIn                                                                                |
-| :----------------- | :----------------- | :-----------------------------------------------------------------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------: 
-| **Iago Lima** | PO / Developer | <a href="https://github.com/zixx0080"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" width="30"></a> | <a href="https://www.linkedin.com/in/iago-lima-940376358/"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg" width="30"></a> |
-| **Fernando Gomes** | Master / Developer | <a href="https://github.com/ihfernando"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" width="30"></a> | <a href="https://www.linkedin.com/in/ihfernando/"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg" width="30"></a> |
-| **Rafael Matheus** |  Developer | <a href="https://github.com/RafaelM-sants"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" width="30"></a> | <a href="https://www.linkedin.com/in/rafael-matheus-dos-santos-7a9344397"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg" width="30"></a> |
-| **Pedro Henrique** | Developer | <a href="https://github.com/pedrohl45"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" width="30"></a> | <a href="https://www.linkedin.com/in/pedrohl45/"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg" width="30"></a> |
- **Lucas Vinicius** | Developer | <a href="https://github.com/lucasvn1"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" width="30"></a> | <a href="https://www.linkedin.com/in/lucasviniciusant"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg" width="30"></a> |
-| **Isabela Alves** | Developer | <a href="https://github.com/isa-alvxs"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" width="30"></a> | <a href="https://www.linkedin.com/in/isabela-alves-778402316/"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg" width="30"></a> |
-| **Fernando Ferreira** | Developer | <a href="https://github.com/fesafer"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" width="30"></a> | <a href="https://www.linkedin.com/in/fernando-henrique-de-s%C3%A1-ferreira-250623352/"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg" width="30"></a> |
-| **Khalil Ayoub** | Developer | <a href="https://github.com/KhaosKhalil"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" width="30"></a> | <a href="https://www.linkedin.com/in/khalil-ayoub-083767429/"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg" width="30"></a> |
+| Integrante            | Papel              |                                                                           GitHub                                                                           |                                                                                                  LinkedIn                                                                                                  |
+| :-------------------- | :----------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+| **Iago Lima**         | PO / Developer     |   <a href="https://github.com/zixx0080"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" width="30"></a>    |               <a href="https://www.linkedin.com/in/iago-lima-940376358/"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg" width="30"></a>               |
+| **Fernando Gomes**    | Master / Developer |  <a href="https://github.com/ihfernando"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" width="30"></a>   |                   <a href="https://www.linkedin.com/in/ihfernando/"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg" width="30"></a>                    |
+| **Rafael Matheus**    | Developer          | <a href="https://github.com/RafaelM-sants"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" width="30"></a> |       <a href="https://www.linkedin.com/in/rafael-matheus-dos-santos-7a9344397"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg" width="30"></a>        |
+| **Pedro Henrique**    | Developer          |   <a href="https://github.com/pedrohl45"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" width="30"></a>   |                    <a href="https://www.linkedin.com/in/pedrohl45/"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg" width="30"></a>                    |
+| **Lucas Vinicius**    | Developer          |   <a href="https://github.com/lucasvn1"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" width="30"></a>    |                 <a href="https://www.linkedin.com/in/lucasviniciusant"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg" width="30"></a>                 |
+| **Isabela Alves**     | Developer          |   <a href="https://github.com/isa-alvxs"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" width="30"></a>   |             <a href="https://www.linkedin.com/in/isabela-alves-778402316/"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg" width="30"></a>             |
+| **Fernando Ferreira** | Developer          |    <a href="https://github.com/fesafer"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" width="30"></a>    | <a href="https://www.linkedin.com/in/fernando-henrique-de-s%C3%A1-ferreira-250623352/"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg" width="30"></a> |
+| **Khalil Ayoub**      | Developer          |  <a href="https://github.com/KhaosKhalil"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" width="30"></a>  |             <a href="https://www.linkedin.com/in/khalil-ayoub-083767429/"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg" width="30"></a>              |
+
 # 📚 Documentação
 
 ## Documentação Geral
 
-[Adicionar links.]
+- [Fluxo Git — Convenções de Branch, Commit e Hooks](docs/workflows/fluxo-git.md)
+- [Processo de Pull Request, Code Review e Definition of Done](docs/workflows/processo-pr.md)
+- [Jira — Fluxo de Trabalho e Gestão de Cards](docs/workflows/jira.md)
 
 ## Atas de Reunião
 
