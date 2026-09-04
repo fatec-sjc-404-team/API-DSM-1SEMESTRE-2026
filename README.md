@@ -326,7 +326,7 @@ npm install
 
 ## Atas de Reunião
 
-[Adicionar links.]
+  [Ata da reunião - 28/08/2026](https://docs.google.com/document/d/1mJP76pr24N31S9nNDrN5eqIZJXUSGMQJawzefVghuRI/edit?usp=sharing) 
 
 ## Documentação das Sprints
 
