@@ -94,13 +94,15 @@ As regras abaixo são aplicadas automaticamente via GitHub Rulesets e não podem
 
 ## 5. Definition of Done (DoD)
 
-Uma tarefa só é considerada **concluída** quando atende a todos os critérios abaixo:
+Para que qualquer User Story e Pull Request seja definido como concluído e seja integrado à branch principal (`main`), os seguintes critérios devem ser atendidos:
 
-1. O código está integrado em `develop` (ou superior) via PR aprovado.
-2. O PR teve **2 aprovações** e todos os comentários foram resolvidos.
-3. O CI passou — Frontend CI e/ou Backend CI conforme os arquivos alterados.
-4. A branch de origem foi criada a partir de `develop` com o nome no padrão correto.
-5. Os commits seguem o Conventional Commits com o ticket Jira no escopo.
-6. Os critérios de aceite definidos no card do Backlog da Sprint foram atendidos.
+- [ ] O código está integrado em `develop` (ou superior) via PR aprovado.
+- [ ] O PR teve ao menos 2 aprovações e todos os comentários foram resolvidos.
+- [ ] O CI passou com sucesso — Frontend CI e/ou Backend CI conforme os arquivos alterados.
+- [ ] A branch de origem foi criada a partir de `develop` com o nome no padrão correto.
+- [ ] Os commits seguem o Conventional Commits com o ticket Jira no escopo.
+- [ ] Os critérios de aceite definidos no card do Backlog da Sprint foram atendidos.
+- [ ] Testes unitários foram criados ou atualizados para novas regras de negócio e passaram com 100% de sucesso.
+- [ ] `README.md` e documentos necessários foram devidamente atualizados conforme a demanda da task.
 
 > Os critérios específicos de cada User Story estão no card correspondente no [Jira](https://fatec-sjc-404-team.atlassian.net/jira/software/projects/FC404/boards/1/backlog).
