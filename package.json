@@ -2,7 +2,11 @@
   "name": "api-dsm-1semestre-2026",
   "private": true,
   "scripts": {
-    "prepare": "lefthook install"
+    "prepare": "lefthook install",
+    "update-cli": "npm install github:fatec-sjc-404-team/404-cli"
+  },
+  "dependencies": {
+    "@fatec-sjc-404-team/cli": "github:fatec-sjc-404-team/404-cli"
   },
   "dependencies": {
     "@fatec-sjc-404-team/cli": "github:fatec-sjc-404-team/404-cli"
