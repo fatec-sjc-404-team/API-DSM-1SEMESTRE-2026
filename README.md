@@ -57,11 +57,8 @@ Transformar dados econômicos públicos do Banco Central do Brasil (BCB) e BACEN
 
 # 📋 Backlog do Produto <a id="backlog"></a>
 
-[Preencher após levantamento e refinamento do Product Backlog.]
-
-| Rank | Prioridade | User Story | Estimativa | Sprint | Status |
-| :--: | :--------: | ---------- | :--------: | :----: | :----: |
-|      |            |            |            |        |        |
+O backlog está sendo registrado dentro da pasta de produto. 
+[Acessar Backlog](docs/produto/backlog.md)
 
 ---
 
