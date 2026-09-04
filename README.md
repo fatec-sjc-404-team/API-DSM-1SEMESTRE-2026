@@ -252,6 +252,7 @@ Após esse passo, os comandos abaixo ficam disponíveis globalmente no terminal:
 | `404 commit` | Cria um commit interativo no padrão Conventional Commits |
 | `404 new-branch` | Cria uma nova branch a partir de `develop` |
 | `404 new-file` | Cria um novo arquivo a partir de template |
+| `404 push` | Faz push da branch atual para origin (confirma antes de executar) |
 
 ### 4. Configurar ambiente
 

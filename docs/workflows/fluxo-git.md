@@ -121,5 +121,6 @@ Commits: feat(FC404-42): criar estrutura da tela de login
 | Criar uma nova branch    | `404 new-branch` ou `git checkout -b feat/FC404-XX_nome-da-feature` a partir de `develop` |
 | Commitar com o padrão    | `404 commit` ou `git commit -m "feat(FC404-XX): descricao"`                             |
 | Criar um arquivo novo    | `404 new-file`                                                                          |
-| Validar branch           | O `pre-push` valida automaticamente ao rodar `git push`                                 |
+| Fazer push               | `404 push` ou `git push origin <branch>`                                                |
+| Validar branch           | O `pre-push` valida automaticamente ao rodar `git push` ou `404 push`                  |
 | Abrir um PR              | Da sua branch para `develop` — veja [processo-pr.md](processo-pr.md)                   |
