@@ -4,6 +4,9 @@
   "scripts": {
     "prepare": "lefthook install"
   },
+  "dependencies": {
+    "@fatec-sjc-404-team/cli": "github:fatec-sjc-404-team/404-cli"
+  },
   "devDependencies": {
     "@commitlint/cli": "^19.0.0",
     "@commitlint/config-conventional": "^19.0.0",

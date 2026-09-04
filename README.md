@@ -236,7 +236,25 @@ npm install
 
 > O `npm install` já instala os hooks Git automaticamente via Lefthook (script `prepare`). Após isso, as validações de commit, branch e lint passam a funcionar localmente.
 
-### 3. Configurar ambiente
+### 3. Ativar a CLI `404` (uma vez por máquina)
+
+```bash
+cd node_modules/@fatec-sjc-404-team/cli && npm link && cd -
+```
+
+> A CLI está instalada como dependência do projeto (não publicada no npm), então o `npm link` precisa ser executado de dentro da pasta do pacote instalado.
+
+Após esse passo, os comandos abaixo ficam disponíveis globalmente no terminal:
+
+| Comando | O que faz |
+| :------ | :-------- |
+| `404 start` | Ponto de entrada: mostra as opções disponíveis e deixa você escolher |
+| `404 commit` | Cria um commit interativo no padrão Conventional Commits |
+| `404 new-branch` | Cria uma nova branch a partir de `develop` |
+| `404 new-file` | Cria um novo arquivo a partir de template |
+| `404 push` | Faz push da branch atual para origin (confirma antes de executar) |
+
+### 4. Configurar ambiente
 
 ```text
 [Preencher após o Kick-off — variáveis de ambiente, .env, etc.]

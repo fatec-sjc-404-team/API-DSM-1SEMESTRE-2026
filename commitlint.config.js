@@ -16,6 +16,7 @@ module.exports = {
   rules: {
     "scope-empty": [2, "never"], // escopo obrigatorio
     "scope-case": [0], // desativado — tickets Jira sao uppercase
+    "subject-case": [0], // desativado — mensagens em portugues usam maiusculas naturalmente
     "jira-scope": [2, "always"], // valida padrao [A-Z]+-[0-9]+
   },
 };

@@ -12,6 +12,8 @@ docs/
 └── workflows/         ← processos e fluxos de trabalho do time
 ```
 
+> **CLI `404`:** o repositório inclui uma CLI interativa para criar branches, commits e arquivos seguindo os padrões do projeto. Consulte o [Manual de Instalação](../README.md#instalacao) no README raiz para ativá-la.
+
 ---
 
 ## workflows/

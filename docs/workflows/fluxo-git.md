@@ -81,7 +81,7 @@ docs(FC404-10): atualizar readme com instrucoes de instalacao
 
 ## 3. Hooks Locais — Lefthook
 
-O [Lefthook](https://github.com/evilmartians/lefthook) executa validações automaticamente na máquina do desenvolvedor. Instalação: `npm install` na raiz do repositório (o script `prepare` roda `lefthook install` automaticamente).
+O [Lefthook](https://github.com/evilmartians/lefthook) executa validações automaticamente na máquina do desenvolvedor. Instalação: `npm install` na raiz do repositório (o script `prepare` roda `lefthook install` automaticamente). Para ativar a CLI `404`, rode também `cd node_modules/@fatec-sjc-404-team/cli && npm link && cd -`.
 
 | Hook         | Quando executa      | O que faz                                                                                                                                    |
 | :----------- | :------------------ | :------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -114,10 +114,13 @@ Commits: feat(FC404-42): criar estrutura da tela de login
 
 ## Referência Rápida
 
-| O que fazer              | Como fazer                                                             |
-| :----------------------- | :--------------------------------------------------------------------- |
-| Instalar os hooks        | `npm install` na raiz do repositório                                   |
-| Criar uma nova branch    | `git checkout -b feat/FC404-XX_nome-da-feature` a partir de `develop` |
-| Commitar com o padrão    | `git commit -m "feat(FC404-XX): descricao"`                            |
-| Validar branch           | O `pre-push` valida automaticamente ao rodar `git push`                |
-| Abrir um PR              | Da sua branch para `develop` — veja [processo-pr.md](processo-pr.md)  |
+| O que fazer              | Como fazer                                                                              |
+| :----------------------- | :-------------------------------------------------------------------------------------- |
+| Instalar os hooks        | `npm install` na raiz do repositório                                                    |
+| Ativar a CLI `404`       | `cd node_modules/@fatec-sjc-404-team/cli && npm link && cd -` (uma vez por máquina)    |
+| Criar uma nova branch    | `404 new-branch` ou `git checkout -b feat/FC404-XX_nome-da-feature` a partir de `develop` |
+| Commitar com o padrão    | `404 commit` ou `git commit -m "feat(FC404-XX): descricao"`                             |
+| Criar um arquivo novo    | `404 new-file`                                                                          |
+| Fazer push               | `404 push` ou `git push origin <branch>`                                                |
+| Validar branch           | O `pre-push` valida automaticamente ao rodar `git push` ou `404 push`                  |
+| Abrir um PR              | Da sua branch para `develop` — veja [processo-pr.md](processo-pr.md)                   |
