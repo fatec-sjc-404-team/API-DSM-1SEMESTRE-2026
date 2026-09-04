@@ -75,6 +75,17 @@ Transformar dados econômicos públicos do Banco Central do Brasil (BCB) e BACEN
 
 ## 🏆 DoD — Definition of Done <a id="dod"></a>
 
+Para que qualquer User Story e Pull Request seja definido como concluído e seja integrado à branch principal (`main`), os seguintes critérios devem ser atendidos:
+
+- [ ] O código está integrado em `develop` (ou superior) via PR aprovado.
+- [ ] O PR teve ao menos 2 aprovações e todos os comentários foram resolvidos.
+- [ ] O CI passou com sucesso — Frontend CI e/ou Backend CI conforme os arquivos alterados.
+- [ ] A branch de origem foi criada a partir de `develop` com o nome no padrão correto.
+- [ ] Os commits seguem o Conventional Commits com o ticket Jira no escopo.
+- [ ] Os critérios de aceite definidos no card do Backlog da Sprint foram atendidos.
+- [ ] Testes unitários foram criados ou atualizados para novas regras de negócio e passaram com 100% de sucesso.
+- [ ] `README.md` e documentos necessários foram devidamente atualizados conforme a demanda da task.
+
 Os critérios de conclusão de cada tarefa estão documentados em **[docs/workflows/processo-pr.md](docs/workflows/processo-pr.md#5-definition-of-done-dod)**.
 
 Os critérios específicos de cada User Story estão no card correspondente no [Jira](https://fatec-sjc-404-team.atlassian.net/jira/software/projects/FC404/boards/1/backlog).
