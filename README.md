@@ -326,7 +326,52 @@ npm install
 
 ## Atas de Reunião
 
-[Adicionar links.]
+**Data:** 28/08/2026  
+**Local:** FATEC São José dos Campos - Prof. Jessen Vidal  
+
+---
+
+## 👥 Participantes (Grupo 404)
+* Rafael Matheus
+* Fernando Ferreira
+* Fernando Gomes
+* Khalil Ayoub
+* Pedro Cabral
+* Iago Lima
+* Isabela Alves
+* Lucas Vinicius
+
+---
+
+## 🎯 Objetivo
+Consolidar os alinhamentos sobre os rituais ágeis e ferramentas do time, além de estruturar as tarefas individuais atribuídas para execução na segunda-feira (31/08/2026).
+
+---
+
+## 📌 Pauta
+
+### 🔄 Rituais do Scrum / Ágil
+* **Daily:** Reunião diária de 10 a 15 minutos para atualização de status, identificação de impedimentos e alinhamento de dúvidas.
+* **Planning:** Sessão de 30 minutos a 1 hora (conforme o volume e a complexidade das demandas) dedicada à revisão do backlog, detalhamento de requisitos e estimativa de esforço.
+
+### 🛠️ Ferramentas e Governança
+* **Comunicação:** Definição do Slack como canal oficial da equipe.
+* **Repositório:** Apresentação das diretrizes e políticas adotadas no GitHub.
+* **Distribuição do Trabalho:** Divisão inicial das responsabilidades entre os membros do time.
+
+---
+
+## 📋 Pendências (Tarefas para 31/08/2026)
+
+| Tarefa | Responsável |
+| :--- | :--- |
+| Definição das diretrizes do produto | `@iago lima` |
+| Estudo sobre raspagem de dados (*web scraping*) | `@isabela.barbosa10` |
+| Mapeamento e análise dos dados disponibilizados pelo IBGE e BACEN/BCB | `@khalil.krayem` |
+| Apresentação de exemplo de catalogação de dados (referência Serasa) | `@Fer` |
+| Estudo de funcionamento e uso do Google Colab | `@fesafer` |
+| Pesquisa sobre geração de gráficos no Jupyter Notebook e levantamento de ferramentas alternativas | `@rafael.santos202` |
+| Análise da API do 3-ADS, com detalhamento do projeto e da manipulação de dados | `@deftones.45` |
 
 ## Documentação das Sprints
 
