@@ -5,15 +5,12 @@
     "prepare": "lefthook install",
     "update-cli": "npm install github:fatec-sjc-404-team/404-cli"
   },
-  "dependencies": {
-    "@fatec-sjc-404-team/cli": "github:fatec-sjc-404-team/404-cli"
-  },
-  "dependencies": {
-    "@fatec-sjc-404-team/cli": "github:fatec-sjc-404-team/404-cli"
-  },
   "devDependencies": {
     "@commitlint/cli": "^19.0.0",
     "@commitlint/config-conventional": "^19.0.0",
     "lefthook": "^1.7.0"
+  },
+  "dependencies": {
+    "uva-cli": "^1.1.0"
   }
 }
