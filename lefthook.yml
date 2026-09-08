@@ -20,8 +20,9 @@ pre-commit:
       stage_fixed: true
 
 pre-push:
-  commands:
-    validate-branch-name:
+  jobs:
+    - name: validate-branch-name
+      runner: bash
       run: |
         branch=$(git symbolic-ref --short HEAD)
         # branches protegidas ficam fora da regra
