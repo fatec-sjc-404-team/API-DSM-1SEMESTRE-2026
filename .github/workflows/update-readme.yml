@@ -1,0 +1,84 @@
+name: Atualiza README automaticamente
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+    paths:
+      - "docs/**"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout da branch da PR
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+
+      - name: Claude analisa e edita a documentação se necessário
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          claude_args: |
+            --model claude-haiku-4-5-20251001
+            --max-turns 3
+          direct_prompt: |
+            Analise os arquivos alterados nesta PR comparado com a branch
+            base, olhando apenas pra arquivos novos dentro de docs/.
+
+            Este projeto mantém duas listagens de documentação que
+            precisam ficar sincronizadas:
+
+            1. docs/README.md — na seção "## workflows/", existe uma
+               tabela "| Arquivo | Conteúdo |" listando os arquivos de
+               docs/workflows/.
+            2. README.md (raiz) — na seção "## Documentação Geral",
+               existe uma lista com um link por arquivo de
+               docs/workflows/.
+
+            Se um arquivo novo foi adicionado em docs/workflows/,
+            adicione:
+            - Uma nova linha na tabela de docs/README.md, com o nome do
+              arquivo, o link relativo correto, e uma descrição curta de
+              uma linha resumindo o conteúdo do arquivo (leia o arquivo
+              pra escrever a descrição, no mesmo estilo das descrições já
+              existentes na tabela).
+            - Um novo item na lista "Documentação Geral" do README.md
+              raiz, no mesmo formato dos itens existentes (link com um
+              título descritivo curto, sem a descrição longa que vai na
+              tabela de docs/README.md).
+
+            REGRAS IMPORTANTES:
+            - Só edite dentro dessas duas estruturas já existentes (a
+              tabela de docs/README.md e a lista de Documentação Geral do
+              README.md raiz). NUNCA crie uma seção, tabela ou heading
+              novo em nenhum dos dois arquivos, mesmo que um arquivo novo
+              apareça numa pasta de docs/ que ainda não tem uma seção
+              própria (por exemplo, hoje docs/produto/ não tem tabela em
+              docs/README.md).
+            - Se um arquivo novo aparecer numa pasta de docs/ que não tem
+              uma estrutura já existente pra receber esse link, NÃO edite
+              nenhum dos dois README. Em vez disso, deixe um comentário
+              na PR avisando qual arquivo novo apareceu e que a
+              documentação ainda não tem uma seção pra ele, pra alguém do
+              time adicionar manualmente.
+            - Não mexa em mais nada nos dois arquivos além dessas duas
+              estruturas. Não reorganize, não reescreva texto existente,
+              não corrija formatação de outras partes.
+            - IMPORTANTE: apenas edite os arquivos em disco (ou comente
+              na PR, se for o caso). Não faça "git add", "git commit" nem
+              "git push" você mesmo — isso é feito por outro passo do
+              workflow.
+
+      - name: Commita a alteração como bot do time (se houver alguma)
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "docs(FC404-00): atualiza documentação automaticamente"
+          commit_author: "Equipe 404 Docs Bot <404-bot@users.noreply.github.com>"
+          file_pattern: "README.md docs/README.md"
