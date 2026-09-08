@@ -1,0 +1,19 @@
+{
+  "project": {
+    "name": "API-DSM-1SEMESTRE-2026",
+    "lang": "pt-br"
+  },
+  "commit": {
+    "ticketEnabled": true,
+    "ticketPrefix": "FC404",
+    "ticketPlaceholder": "FC404-42",
+    "format": "conventional-ticket"
+  },
+  "branch": {
+    "sources": ["main", "stg", "develop"],
+    "ticketEnabled": true,
+    "areaEnabled": false,
+    "areas": [],
+    "format": "type-ticket-name"
+  }
+}
