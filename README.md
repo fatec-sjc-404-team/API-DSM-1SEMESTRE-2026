@@ -21,7 +21,7 @@
   <a href="#equipe">Equipe</a>
 </p>
 
-> **Status do Projeto:** Planejamento / Kick-off ⏳
+> **Status do Projeto:** Sprint 1 em andamento ⏳
 >
 > **Documentação:** [Acessar documentação geral](docs/README.md)
 >
@@ -51,13 +51,15 @@ Transformar dados econômicos públicos do Banco Central do Brasil (BCB) e BACEN
 
 ## 💡 Solução <a id="solucao"></a>
 
-[Preencher após o Kick-off.]
+Um site que identifica regiões com alto potencial de crédito, mas sem acesso ao sistema financeiro tradicional. A partir de dados públicos do **BCB/BACEN**, **IBGE** e **Serasa**, a aplicação calcula um **Score de Oportunidade** por região, permitindo que analistas de crédito visualizem indicadores, apliquem filtros e comparem territórios de forma simples e responsiva.
+
+O processamento e a análise dos dados são feitos via **Google Colab**, e os resultados são exibidos em um site desenvolvido com **HTML + CSS + Python (Flask)**.
 
 ---
 
 # 📋 Backlog do Produto <a id="backlog"></a>
 
-O backlog está sendo registrado dentro da pasta de produto. 
+O backlog está sendo registrado dentro da pasta de produto.
 [Acessar Backlog](docs/produto/backlog.md)
 
 ---
@@ -93,35 +95,29 @@ Os critérios específicos de cada User Story estão no card correspondente no [
 
 ## 🎯 Requisitos Funcionais — RF
 
-[Preencher após o Kick-off.]
+Os requisitos funcionais estão registrados como User Stories no Backlog do Produto:
+
+**[docs/produto/backlog.md](docs/produto/backlog.md)**
 
 ---
 
 ## ⚙️ Requisitos Não Funcionais — RNF
 
-[Preencher após o Kick-off.]
+Os requisitos não funcionais estão definidos no documento de definição do projeto:
+
+**[docs/arquitetura/definicao-do-projeto.md](docs/arquitetura/definicao-do-projeto.md)**
 
 ---
 
 # 🏗️ Arquitetura do Sistema <a id="arquitetura"></a>
 
-[Definir após o Kick-off e escolha das tecnologias.]
+A definição de arquitetura, componentes, banco de dados e integrações está documentada em:
+
+**[docs/arquitetura/definicao-do-projeto.md](docs/arquitetura/definicao-do-projeto.md)**
 
 ## Diagrama de Arquitetura
 
 [Adicionar diagrama.]
-
-## Componentes
-
-[Preencher.]
-
-## Banco de Dados
-
-[Preencher.]
-
-## APIs / Integrações
-
-[Preencher.]
 
 ---
 
@@ -233,23 +229,23 @@ npm install
 
 > O `npm install` já instala os hooks Git automaticamente via Lefthook (script `prepare`). Após isso, as validações de commit, branch e lint passam a funcionar localmente.
 
-### 3. Ativar a CLI `404` (uma vez por máquina)
+### 3. Utiliziar a CLI `UVA` para automatizar processos
 
 ```bash
-cd node_modules/@fatec-sjc-404-team/cli && npm link && cd -
+npx uva start
 ```
 
 > A CLI está instalada como dependência do projeto (não publicada no npm), então o `npm link` precisa ser executado de dentro da pasta do pacote instalado.
 
 Após esse passo, os comandos abaixo ficam disponíveis globalmente no terminal:
 
-| Comando | O que faz |
-| :------ | :-------- |
-| `404 start` | Ponto de entrada: mostra as opções disponíveis e deixa você escolher |
-| `404 commit` | Cria um commit interativo no padrão Conventional Commits |
-| `404 new-branch` | Cria uma nova branch a partir de `develop` |
-| `404 new-file` | Cria um novo arquivo a partir de template |
-| `404 push` | Faz push da branch atual para origin (confirma antes de executar) |
+| Comando          | O que faz                                                            |
+| :--------------- | :------------------------------------------------------------------- |
+| `uva start`      | Ponto de entrada: mostra as opções disponíveis e deixa você escolher |
+| `uva commit`     | Cria um commit interativo no padrão Conventional Commits             |
+| `uva new-branch` | Cria uma nova branch a partir de `main, stg, develop`                |
+| `uva new-file`   | Cria um novo arquivo a partir de template                            |
+| `uva push`       | Faz push da branch atual para origin (confirma antes de executar)    |
 
 ### 4. Configurar ambiente
 
@@ -289,19 +285,23 @@ Após esse passo, os comandos abaixo ficam disponíveis globalmente no terminal:
 
 # 🛠️ Tecnologias Utilizadas <a id="tecnologias"></a>
 
-[Definir após o Kick-off.]
-
 ## Frontend
 
-[Preencher.]
+- HTML — estrutura das páginas
+- CSS — estilização e responsividade
 
 ## Backend
 
-[Preencher.]
+- Python — linguagem principal
+- Flask — framework web, integração Python ↔ HTML/CSS
 
 ## Banco de Dados
 
-[Preencher.]
+- SQL — armazenamento de filtros e feedbacks
+
+## Análise de Dados
+
+- Google Colab — ambiente em nuvem para raspagem, tratamento e análise
 
 ## Testes
 
@@ -341,7 +341,7 @@ Após esse passo, os comandos abaixo ficam disponíveis globalmente no terminal:
 
 ## Atas de Reunião
 
-  [Ata da reunião - 28/08/2026](https://docs.google.com/document/d/1mJP76pr24N31S9nNDrN5eqIZJXUSGMQJawzefVghuRI/edit?usp=sharing) 
+[Ata da reunião - 28/08/2026](https://docs.google.com/document/d/1mJP76pr24N31S9nNDrN5eqIZJXUSGMQJawzefVghuRI/edit?usp=sharing)
 
 ## Documentação das Sprints
 
@@ -365,6 +365,4 @@ Após esse passo, os comandos abaixo ficam disponíveis globalmente no terminal:
 
 # 📌 Status do Projeto
 
-**Fase atual:** Kick-off.
-
-O conteúdo técnico e funcional deste README será atualizado após o Kick-off oficial, conforme definição do problema, requisitos, arquitetura, tecnologias e planejamento das Sprints.
+**Fase atual:** Sprint 1
