@@ -29,6 +29,7 @@ jobs:
           claude_args: |
             --model claude-haiku-4-5-20251001
             --max-turns 8
+            --permission-mode acceptEdits
           prompt: |
             Para encontrar os arquivos novos desta PR, execute:
             git diff --name-status origin/main...HEAD -- docs/ | grep '^A'
