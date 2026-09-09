@@ -11,6 +11,6 @@
     "lefthook": "^1.7.0"
   },
   "dependencies": {
-    "uva-cli": "^1.1.0"
+    "uva-cli": "^1.3.0"
   }
 }

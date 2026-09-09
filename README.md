@@ -21,6 +21,12 @@
   <a href="#equipe">Equipe</a>
 </p>
 
+<p align="center">
+  <img src="https://img.shields.io/badge/status-Sprint%201%20em%20andamento-yellow" alt="Status do Projeto">
+  <img src="https://img.shields.io/badge/semestre-1º%202026-blue" alt="Semestre">
+  <img src="https://img.shields.io/badge/FATEC-SJC-red" alt="FATEC SJC">
+</p>
+
 > **Status do Projeto:** Sprint 1 em andamento ⏳
 >
 > **Documentação:** [Acessar documentação geral](docs/README.md)
@@ -285,23 +291,32 @@ Após esse passo, os comandos abaixo ficam disponíveis globalmente no terminal:
 
 # 🛠️ Tecnologias Utilizadas <a id="tecnologias"></a>
 
-## Frontend
+*Frontend*
 
-- HTML — estrutura das páginas
-- CSS — estilização e responsividade
+![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat&logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=flat&logo=css3&logoColor=white)
 
-## Backend
+*Backend*
 
-- Python — linguagem principal
-- Flask — framework web, integração Python ↔ HTML/CSS
+![Python](https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white)
+![Flask](https://img.shields.io/badge/Flask-000000?style=flat&logo=flask&logoColor=white)
 
-## Banco de Dados
+*Banco de Dados*
 
-- SQL — armazenamento de filtros e feedbacks
+![SQL](https://img.shields.io/badge/SQL-4479A1?style=flat&logo=postgresql&logoColor=white)
 
-## Análise de Dados
+*Análise de Dados*
 
-- Google Colab — ambiente em nuvem para raspagem, tratamento e análise
+![Google Colab](https://img.shields.io/badge/Google%20Colab-F9AB00?style=flat&logo=googlecolab&logoColor=white)
+
+*DevOps & Qualidade*
+
+![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-2088FF?style=flat&logo=githubactions&logoColor=white)
+![Lefthook](https://img.shields.io/badge/Lefthook-FF1E1E?style=flat)
+![Ruff](https://img.shields.io/badge/Ruff-D7FF64?style=flat&logoColor=black)
+![commitlint](https://img.shields.io/badge/commitlint-000000?style=flat)
+![Jira](https://img.shields.io/badge/Jira-0052CC?style=flat&logo=jira&logoColor=white)
+
 
 ## Testes
 
@@ -360,9 +375,3 @@ Após esse passo, os comandos abaixo ficam disponíveis globalmente no terminal:
 | Sprint 1 | [Adicionar] |
 | Sprint 2 | [Adicionar] |
 | Sprint 3 | [Adicionar] |
-
----
-
-# 📌 Status do Projeto
-
-**Fase atual:** Sprint 1
