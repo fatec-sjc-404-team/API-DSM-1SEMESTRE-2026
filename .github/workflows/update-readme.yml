@@ -28,7 +28,7 @@ jobs:
           claude_args: |
             --model claude-haiku-4-5-20251001
             --max-turns 3
-          direct_prompt: |
+          prompt: |
             Analise os arquivos alterados nesta PR comparado com a branch
             base, olhando apenas pra arquivos novos dentro de docs/.
 
