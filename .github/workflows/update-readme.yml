@@ -28,10 +28,13 @@ jobs:
           show_full_output: true
           claude_args: |
             --model claude-haiku-4-5-20251001
-            --max-turns 3
+            --max-turns 8
           prompt: |
-            Analise os arquivos alterados nesta PR comparado com a branch
-            base, olhando apenas pra arquivos novos dentro de docs/.
+            Para encontrar os arquivos novos desta PR, execute:
+            git diff --name-status origin/main...HEAD -- docs/ | grep '^A'
+
+            Analise apenas os arquivos novos dentro de docs/ listados por
+            esse comando.
 
             Este projeto mantém duas listagens de documentação que
             precisam ficar sincronizadas:
