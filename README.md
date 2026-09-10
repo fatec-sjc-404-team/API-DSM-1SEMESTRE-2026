@@ -353,6 +353,7 @@ Após esse passo, os comandos abaixo ficam disponíveis globalmente no terminal:
 - [Fluxo Git — Convenções de Branch, Commit e Hooks](docs/workflows/fluxo-git.md)
 - [Processo de Pull Request, Code Review e Definition of Done](docs/workflows/processo-pr.md)
 - [Jira — Fluxo de Trabalho e Gestão de Cards](docs/workflows/jira.md)
+- [Estudo do Flask](docs/pesquisa/estudo-do-flask.md)
 
 ## Atas de Reunião
 
