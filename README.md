@@ -74,7 +74,18 @@ O backlog está sendo registrado dentro da pasta de produto.
 
 ## 🏃 DoR — Definition of Ready <a id="dor-ready"></a>
 
-[Definir após o Kick-off.]
+Para que qualquer User Story, tarefa ou card do Backlog seja considerado pronto (**Ready**) para ser puxado para a Sprint, os seguintes critérios devem ser atendidos:
+
+* [ ] O problema herdado do projeto de 3-ADS relacionado à tarefa foi analisado e o objetivo da melhoria está compreendido por todo o grupo.
+* [ ] A história do usuário está escrita de forma clara no formato padrão e os critérios de aceite estão explicitamente descritos no card.
+* [ ] As fontes de dados do IBGE, BACEN e Serasa necessárias para a tarefa foram identificadas e o recorte dos dados a serem utilizados foi definido.
+* [ ] O escopo da raspagem de dados (*scraping*) está mapeado, incluindo os sites-alvo, os dados a serem extraídos e a frequência de atualização.
+* [ ] A estrutura do notebook no Google Colab / Jupyter para a análise dos dados e geração dos gráficos foi alinhada entre os responsáveis.
+* [ ] Os tipos de gráficos a serem gerados no Colab e o formato de exportação/link para o HTML da aplicação foram previamente definidos.
+* [ ] O modelo e a estrutura das tabelas do banco de dados simples (ex: tabela para feedback dos jornalistas) foram desenhados e validados.
+* [ ] O fluxo da tela ou o protótipo navegável correspondente à tarefa foi desenhado e aprovado para implementação no front-end.
+* [ ] Todas as dependências técnicas entre tarefas da Sprint (ex: dependência entre o script de raspagem e o banco de dados) foram identificadas.
+
 
 ---
 
