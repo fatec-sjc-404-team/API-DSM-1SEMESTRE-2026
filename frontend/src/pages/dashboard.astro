@@ -1,0 +1,94 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Dashboard — Negado pelo Banco">
+  <div x-data="dashboardData()" x-init="carregarDados()">
+    <h1 class="text-2xl font-bold text-gray-900 mb-6">Dashboard de Vendas</h1>
+
+    <div class="flex items-center gap-3 mb-6">
+      <label for="periodo" class="text-sm text-gray-600">Período:</label>
+      <select
+        id="periodo"
+        x-model="filtro"
+        @change="carregarDados()"
+        class="text-sm border border-gray-200 rounded-md px-3 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-gray-900"
+      >
+        <option value="semana">Última semana</option>
+        <option value="mes">Último mês</option>
+        <option value="ano">Último ano</option>
+      </select>
+      <p class="text-sm text-gray-500">
+        Mostrando dados de: <strong x-text="filtro"></strong>
+      </p>
+    </div>
+
+    <div class="bg-white rounded-xl p-6 shadow-sm">
+      <template x-if="carregando">
+        <p class="text-sm text-gray-500">Carregando...</p>
+      </template>
+      <template x-if="erro">
+        <p class="text-sm text-red-600">Erro ao buscar dados. Tenta de novo.</p>
+      </template>
+      <canvas id="grafico-vendas" x-show="!carregando && !erro"></canvas>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  // @ts-nocheck
+  import Alpine from 'alpinejs';
+  import { getVendas } from '../lib/api.js';
+  import Chart from 'chart.js/auto';
+
+  Alpine.data('dashboardData', () => ({
+    filtro: 'mes',
+    carregando: false,
+    erro: false,
+    grafico: null,
+
+    async carregarDados() {
+      this.carregando = true;
+      this.erro = false;
+
+      try {
+        // const dados = await getVendas(this.filtro);
+        const dados = [
+          { mes: 'Janeiro', total: 10 },
+          { mes: 'Fevereiro', total: 15 },
+          { mes: 'Março', total: 7 },
+        ];
+        this.renderizarGrafico(dados);
+      } catch (e) {
+        this.erro = true;
+      } finally {
+        this.carregando = false;
+      }
+    },
+
+    renderizarGrafico(dados) {
+      const ctx = document.getElementById('grafico-vendas');
+      if (this.grafico) this.grafico.destroy();
+
+      this.grafico = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: dados.map((d) => d.mes),
+          datasets: [
+            {
+              label: 'Vendas',
+              data: dados.map((d) => d.total),
+              backgroundColor: '#4f46e5',
+              borderRadius: 6,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { display: false } },
+          scales: { y: { beginAtZero: true } },
+        },
+      });
+    },
+  }));
+</script>

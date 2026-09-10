@@ -3,7 +3,9 @@
   "private": true,
   "scripts": {
     "prepare": "lefthook install",
-    "update-cli": "npm install github:fatec-sjc-404-team/404-cli"
+    "update-cli": "npm install github:fatec-sjc-404-team/404-cli",
+    "dev-fe": "cd ./frontend && npm run dev",
+    "install-fe": "cd ./frontend && npm install"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.0.0",
