@@ -54,5 +54,6 @@ Estudos e pesquisas técnicas realizados pelo time para embasar decisões de arq
 | :------ | :------- |
 | [analise-jupyter.md](pesquisa/analise-jupyter.md) | Análise do Jupyter Notebook como ambiente de dados, comparação de bibliotecas de visualização e decisão pelo Google Colab |
 | [estudo-do-google-colab.md](pesquisa/estudo-do-google-colab.md) | Estudo de aplicabilidade do Google Colab para prototipagem Python, exploração de dados e modelagem na API |
+| [pesquisa-streamlit.md](pesquisa/pesquisa-streamlit.md) | Pesquisa sobre Streamlit como framework para criação de dashboards e interfaces de visualização de dados em Python |
 | [estudo-do-flask.md](pesquisa/estudo-do-flask.md) | Estudo de aplicabilidade do Flask para criar APIs Python, visão geral do framework, integração com análises em Python e decisão de usar Flask como backend do projeto |
 | [raspagem-de-dados.md](pesquisa/raspagem-de-dados.md) | Guia sobre web scraping: definição, como funciona, fontes de dados (Serasa, IBGE, Banco Central) e boas práticas de coleta responsável | |

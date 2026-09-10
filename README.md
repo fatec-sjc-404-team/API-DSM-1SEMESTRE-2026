@@ -355,6 +355,7 @@ Após esse passo, os comandos abaixo ficam disponíveis globalmente no terminal:
 - [Jira — Fluxo de Trabalho e Gestão de Cards](docs/workflows/jira.md)
 - [Estudo do Flask](docs/pesquisa/estudo-do-flask.md)
 - [Raspagem de Dados](docs/pesquisa/raspagem-de-dados.md)
+- [Pesquisa sobre Streamlit](docs/pesquisa/pesquisa-streamlit.md)
 
 ## Atas de Reunião
 

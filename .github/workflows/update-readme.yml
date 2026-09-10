@@ -13,6 +13,7 @@ permissions:
 jobs:
   update-readme:
     runs-on: ubuntu-latest
+    if: github.actor != 'github-action[bot]'
     steps:
       - name: Checkout da branch da PR
         uses: actions/checkout@v4
