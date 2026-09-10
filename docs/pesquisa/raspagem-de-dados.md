@@ -48,6 +48,7 @@ Raspagem de dados, ou *Web Scraping*, é uma técnica usada para coletar informa
 | **SERASA** | Informações relacionadas a crédito e situação financeira. Exige cuidado especial com dados pessoais, financeiros e com a LGPD. |
 | **IBGE** | Dados estatísticos sobre o Brasil, como população, municípios, educação, trabalho e economia. |
 | **BANCO CENTRAL** | Dados econômicos e financeiros, como taxas de juros, câmbio e indicadores. |
+  **DATA_SENADO** |Dados abertos institucionais, projetos de lei, proposições e informações legislativas do Senado Federal.|
 
 ---
 
