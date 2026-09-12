@@ -74,7 +74,17 @@ O backlog está sendo registrado dentro da pasta de produto.
 
 ## 🏃 DoR — Definition of Ready <a id="dor-ready"></a>
 
-[Definir após o Kick-off.]
+Para que qualquer **User Story**, tarefa ou card do Backlog seja considerado pronto (**Ready**) para ser puxado para a Sprint, os seguintes critérios devem ser atendidos:
+
+- [ ] **Contexto e Objetivo:** O problema a ser resolvido e o objetivo da tarefa estão claramente definidos e compreendidos por todo o time.
+- [ ] **Formato do Card:** A história do usuário e seus critérios de aceite estão explicitamente descritos de forma clara.
+- [ ] **Insumos e Fontes de Dados:** Mapeamento e especificação completa das fontes de dados, APIs ou insumos necessários para a execução da tarefa.
+- [ ] **Escopo de Integração e Automação:** Escopo técnico mapeado (ex: scraping, rotinas, frequência de atualização ou regras de negócio envolvidas).
+- [ ] **Arquitetura e Ambiente:** Ferramentas, estrutura de código/notebooks e modelos de dados (ex: esquemas de tabelas do banco) alinhados entre os responsáveis.
+- [ ] **Design e Interface:** Protótipos de tela, fluxos visuais ou formatos de exportação (ex: gráficos, relatórios) definidos e aprovados.
+- [ ] **Mapeamento de Dependências:** Dependências técnicas (ex: rotinas de backend antes do banco) ou de negócios identificadas e tratadas.
+- [ ] **Estimativa e Sem Bloqueios:** A tarefa foi discutida, estimada pelo time e não possui impedimentos conhecidos para o início imediato.
+
 
 ---
 
