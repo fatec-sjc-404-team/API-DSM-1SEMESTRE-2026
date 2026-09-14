@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "prepare": "lefthook install",
-    "update-cli": "npm install github:fatec-sjc-404-team/404-cli"
+    "update-cli": "npm update uva-cli"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.0.0",
@@ -11,6 +11,6 @@
     "lefthook": "^1.7.0"
   },
   "dependencies": {
-    "uva-cli": "^1.3.0"
+    "uva-cli": "^1.5.0-beta.1"
   }
 }
