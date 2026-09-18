@@ -57,3 +57,11 @@ Estudos e pesquisas técnicas realizados pelo time para embasar decisões de arq
 | [pesquisa-streamlit.md](pesquisa/pesquisa-streamlit.md) | Pesquisa sobre Streamlit como framework para criação de dashboards e interfaces de visualização de dados em Python |
 | [estudo-do-flask.md](pesquisa/estudo-do-flask.md) | Estudo de aplicabilidade do Flask para criar APIs Python, visão geral do framework, integração com análises em Python e decisão de usar Flask como backend do projeto |
 | [raspagem-de-dados.md](pesquisa/raspagem-de-dados.md) | Guia sobre web scraping: definição, como funciona, fontes de dados (Serasa, IBGE, Banco Central) e boas práticas de coleta responsável | |
+
+## dados/
+
+Coleta de Dados (IBGE, BCB, Bacen) Realizada pela equipe, para manipulação, tratamento e governança de Dados.
+
+| Arquivo | Conteúdo |
+| :------ | :------- |
+| [dados-bcb.md](dados/dados-bcb.md) | O tratamento de dados do BCB, IBGE e Bacen envolve a coleta, organização e análise de informações econômicas e financeiras. Esses dados permitem acompanhar indicadores como crédito, inadimplência, juros, renda e consumo da população. |
