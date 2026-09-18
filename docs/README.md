@@ -58,6 +58,7 @@ Estudos e pesquisas técnicas realizados pelo time para embasar decisões de arq
 | [estudo-do-flask.md](pesquisa/estudo-do-flask.md) | Estudo de aplicabilidade do Flask para criar APIs Python, visão geral do framework, integração com análises em Python e decisão de usar Flask como backend do projeto |
 | [raspagem-de-dados.md](pesquisa/raspagem-de-dados.md) | Guia sobre web scraping: definição, como funciona, fontes de dados (Serasa, IBGE, Banco Central) e boas práticas de coleta responsável |
 | [pesquisa-spa.md](pesquisa/pesquisa-spa.md) | Pesquisa sobre a Secretaria de Prêmios e Apostas: organização, regulamentação do mercado de apostas e impacto na inadimplência das famílias brasileiras |
+| [pesquisa-data-senado.md](pesquisa/pesquisa-data-senado.md) | Pesquisa sobre DataSenado: órgão de pesquisas de opinião pública do Senado Federal e sua relação com análise de endividamento e capacidade de pagamento das famílias brasileiras |
 
 ## dados/
 
