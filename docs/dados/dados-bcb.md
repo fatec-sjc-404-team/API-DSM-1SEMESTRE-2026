@@ -43,3 +43,18 @@
 
 ---
 
+# Dados Gerais e Principais Utilizados para o Projeto.
+
+| **BANCO CENTRAL** | Dados Financeiro e indicadores | Taxa de Inadimplência | Potencial de Crédito | 
+**(Região, Tipo de Cliente, Período)**
+
+<a href="https://www.bcb.gov.br/estabilidadefinanceira/scrdata?dataIn=2012-06-01;2012-06-01;2025-01-01&dataFim=2026-07-31;2026-07-31;2026-07-31&uf_filtro=Todas;ap;ap&cnaeocup_filtro=Todos;Todos;Todos&porte_filtro=Todos;Todos;Todos&modalidade_filtro=Todas;PF%20-%20Outros%20cr%C3%A9ditos;PF%20-%20Outros%20cr%C3%A9ditos&origem_filtro=Todas;Todas;Todas&indexador_filtro=Todos;Todos;Todos&cliente_filtro=Todos;Todos;Todos&subModalidade_filtro=Todas;Todas;Todas&segmento_filtro=Todos;Todos;Todos&id=952f64e5-acdd-4747-909c-493c82562851&numSeries=3" target="_blank">Dados.bcb</a>
+
+---
+
+| **Ativos Problemáticos** | **Modalidade de Crédito** | 
+
+**Página 34-37**
+
+<a href="https://www.bcb.gov.br/content/cidadaniafinanceira/documentos_cidadania/RIF/relatorio_de_cidadania_financeira_2025.pdf" target="_blank">Modalidades.bcb</a> 
+
