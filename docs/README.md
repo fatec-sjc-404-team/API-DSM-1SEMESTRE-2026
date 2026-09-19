@@ -67,4 +67,4 @@ Coleta de Dados (IBGE, BCB, Bacen) Realizada pela equipe, para manipulação, tr
 | Arquivo | Conteúdo |
 | :------ | :------- |
 | [dados-bcb.md](dados/dados-bcb.md) | O tratamento de dados do BCB, IBGE e Bacen envolve a coleta, organização e análise de informações econômicas e financeiras. Esses dados permitem acompanhar indicadores como crédito, inadimplência, juros, renda e consumo da população. |
-| [dados-ibge.md](dados/dados-ibge.md) | O tratamento de dados do IBGE se dá pela Coleta de informações econômicas e financeiras. Esses dados permitem acompanhar indicadores como crediário, inadimplência, juros, renda |
+| [dados-ibge.md](dados/dados-ibge.md) | Indicadores econômicos e financeiros do IBGE: rendimento domiciliar per capita, endividamento de risco, inadimplência e comportamento de consumo por região |
