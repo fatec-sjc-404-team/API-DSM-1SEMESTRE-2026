@@ -75,3 +75,35 @@ A regra é configurada por meio de variáveis e gatilhos automatizados em motore
  - Punição no Score Interno: O cliente é rebaixado da faixa de risco, mesmo que o CPF ainda esteja sem negativação em birôs como o Serasa ou SPC.
 
 - ### A Aplicação:
+
+---
+
+##  Regra de Recuperação Rápida
+
+### O que é:
+É o indicador que mede a resiliência financeira do tomador. Considera-se dívida de recuperação rápida aquela que entra em atraso inicial, mas é totalmente quitada em até $20$ dias a partir do vencimento.
+
+### Como funciona:
+Calcula-se o intervalo de tempo entre a data de vencimento original e a data efetiva de pagamento. Se a quitação ocorrer dentro da janela de $1$ a $20$ dias após o vencimento, a operação é classificada como recuperação rápida.
+
+### Como o banco enxerga isso:
+Os bancos tradicionais geralmente tratam qualquer dia de atraso como inadimplência pura. Sob a ótica do crédito inclusivo, entende-se que imprevistos de fluxo de caixa são comuns na base da pirâmide e que quem paga em até $20$ dias demonstra comprometimento e alta capacidade de reequilíbrio, não sendo um mau pagador crônico.
+
+## tenho que colocar aplicacao
+
+---
+
+##  Regra de Dívida Saudável x Crítica
+
+### O que é:
+É a classificação do perfil de endividamento com base na finalidade do crédito tomado. Separa o que gera patrimônio/desenvolvimento daquilo que apenas cobre buracos de consumo imediato.
+
+### Como funciona:
+Categoriza-se as linhas de crédito disponíveis:
+* **Dívida Saudável:** Créditos voltados à construção de patrimônio, investimentos de longo prazo ou crédito produtivo (Ex: financiamento de imóveis).
+* **Dívida Crítica:** Créditos voltados ao consumo imediato ou linhas de emergência com juros abusivos (Ex: rotativo de cartão de crédito e cheque especial).
+
+### Como o banco enxerga isso:
+O modelo tradicional olha apenas o volume total de dívidas e descarta o cliente se o montante for alto. A visão inclusiva diferencia a qualidade da dívida: um financiamento imobiliário alto indica investimento e estabilidade, enquanto um valor menor em cartão rotativo sinaliza alto risco de insolvência. O banco passa a enxergar a finalidade e o impacto real desse crédito na vida do tomador.
+
+## tenho que colocar aplicacao
