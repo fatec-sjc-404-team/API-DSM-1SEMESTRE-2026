@@ -369,6 +369,7 @@ Após esse passo, os comandos abaixo ficam disponíveis globalmente no terminal:
 - [Pesquisa sobre SPA](docs/pesquisa/pesquisa-spa.md)
 - [Pesquisa sobre DataSenado](docs/pesquisa/pesquisa-data-senado.md)
 - [Pesquisa sobre Matplotlib](docs/pesquisa/pesquisa-matplotlib.md)
+- [Estudo do Pandas](docs/pesquisa/estudo-do-pandas.md)
 - [Dados BCB — Inadimplência e Crédito](docs/dados/dados-bcb.md)
 - [Dados IBGE — Indicadores Econômicos e Financeiros](docs/dados/dados-ibge.md)
 
