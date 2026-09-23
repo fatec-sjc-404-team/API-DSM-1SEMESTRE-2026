@@ -37,6 +37,7 @@ Documentações sobre o produto, backlog e entregas por Sprint.
 | Arquivo | Conteúdo |
 | :------ | :------- |
 | [backlog.md](produto/backlog.md) | Backlog do produto com as User Stories e critérios de aceite por Sprint |
+| [planejamento_sprints.md](produto/planejamento_sprints.md) | Planejamento das 3 Sprints: objetivos, épicos, user stories e lógica de sequenciamento das entregas |
 
 ## arquitetura/
 
