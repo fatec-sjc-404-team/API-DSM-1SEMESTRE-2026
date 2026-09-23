@@ -76,7 +76,50 @@ A regra é configurada por meio de variáveis e gatilhos automatizados em motore
 
 - ### A Aplicação:
 
----
+- **Ingestão e Identificação dos dados**
+
+É necessário capturar as transações via extrato bancário ou fatura do cartão:
+
+- MCC (Merchant Category Code): Filtrar compras no cartão com códigos de jogos de azar e apostas.
+ 
+- CNPJs credenciados: Cruzar chaves Pix e transferências com a base de CNPJs de operadoreas autorizadas de apostas.
+
+- **Criação das variáveis**
+
+Transforma os dados brutos em métricas quantitativas de risco:
+
+- Comprometimento de Renda (Gambling-to-income):
+    GTI = (Total gasto em apostas no mês / Renda líquida estimada) * 100
+
+- Velocidade de Gasto: Quantidade de depósitos em casas de aposta em janelas curtas
+
+- Uso de Linhas Emergenciais: Se o Pix para a casa de apostas foi feito enquanto a conta estava negativa (usando cheque especial) ou logo após um saque de cartão de crédito.
+
+- **Definição dos limiares lógicos**
+
+No motor de decisão, configure as regras condicionais:
+
+- Nível 1: Recusa Sumária (Hard Rule / Knockout)
+
+``` SE (Saldo_Cheque_Especial > 0 E Gasto_Apostas_30d > 0) ENTÃO Recusar_Novo_Crédito```
+
+```SE (GTI > 25%) ENTÃO Recusar_Novo_Crédito```
+
+- Nível 2: Redução Preventiva de Exposição
+
+```SE (GTI > 15% E Score_Biro >= 700) ENTÃO Reduzir_Limite_Cartao_em_50%```
+
+- Nível 3: Punição no Score Interno
+
+```SE (Frequencia_Apostas >= 5 transações/semana) ENTÃO Subtrair_Score_Interno(-80_pontos)```
+
+- **Ações automatizadas**
+
+A depender de onde o cliente está na jornada, o sistema dispara a ação correspondente:
+
+- Na entrada (concessão): Reprova o pedido ou aprova apenas linhas com garantia real (consignado, veículo).
+
+- Na base ativa (gestão de portfólio): Bloqueia aumentos automáticos de limite e reduz limites de cheque especial e rotativo para evitar o calote iminente.
 
 ##  Regra de Recuperação Rápida
 
