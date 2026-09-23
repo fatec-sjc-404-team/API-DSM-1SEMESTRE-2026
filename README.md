@@ -35,6 +35,11 @@
 >
 > **Vídeo do Projeto:** [Adicionar link]
 
+> **Figma:** [Acessar prototipo no figma](https://www.figma.com/make/JcQ4GQFCl55CO8K9N8atOD/AvoCrdit?t=Wa7FHe82F4FV8Rog-1)
+>
+
+> **Colab:** [Acessar funções no Google Colab](https://colab.research.google.com/drive/1uMAxgv1r2Tn69wQsd8uY0oKikeQqMdKA?usp=sharing)
+>
 ---
 
 ## 🏢 Cliente <a id="cliente"></a>
