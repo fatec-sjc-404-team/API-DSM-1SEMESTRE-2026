@@ -60,6 +60,7 @@ Estudos e pesquisas técnicas realizados pelo time para embasar decisões de arq
 | [pesquisa-spa.md](pesquisa/pesquisa-spa.md) | Pesquisa sobre a Secretaria de Prêmios e Apostas: organização, regulamentação do mercado de apostas e impacto na inadimplência das famílias brasileiras |
 | [pesquisa-data-senado.md](pesquisa/pesquisa-data-senado.md) | Pesquisa sobre DataSenado: órgão de pesquisas de opinião pública do Senado Federal e sua relação com análise de endividamento e capacidade de pagamento das famílias brasileiras |
 | [pesquisa-matplotlib.md](pesquisa/pesquisa-matplotlib.md) | ADR sobre Matplotlib: análise da biblioteca para visualização de dados em Python e adequação ao projeto |
+| [estudo-do-pandas.md](pesquisa/estudo-do-pandas.md) | Estudo da biblioteca Pandas: instalação, manipulação de dados em DataFrames, integração com Flask e aplicabilidade no tratamento de dados do projeto |
 
 ## dados/
 
