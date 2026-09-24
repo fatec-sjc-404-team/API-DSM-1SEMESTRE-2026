@@ -397,6 +397,6 @@ Após esse passo, os comandos abaixo ficam disponíveis globalmente no terminal:
 
 |  Sprint  | Vídeo       |
 | :------: | ----------- |
-| Sprint 1 | [Adicionar] |
+| Sprint 1 | [Link](https://www.youtube.com/watch?v=-hMCoe8eivQ&list=PLDRBTDFOFzlE&pp=sAgC) |
 | Sprint 2 | [Adicionar] |
 | Sprint 3 | [Adicionar] |
