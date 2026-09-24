@@ -35,7 +35,7 @@
 >
 > **Vídeo do Projeto:** [Adicionar link]
 
-> **Figma:** [Acessar prototipo no figma](https://www.figma.com/make/JcQ4GQFCl55CO8K9N8atOD/AvoCrdit?t=Wa7FHe82F4FV8Rog-1)
+> **Figma:** [Acessar prototipo no figma](https://www.figma.com/make/JcQ4GQFCl55CO8K9N8atOD/AvoCrdit?code-node-id=0-6&p=f&t=nO38ukySfIU9Z9su-0&fullscreen=1)
 >
 
 > **Colab:** [Acessar funções no Google Colab](https://colab.research.google.com/drive/1uMAxgv1r2Tn69wQsd8uY0oKikeQqMdKA?usp=sharing)
@@ -368,6 +368,7 @@ Após esse passo, os comandos abaixo ficam disponíveis globalmente no terminal:
 - [Fluxo Git — Convenções de Branch, Commit e Hooks](docs/workflows/fluxo-git.md)
 - [Processo de Pull Request, Code Review e Definition of Done](docs/workflows/processo-pr.md)
 - [Jira — Fluxo de Trabalho e Gestão de Cards](docs/workflows/jira.md)
+- [Planejamento das 3 Sprints](docs/produto/planejamento_sprints.md)
 - [Estudo do Flask](docs/pesquisa/estudo-do-flask.md)
 - [Raspagem de Dados](docs/pesquisa/raspagem-de-dados.md)
 - [Pesquisa sobre Streamlit](docs/pesquisa/pesquisa-streamlit.md)
