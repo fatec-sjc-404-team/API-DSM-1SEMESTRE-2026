@@ -4,6 +4,9 @@
   "private": true,
   "type": "module",
   "description": "Exemplo de projeto com Astro + Alpine.js + Chart.js",
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
