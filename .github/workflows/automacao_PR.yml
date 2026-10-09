@@ -1,0 +1,42 @@
+name: Automacao de PR
+
+on:
+  pull_request:
+    types: [opened]
+
+jobs:
+  configurar-pr:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Auto Assign e Request Reviewers Individuais
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const criadorDaPR = context.payload.pull_request.user.login;
+            
+            // 1. LISTA DE DEVS: Coloque o username do GitHub de todo mundo aqui
+            const todosOsDevs = ['ihFernando', 'fesafer', 'RafaelM-sants', 'KhaosKhalil', 'isa-alvxs', 'lucasvn1', 'zixx0080', 'pedrohl45'];
+            
+            // 2. Autoassinalar a PR para quem a criou
+            await github.rest.issues.addAssignees({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              assignees: [criadorDaPR]
+            });
+
+            // 3. Filtrar a lista para NÃO chamar o próprio criador da PR para revisar
+            const revisores = todosOsDevs.filter(dev => dev !== criadorDaPR);
+
+            // 4. Chamar todos os outros devs individualmente
+            if (revisores.length > 0) {
+              await github.rest.pulls.requestReviewers({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: context.payload.pull_request.number,
+                reviewers: revisores
+              });
+            }

@@ -35,6 +35,11 @@
 >
 > **Vídeo do Projeto:** [Adicionar link]
 
+> **Figma:** [Acessar prototipo no figma](https://www.figma.com/make/JcQ4GQFCl55CO8K9N8atOD/AvoCrdit?code-node-id=0-6&p=f&t=nO38ukySfIU9Z9su-0&fullscreen=1)
+>
+
+> **Colab:** [Acessar funções no Google Colab](https://colab.research.google.com/drive/1uMAxgv1r2Tn69wQsd8uY0oKikeQqMdKA?usp=sharing)
+>
 ---
 
 ## 🏢 Cliente <a id="cliente"></a>
@@ -74,7 +79,17 @@ O backlog está sendo registrado dentro da pasta de produto.
 
 ## 🏃 DoR — Definition of Ready <a id="dor-ready"></a>
 
-[Definir após o Kick-off.]
+Para que qualquer **User Story**, tarefa ou card do Backlog seja considerado pronto (**Ready**) para ser puxado para a Sprint, os seguintes critérios devem ser atendidos:
+
+- [ ] **Contexto e Objetivo:** O problema a ser resolvido e o objetivo da tarefa estão claramente definidos e compreendidos por todo o time.
+- [ ] **Formato do Card:** A história do usuário e seus critérios de aceite estão explicitamente descritos de forma clara.
+- [ ] **Insumos e Fontes de Dados:** Mapeamento e especificação completa das fontes de dados, APIs ou insumos necessários para a execução da tarefa.
+- [ ] **Escopo de Integração e Automação:** Escopo técnico mapeado (ex: scraping, rotinas, frequência de atualização ou regras de negócio envolvidas).
+- [ ] **Arquitetura e Ambiente:** Ferramentas, estrutura de código/notebooks e modelos de dados (ex: esquemas de tabelas do banco) alinhados entre os responsáveis.
+- [ ] **Design e Interface:** Protótipos de tela, fluxos visuais ou formatos de exportação (ex: gráficos, relatórios) definidos e aprovados.
+- [ ] **Mapeamento de Dependências:** Dependências técnicas (ex: rotinas de backend antes do banco) ou de negócios identificadas e tratadas.
+- [ ] **Estimativa e Sem Bloqueios:** A tarefa foi discutida, estimada pelo time e não possui impedimentos conhecidos para o início imediato.
+
 
 ---
 
@@ -353,9 +368,16 @@ Após esse passo, os comandos abaixo ficam disponíveis globalmente no terminal:
 - [Fluxo Git — Convenções de Branch, Commit e Hooks](docs/workflows/fluxo-git.md)
 - [Processo de Pull Request, Code Review e Definition of Done](docs/workflows/processo-pr.md)
 - [Jira — Fluxo de Trabalho e Gestão de Cards](docs/workflows/jira.md)
+- [Planejamento das 3 Sprints](docs/produto/planejamento_sprints.md)
 - [Estudo do Flask](docs/pesquisa/estudo-do-flask.md)
 - [Raspagem de Dados](docs/pesquisa/raspagem-de-dados.md)
 - [Pesquisa sobre Streamlit](docs/pesquisa/pesquisa-streamlit.md)
+- [Pesquisa sobre SPA](docs/pesquisa/pesquisa-spa.md)
+- [Pesquisa sobre DataSenado](docs/pesquisa/pesquisa-data-senado.md)
+- [Pesquisa sobre Matplotlib](docs/pesquisa/pesquisa-matplotlib.md)
+- [Estudo do Pandas](docs/pesquisa/estudo-do-pandas.md)
+- [Dados BCB — Inadimplência e Crédito](docs/dados/dados-bcb.md)
+- [Dados IBGE — Indicadores Econômicos e Financeiros](docs/dados/dados-ibge.md)
 
 ## Atas de Reunião
 
@@ -375,6 +397,6 @@ Após esse passo, os comandos abaixo ficam disponíveis globalmente no terminal:
 
 |  Sprint  | Vídeo       |
 | :------: | ----------- |
-| Sprint 1 | [Adicionar] |
+| Sprint 1 | [Link](https://www.youtube.com/watch?v=-hMCoe8eivQ&list=PLDRBTDFOFzlE&pp=sAgC) |
 | Sprint 2 | [Adicionar] |
 | Sprint 3 | [Adicionar] |

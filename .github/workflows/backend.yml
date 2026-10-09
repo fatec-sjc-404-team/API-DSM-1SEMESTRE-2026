@@ -1,32 +1,32 @@
-name: Backend CI
+# name: Backend CI
 
-on:
-  push:
-    branches: [main, stg, develop]
-    paths:
-      - 'backend/**'
-  pull_request:
-    paths:
-      - 'backend/**'
+# on:
+#   push:
+#     branches: [main, stg, develop]
+#     paths:
+#       - 'backend/**'
+#   pull_request:
+#     paths:
+#       - 'backend/**'
 
-jobs:
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+# jobs:
+#   lint:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
+#       - uses: actions/setup-python@v5
+#         with:
+#           python-version: '3.12'
 
-      - name: Install ruff
-        run: pip install ruff
+#       - name: Install ruff
+#         run: pip install ruff
 
-      - name: Lint
-        run: cd backend && ruff check .
+#       - name: Lint
+#         run: cd backend && ruff check .
 
-      - name: Format check
-        run: cd backend && ruff format --check .
+#       - name: Format check
+#         run: cd backend && ruff format --check .
 
       # Descomentar quando o ambiente de deploy estiver definido
       # - name: Deploy

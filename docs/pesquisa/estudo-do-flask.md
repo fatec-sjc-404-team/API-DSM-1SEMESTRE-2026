@@ -4,7 +4,7 @@
 
 **Autor:** Pedro Henrique Cabral Leite
 
-**Status:** Em aberto
+**Status:** Finalizado
 
 ---
 
@@ -13,6 +13,46 @@
 O Flask é um micro-framework para Python usado para criar aplicações web e APIs para o back-end. 
 
 Ele é chamado de "micro" não porque é limitado, mas porque ele não vem com um monte de coisas pré-instaladas que a gente não vai usar. Ele entrega só o básico para subir um servidor e criar as rotas (URLs), deixando a gente livre para escolher as ferramentas e bibliotecas que o projeto realmente precisar.
+
+---
+
+## Como instalar na sua máquina
+
+Precisa ter o Python instalado. Se não tiver, baixa pelo site oficial: https://www.python.org/downloads/
+
+**1. Criar um ambiente virtual**
+
+É bom criar um pra não misturar as bibliotecas com outros projetos:
+
+```bash
+python -m venv venv
+```
+
+Pra ativar:
+
+```bash
+# Windows
+venv\Scripts\activate
+
+# Linux/Mac
+source venv/bin/activate
+```
+
+Vai aparecer um `(venv)` no terminal quando estiver ativo.
+
+**2. Instalar o Flask**
+
+```bash
+pip install flask
+```
+
+**3. Testar se instalou**
+
+```bash
+python -c "import flask; print(flask.__version__)"
+```
+
+Se mostrar a versão, tá funcionando.
 
 ---
 

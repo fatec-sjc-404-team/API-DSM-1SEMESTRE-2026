@@ -37,6 +37,7 @@ Documentações sobre o produto, backlog e entregas por Sprint.
 | Arquivo | Conteúdo |
 | :------ | :------- |
 | [backlog.md](produto/backlog.md) | Backlog do produto com as User Stories e critérios de aceite por Sprint |
+| [planejamento_sprints.md](produto/planejamento_sprints.md) | Planejamento das 3 Sprints: objetivos, épicos, user stories e lógica de sequenciamento das entregas |
 
 ## arquitetura/
 
@@ -56,4 +57,17 @@ Estudos e pesquisas técnicas realizados pelo time para embasar decisões de arq
 | [estudo-do-google-colab.md](pesquisa/estudo-do-google-colab.md) | Estudo de aplicabilidade do Google Colab para prototipagem Python, exploração de dados e modelagem na API |
 | [pesquisa-streamlit.md](pesquisa/pesquisa-streamlit.md) | Pesquisa sobre Streamlit como framework para criação de dashboards e interfaces de visualização de dados em Python |
 | [estudo-do-flask.md](pesquisa/estudo-do-flask.md) | Estudo de aplicabilidade do Flask para criar APIs Python, visão geral do framework, integração com análises em Python e decisão de usar Flask como backend do projeto |
-| [raspagem-de-dados.md](pesquisa/raspagem-de-dados.md) | Guia sobre web scraping: definição, como funciona, fontes de dados (Serasa, IBGE, Banco Central) e boas práticas de coleta responsável | |
+| [raspagem-de-dados.md](pesquisa/raspagem-de-dados.md) | Guia sobre web scraping: definição, como funciona, fontes de dados (Serasa, IBGE, Banco Central) e boas práticas de coleta responsável |
+| [pesquisa-spa.md](pesquisa/pesquisa-spa.md) | Pesquisa sobre a Secretaria de Prêmios e Apostas: organização, regulamentação do mercado de apostas e impacto na inadimplência das famílias brasileiras |
+| [pesquisa-data-senado.md](pesquisa/pesquisa-data-senado.md) | Pesquisa sobre DataSenado: órgão de pesquisas de opinião pública do Senado Federal e sua relação com análise de endividamento e capacidade de pagamento das famílias brasileiras |
+| [pesquisa-matplotlib.md](pesquisa/pesquisa-matplotlib.md) | ADR sobre Matplotlib: análise da biblioteca para visualização de dados em Python e adequação ao projeto |
+| [estudo-do-pandas.md](pesquisa/estudo-do-pandas.md) | Estudo da biblioteca Pandas: instalação, manipulação de dados em DataFrames, integração com Flask e aplicabilidade no tratamento de dados do projeto |
+
+## dados/
+
+Coleta de Dados (IBGE, BCB, Bacen) Realizada pela equipe, para manipulação, tratamento e governança de Dados.
+
+| Arquivo | Conteúdo |
+| :------ | :------- |
+| [dados-bcb.md](dados/dados-bcb.md) | O tratamento de dados do BCB, IBGE e Bacen envolve a coleta, organização e análise de informações econômicas e financeiras. Esses dados permitem acompanhar indicadores como crédito, inadimplência, juros, renda e consumo da população. |
+| [dados-ibge.md](dados/dados-ibge.md) | Indicadores econômicos e financeiros do IBGE: rendimento domiciliar per capita, endividamento de risco, inadimplência e comportamento de consumo por região |
