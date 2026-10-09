@@ -276,6 +276,8 @@ Após esse passo, os comandos abaixo ficam disponíveis globalmente no terminal:
 
 ### 4. Executar aplicação
 
+> **Backend (API Flask):** veja o passo a passo em [backend/README.md](backend/README.md). A API sobe em `http://localhost:8000` e a documentação Swagger fica em `http://localhost:8000/apidocs`.
+
 ```bash
 [COMANDO]
 ```
