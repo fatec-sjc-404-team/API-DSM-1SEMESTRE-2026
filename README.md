@@ -22,12 +22,12 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/status-Sprint%201%20em%20andamento-yellow" alt="Status do Projeto">
+  <img src="https://img.shields.io/badge/status-Sprint%202%20em%20andamento-yellow" alt="Status do Projeto">
   <img src="https://img.shields.io/badge/semestre-1º%202026-blue" alt="Semestre">
   <img src="https://img.shields.io/badge/FATEC-SJC-red" alt="FATEC SJC">
 </p>
 
-> **Status do Projeto:** Sprint 1 em andamento ⏳
+> **Status do Projeto:** Sprint 2 em andamento ⏳
 >
 > **Documentação:** [Acessar documentação geral](docs/README.md)
 >
@@ -294,8 +294,8 @@ Após esse passo, os comandos abaixo ficam disponíveis globalmente no terminal:
 | :------------------------------- | :---------------- | :----: |
 | Kick-off geral                   | 24/08 a 28/08     |   ✅   |
 | Construção do Backlog / Planning | 31/08 a 04/09     |   ✅   |
-| **Sprint 1**                     | **07/09 a 27/09** |   ⏳   |
-| Sprint Review / Planning         | 28/09 a 02/10     |   ⏳   |
+| **Sprint 1**                     | **07/09 a 27/09** |   ✅   |
+| Sprint Review / Planning         | 28/09 a 02/10     |   ✅   |
 | **Sprint 2**                     | **05/10 a 25/10** |   ⏳   |
 | Sprint Review / Planning         | 26/10 a 30/10     |   ⏳   |
 | **Sprint 3**                     | **02/11 a 22/11** |   ⏳   |
@@ -351,11 +351,11 @@ Após esse passo, os comandos abaixo ficam disponíveis globalmente no terminal:
 
 | Integrante            | Papel              |                                                                           GitHub                                                                           |                                                                                                  LinkedIn                                                                                                  |
 | :-------------------- | :----------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
-| **Iago Lima**         | PO / Developer     |   <a href="https://github.com/zixx0080"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" width="30"></a>    |               <a href="https://www.linkedin.com/in/iago-lima-940376358/"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg" width="30"></a>               |
-| **Fernando Gomes**    | Master / Developer |  <a href="https://github.com/ihfernando"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" width="30"></a>   |                   <a href="https://www.linkedin.com/in/ihfernando/"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg" width="30"></a>                    |
+| **Lucas Vinicius**    | PO / Developer       |   <a href="https://github.com/lucasvn1"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" width="30"></a>    |                 <a href="https://www.linkedin.com/in/lucasviniciusant"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg" width="30"></a>                 |
+| **Iago Lima**        | Master / Developer     |   <a href="https://github.com/zixx0080"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" width="30"></a>    |               <a href="https://www.linkedin.com/in/iago-lima-940376358/"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg" width="30"></a>               |
+| **Fernando Gomes**    | Developer |  <a href="https://github.com/ihfernando"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" width="30"></a>   |                   <a href="https://www.linkedin.com/in/ihfernando/"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg" width="30"></a>                    |
 | **Rafael Matheus**    | Developer          | <a href="https://github.com/RafaelM-sants"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" width="30"></a> |       <a href="https://www.linkedin.com/in/rafael-matheus-dos-santos-7a9344397"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg" width="30"></a>        |
 | **Pedro Henrique**    | Developer          |   <a href="https://github.com/pedrohl45"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" width="30"></a>   |                    <a href="https://www.linkedin.com/in/pedrohl45/"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg" width="30"></a>                    |
-| **Lucas Vinicius**    | Developer          |   <a href="https://github.com/lucasvn1"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" width="30"></a>    |                 <a href="https://www.linkedin.com/in/lucasviniciusant"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg" width="30"></a>                 |
 | **Isabela Alves**     | Developer          |   <a href="https://github.com/isa-alvxs"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" width="30"></a>   |             <a href="https://www.linkedin.com/in/isabela-alves-778402316/"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg" width="30"></a>             |
 | **Fernando Ferreira** | Developer          |    <a href="https://github.com/fesafer"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" width="30"></a>    | <a href="https://www.linkedin.com/in/fernando-henrique-de-s%C3%A1-ferreira-250623352/"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg" width="30"></a> |
 | **Khalil Ayoub**      | Developer          |  <a href="https://github.com/KhaosKhalil"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" width="30"></a>  |             <a href="https://www.linkedin.com/in/khalil-ayoub-083767429/"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg" width="30"></a>              |
