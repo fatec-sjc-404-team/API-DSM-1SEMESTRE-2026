@@ -228,7 +228,7 @@ O fluxo de PR, regras de proteção do GitHub, critérios de Code Review e Defin
 
 ## ⚙️ Pré-requisitos
 
-- [Node.js 20+](https://nodejs.org/) — necessário para todos os membros (instala os hooks Git automaticamente)
+- [Node.js 22.12+](https://nodejs.org/) — necessário para todos os membros (instala os hooks Git automaticamente)
 - [Ruff](https://docs.astral.sh/ruff/installation/) — necessário apenas para quem trabalha no backend Python
 
 ---
