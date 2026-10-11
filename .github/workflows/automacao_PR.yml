@@ -7,6 +7,9 @@ on:
 jobs:
   configurar-pr:
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
     steps:
       - name: Auto Assign e Request Reviewers Individuais
         uses: actions/github-script@v7

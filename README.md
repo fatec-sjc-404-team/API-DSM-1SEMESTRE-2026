@@ -35,6 +35,11 @@
 >
 > **Vídeo do Projeto:** [Adicionar link]
 
+> **Figma:** [Acessar prototipo no figma](https://www.figma.com/make/JcQ4GQFCl55CO8K9N8atOD/AvoCrdit?code-node-id=0-6&p=f&t=nO38ukySfIU9Z9su-0&fullscreen=1)
+>
+
+> **Colab:** [Acessar funções no Google Colab](https://colab.research.google.com/drive/1uMAxgv1r2Tn69wQsd8uY0oKikeQqMdKA?usp=sharing)
+>
 ---
 
 ## 🏢 Cliente <a id="cliente"></a>
@@ -271,6 +276,8 @@ Após esse passo, os comandos abaixo ficam disponíveis globalmente no terminal:
 
 ### 4. Executar aplicação
 
+> **Backend (API Flask):** veja o passo a passo em [backend/README.md](backend/README.md). A API sobe em `http://localhost:8000` e a documentação Swagger fica em `http://localhost:8000/apidocs`.
+
 ```bash
 [COMANDO]
 ```
@@ -363,9 +370,16 @@ Após esse passo, os comandos abaixo ficam disponíveis globalmente no terminal:
 - [Fluxo Git — Convenções de Branch, Commit e Hooks](docs/workflows/fluxo-git.md)
 - [Processo de Pull Request, Code Review e Definition of Done](docs/workflows/processo-pr.md)
 - [Jira — Fluxo de Trabalho e Gestão de Cards](docs/workflows/jira.md)
+- [Planejamento das 3 Sprints](docs/produto/planejamento_sprints.md)
 - [Estudo do Flask](docs/pesquisa/estudo-do-flask.md)
 - [Raspagem de Dados](docs/pesquisa/raspagem-de-dados.md)
 - [Pesquisa sobre Streamlit](docs/pesquisa/pesquisa-streamlit.md)
+- [Pesquisa sobre SPA](docs/pesquisa/pesquisa-spa.md)
+- [Pesquisa sobre DataSenado](docs/pesquisa/pesquisa-data-senado.md)
+- [Pesquisa sobre Matplotlib](docs/pesquisa/pesquisa-matplotlib.md)
+- [Estudo do Pandas](docs/pesquisa/estudo-do-pandas.md)
+- [Dados BCB — Inadimplência e Crédito](docs/dados/dados-bcb.md)
+- [Dados IBGE — Indicadores Econômicos e Financeiros](docs/dados/dados-ibge.md)
 
 ## Atas de Reunião
 
@@ -385,6 +399,6 @@ Após esse passo, os comandos abaixo ficam disponíveis globalmente no terminal:
 
 |  Sprint  | Vídeo       |
 | :------: | ----------- |
-| Sprint 1 | [Adicionar] |
+| Sprint 1 | [Link](https://www.youtube.com/watch?v=-hMCoe8eivQ&list=PLDRBTDFOFzlE&pp=sAgC) |
 | Sprint 2 | [Adicionar] |
 | Sprint 3 | [Adicionar] |
