@@ -1,0 +1,58 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Relatórios — Negado pelo Banco">
+  <div x-data="relatoriosData()" x-init="carregarUsuarios()">
+    <h1 class="text-2xl font-bold text-gray-900 mb-6">Relatório de Usuários</h1>
+
+    <div class="bg-white rounded-xl p-6 shadow-sm">
+      <template x-if="carregando">
+        <p class="text-sm text-gray-500">Carregando...</p>
+      </template>
+      <template x-if="erro">
+        <p class="text-sm text-red-600">Erro ao buscar dados.</p>
+      </template>
+      <ul x-show="!carregando && !erro" class="divide-y divide-gray-100">
+        <template x-for="usuario in usuarios" :key="usuario.id">
+          <li class="py-3 text-sm text-gray-700" x-text="usuario.nome"></li>
+        </template>
+      </ul>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  // @ts-nocheck
+  import Alpine from 'alpinejs';
+  import { getUsuarios } from '../lib/api.js';
+
+  Alpine.data('relatoriosData', () => ({
+    usuarios: [],
+    carregando: false,
+    erro: false,
+
+    async carregarUsuarios() {
+      this.carregando = true;
+      this.erro = false;
+
+      try {
+        // this.usuarios = await getUsuarios();
+        this.usuarios = [
+          { id: 1, nome: 'Fernando' },
+          { id: 2, nome: 'Fernando' },
+          { id: 3, nome: 'Iago' },
+          { id: 4, nome: 'Isabela' },
+          { id: 5, nome: 'Lucas' },
+          { id: 6, nome: 'Pedro' },
+          { id: 7, nome: 'Rafael' },
+          { id: 8, nome: 'Khalil' },
+        ];
+      } catch (e) {
+        this.erro = true;
+      } finally {
+        this.carregando = false;
+      }
+    },
+  }));
+</script>

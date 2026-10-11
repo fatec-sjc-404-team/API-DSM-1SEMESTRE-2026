@@ -1,0 +1,33 @@
+{
+  "name": "astro-example",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Exemplo de projeto com Astro + Alpine.js + Chart.js",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "lint": "eslint . && prettier --check .",
+    "format": "prettier --write . && eslint . --fix"
+  },
+  "devDependencies": {
+    "@typescript-eslint/parser": "^8.0.0",
+    "autoprefixer": "^10.4.0",
+    "eslint": "^9.0.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-astro": "^1.0.0",
+    "prettier": "^3.0.0",
+    "prettier-plugin-astro": "^0.14.0",
+    "tailwindcss": "^3.4.0"
+  },
+  "dependencies": {
+    "@astrojs/alpinejs": "^0.4.0",
+    "alpinejs": "^3.0.0",
+    "astro": "^6.0.0",
+    "chart.js": "^4.4.0"
+  }
+}
