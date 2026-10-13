@@ -61,3 +61,18 @@ Para documentar uma nova rota, escreva a especificação em YAML na docstring da
 ruff check .     # aponta problemas no código
 ruff format .    # formata o código
 ```
+
+## Tratamento dos dados por estado
+
+Cada pessoa deve colocar uma cópia do CSV chamado `scrdata_202601.csv` em
+`Tratamento_Dados/entrada/`. O caminho é relativo ao script, então não depende
+do nome de usuário ou da pasta onde o repositório foi clonado. Com o ambiente
+virtual ativado e o terminal na pasta `backend/`, execute:
+
+```powershell
+python Tratamento_Dados/Estados.py
+```
+
+O script mantém todas as colunas, filtra as linhas para as UFs do Norte e do
+Nordeste e salva um novo arquivo em `Tratamento_Dados/saida/`, sem alterar o
+original. Os CSVs nas pastas `entrada/` e `saida/` são ignorados pelo Git.
