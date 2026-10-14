@@ -90,6 +90,12 @@ python Tratamento_Dados/Renda.py
 `Tipo_Pessoa.py` mantém apenas clientes `PF`. `Renda.py` mantém os portes
 `Sem rendimento`, `Até 1 salário mínimo` e `Mais de 1 a 2 salários mínimos`.
 
+Atualmente, os caminhos e nomes de saída estão configurados para o arquivo de
+janeiro de 2026 (`scrdata_202601.csv`). Apenas adicionar CSVs de outros meses à
+pasta `entrada/` não os inclui no processamento. Para analisar vários meses,
+será necessário adaptar o pipeline para carregar todos os arquivos e manter
+`data_base` na agregação temporal.
+
 ### Testes automatizados
 
 Os testes usam DataFrames pequenos criados durante o teste; não precisam do CSV

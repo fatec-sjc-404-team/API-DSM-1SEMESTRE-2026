@@ -5,6 +5,7 @@ from Estados import ESTADOS_NORTE_NORDESTE
 from Renda import FAIXAS_BAIXA_RENDA
 
 PASTA_DADOS = Path(__file__).parent
+# Arquivos intermediários usados para conferir cada filtro separadamente.
 ARQUIVOS_ETAPAS = (
     (
         "Etapa 1 - Região Norte e Nordeste",
@@ -41,6 +42,7 @@ def validar_etapa(
             "Execute as etapas de tratamento na ordem indicada no README."
         )
 
+    # Cada etapa exige colunas adicionais conforme os filtros já aplicados.
     dados = pd.read_csv(caminho, sep=";")
     colunas_necessarias = {"uf"}
     if validar_pessoa:
@@ -86,6 +88,7 @@ def validar_etapa(
 
 
 def main() -> None:
+    # Valida todas as saídas em ordem, do filtro regional ao de renda.
     etapas_validas = [
         validar_etapa(nome, caminho, validar_pessoa, validar_renda)
         for nome, caminho, validar_pessoa, validar_renda in ARQUIVOS_ETAPAS

@@ -4,12 +4,10 @@ import pandas as pd
 
 PASTA_DADOS = Path(__file__).parent
 
-# Aqui são os caminhos dos para as bases de dados
-
-# Ele esta pegando o resultado do tratamento anterior
+# Lê a saída da etapa de região, em vez de recomeçar pelo CSV original.
 ARQUIVO_ENTRADA = PASTA_DADOS / "saida" / "scrdata_202601_norte_nordeste.csv"
 
-# E gerando o novo resultado
+# Gera outro arquivo para preservar a saída da etapa anterior.
 ARQUIVO_SAIDA = (
     PASTA_DADOS / "saida" / "scrdata_202601_norte_nordeste_pessoa_fisica.csv"
 )
@@ -20,6 +18,7 @@ def filtrar_pessoas_fisicas(dados: pd.DataFrame) -> pd.DataFrame:
     if "cliente" not in dados.columns:
         raise ValueError("O CSV precisa conter uma coluna chamada 'cliente'.")
 
+    # Normaliza espaços e caixa antes de comparar com a sigla PF.
     cliente = dados["cliente"].astype("string").str.strip().str.upper()
     return dados.loc[cliente == "PF"].copy()
 

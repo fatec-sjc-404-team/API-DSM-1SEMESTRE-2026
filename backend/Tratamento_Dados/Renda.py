@@ -3,6 +3,7 @@ from pathlib import Path
 import pandas as pd
 
 PASTA_DADOS = Path(__file__).parent
+# Continua a partir da saída que já contém somente clientes PF.
 ARQUIVO_ENTRADA = (
     PASTA_DADOS / "saida" / "scrdata_202601_norte_nordeste_pessoa_fisica.csv"
 )
@@ -12,6 +13,7 @@ ARQUIVO_SAIDA = (
     / "scrdata_202601_norte_nordeste_pessoa_fisica_baixa_renda.csv"
 )
 
+# As categorias são comparadas sem diferenciar maiúsculas/minúsculas.
 FAIXAS_BAIXA_RENDA = frozenset(
     {
         "sem rendimento",
@@ -26,6 +28,7 @@ def filtrar_baixa_renda(dados: pd.DataFrame) -> pd.DataFrame:
     if "porte" not in dados.columns:
         raise ValueError("O CSV precisa conter uma coluna chamada 'porte'.")
 
+    # strip/casefold toleram diferenças de espaços e capitalização no CSV.
     porte = dados["porte"].astype("string").str.strip().str.casefold()
     return dados.loc[porte.isin(FAIXAS_BAIXA_RENDA)].copy()
 
@@ -37,6 +40,7 @@ def main() -> None:
             "Execute Estados.py e Tipo_Pessoa.py primeiro."
         )
 
+    # Cada etapa escreve um novo resultado e deixa sua entrada preservada.
     dados = pd.read_csv(ARQUIVO_ENTRADA, sep=";")
     filtrados = filtrar_baixa_renda(dados)
 

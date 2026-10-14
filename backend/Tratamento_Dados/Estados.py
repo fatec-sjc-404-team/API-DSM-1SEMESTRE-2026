@@ -4,11 +4,10 @@ import pandas as pd
 
 PASTA_DADOS = Path(__file__).parent
 
-# Define o caminho do arquivo que será tratado.
-# Coloque o CSV na pasta entrada; o caminho pode ser ajustado, se necessário.
+# Esta etapa usa o CSV original colocado na pasta de entrada.
 ARQUIVO_ENTRADA = PASTA_DADOS / "entrada" / "scrdata_202601.csv"
 
-# Estados que pertencem às regiões Norte e Nordeste.
+# Siglas das UFs mantidas no primeiro recorte.
 ESTADOS_NORTE_NORDESTE = frozenset(
     {
         "AC",
@@ -36,6 +35,7 @@ def filtrar_norte_nordeste(dados: pd.DataFrame) -> pd.DataFrame:
     if "uf" not in dados.columns:
         raise ValueError("O CSV precisa conter uma coluna chamada 'uf'.")
 
+    # Normaliza espaços e caixa para aceitar siglas como " ac " e "Ac".
     uf = dados["uf"].astype("string").str.strip().str.upper()
     return dados.loc[uf.isin(ESTADOS_NORTE_NORDESTE)].copy()
 
@@ -47,6 +47,7 @@ def main() -> None:
             "Coloque scrdata_202601.csv na pasta Tratamento_Dados/entrada/."
         )
 
+    # Salva uma cópia filtrada; o CSV original permanece intacto.
     arquivo_saida = PASTA_DADOS / "saida" / f"{ARQUIVO_ENTRADA.stem}_norte_nordeste.csv"
     dados = pd.read_csv(ARQUIVO_ENTRADA, sep=";")
     filtrados = filtrar_norte_nordeste(dados)
