@@ -58,16 +58,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
-# Teste manual
-#
-# Para conferir se o código está funcionando, abra o terminal na pasta backend
-# e execute:
-# .\.venv\Scripts\python.exe -c "import pandas as pd; from Tratamento_Dados.Estados import ESTADOS_NORTE_NORDESTE; df=pd.read_csv('Tratamento_Dados/saida/scrdata_202601_norte_nordeste.csv', sep=';'); ufs=df['uf'].astype('string').str.strip().str.upper(); print('Linhas:', len(df)); print('Colunas:', len(df.columns)); print('Todas as UFs são Norte/Nordeste:', ufs.isin(ESTADOS_NORTE_NORDESTE).all())"
-#
-# Resultado esperado:
-# Linhas: 142813
-# Colunas: 24
-# Todas as UFs são Norte/Nordeste: True
-#
-#O resultado sera salvo em saida

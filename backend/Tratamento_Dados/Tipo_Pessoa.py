@@ -4,12 +4,12 @@ import pandas as pd
 
 PASTA_DADOS = Path(__file__).parent
 
-#Aqui são os caminhos dos para as bases de dados
+# Aqui são os caminhos dos para as bases de dados
 
-#Ele esta pegando o resultado do tratamento anterior
+# Ele esta pegando o resultado do tratamento anterior
 ARQUIVO_ENTRADA = PASTA_DADOS / "saida" / "scrdata_202601_norte_nordeste.csv"
 
-#E gerando o novo resultado
+# E gerando o novo resultado
 ARQUIVO_SAIDA = (
     PASTA_DADOS / "saida" / "scrdata_202601_norte_nordeste_pessoa_fisica.csv"
 )
@@ -41,16 +41,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
-# Teste manual
-#
-# Para conferir se o código está funcionando, abra o terminal na pasta backend
-# e execute:
-# .\.venv\Scripts\python.exe -c "import pandas as pd; df=pd.read_csv('Tratamento_Dados/saida/scrdata_202601_norte_nordeste_pessoa_fisica.csv', sep=';'); clientes=df['cliente'].astype('string').str.strip().str.upper(); print('Linhas:', len(df)); print('Colunas:', len(df.columns)); print('Todas as linhas são de pessoas físicas:', clientes.eq('PF').all())"
-#
-# Resultado esperado:
-# Linhas: 89029
-# Colunas: 24
-# Todas as linhas são de pessoas físicas: True
-#
-# O resultado será salvo em Tratamento_Dados/saida/.

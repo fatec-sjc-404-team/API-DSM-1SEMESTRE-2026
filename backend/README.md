@@ -76,3 +76,37 @@ python Tratamento_Dados/Estados.py
 O script mantém todas as colunas, filtra as linhas para as UFs do Norte e do
 Nordeste e salva um novo arquivo em `Tratamento_Dados/saida/`, sem alterar o
 original. Os CSVs nas pastas `entrada/` e `saida/` são ignorados pelo Git.
+
+### Etapas seguintes do tratamento
+
+Execute os scripts na ordem abaixo, a partir da pasta `backend/`. Cada etapa
+usa a saída da anterior e grava um novo arquivo em `Tratamento_Dados/saida/`:
+
+```bash
+python Tratamento_Dados/Tipo_Pessoa.py
+python Tratamento_Dados/Renda.py
+```
+
+`Tipo_Pessoa.py` mantém apenas clientes `PF`. `Renda.py` mantém os portes
+`Sem rendimento`, `Até 1 salário mínimo` e `Mais de 1 a 2 salários mínimos`.
+
+### Testes automatizados
+
+Os testes usam DataFrames pequenos criados durante o teste; não precisam do CSV
+real nem de um caminho específico do sistema operacional. Na pasta `backend/`,
+execute:
+
+```bash
+python -m pytest
+```
+
+Para verificar no terminal o resultado produzido com o CSV real, depois de
+executar as três etapas (`Estados.py`, `Tipo_Pessoa.py` e `Renda.py`), rode:
+
+```bash
+python Tratamento_Dados/Validar_Resultado.py
+```
+
+O verificador mostra as quantidades de linhas e colunas e os resultados das
+validações após cada etapa: UFs do Norte/Nordeste, clientes PF e faixas de renda
+selecionadas.
