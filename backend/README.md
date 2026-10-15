@@ -64,55 +64,85 @@ ruff format .    # formata o código
 
 ## Tratamento dos dados por estado
 
-Cada pessoa deve colocar uma cópia do CSV chamado `scrdata_202601.csv` em
-`Tratamento_Dados/entrada/`. O caminho é relativo ao script, então não depende
-do nome de usuário ou da pasta onde o repositório foi clonado. Com o ambiente
-virtual ativado e o terminal na pasta `backend/`, execute:
+### Preparar o ambiente
 
-```powershell
-python Tratamento_Dados/Estados.py
-```
-
-O script mantém todas as colunas, filtra as linhas para as UFs do Norte e do
-Nordeste e salva um novo arquivo em `Tratamento_Dados/saida/`, sem alterar o
-original. Os CSVs nas pastas `entrada/` e `saida/` são ignorados pelo Git.
-
-### Etapas seguintes do tratamento
-
-Execute os scripts na ordem abaixo, a partir da pasta `backend/`. Cada etapa
-usa a saída da anterior e grava um novo arquivo em `Tratamento_Dados/saida/`:
+Na raiz do repositório, crie e ative o ambiente virtual:
 
 ```bash
-python Tratamento_Dados/Tipo_Pessoa.py
-python Tratamento_Dados/Renda.py
+python -m venv backend/.venv
+source backend/.venv/bin/activate
 ```
 
-`Tipo_Pessoa.py` mantém apenas clientes `PF`. `Renda.py` mantém os portes
-`Sem rendimento`, `Até 1 salário mínimo` e `Mais de 1 a 2 salários mínimos`.
+No PowerShell do Windows, use a ativação correspondente:
 
-Atualmente, os caminhos e nomes de saída estão configurados para o arquivo de
-janeiro de 2026 (`scrdata_202601.csv`). Apenas adicionar CSVs de outros meses à
-pasta `entrada/` não os inclui no processamento. Para analisar vários meses,
-será necessário adaptar o pipeline para carregar todos os arquivos e manter
-`data_base` na agregação temporal.
+```powershell
+.\backend\.venv\Scripts\Activate.ps1
+```
+
+Instale as dependências a partir da pasta `backend/`:
+
+```bash
+cd backend
+python -m pip install -r requirements.txt
+```
+
+### Preparar os CSVs e executar as etapas
+
+Coloque todos os CSVs mensais em `Tratamento_Dados/entrada/`. Os nomes podem
+variar, mas cada arquivo deve usar `;` como separador e ter as mesmas colunas na
+mesma ordem. Os valores decimais com vírgula são reconhecidos. Na pasta
+`backend/`, com o ambiente virtual ativo, execute as etapas na ordem:
+
+```powershell
+python -m Tratamento_Dados.Estados
+python -m Tratamento_Dados.Tipo_Pessoa
+python -m Tratamento_Dados.Renda
+```
+
+As etapas leem os arquivos em lotes de 50.000 linhas, mantêm todas as colunas e
+criam um CSV combinado por etapa. Não alteram os arquivos originais. Os
+resultados são:
+
+| Etapa | Filtro | Arquivo de saída |
+|---|---|---|
+| 1 | UFs do Norte e Nordeste | `Tratamento_Dados/saida/scrdata_norte_nordeste.csv` |
+| 2 | Apenas clientes `PF` | `Tratamento_Dados/saida/scrdata_norte_nordeste_pessoa_fisica.csv` |
+| 3 | `Sem rendimento`, `Até 1 salário mínimo` e `Mais de 1 a 2 salários mínimos` | `Tratamento_Dados/saida/scrdata_norte_nordeste_pessoa_fisica_baixa_renda.csv` |
 
 ### Testes automatizados
 
 Os testes usam DataFrames pequenos criados durante o teste; não precisam do CSV
-real nem de um caminho específico do sistema operacional. Na pasta `backend/`,
-execute:
+real. Na pasta `backend/`, execute:
 
 ```bash
 python -m pytest
 ```
 
-Para verificar no terminal o resultado produzido com o CSV real, depois de
-executar as três etapas (`Estados.py`, `Tipo_Pessoa.py` e `Renda.py`), rode:
+Resultado esperado: `9 passed`. Esses testes verificam os filtros, a combinação
+de arquivos mensais, a preservação de colunas, os valores decimais e a rejeição
+de arquivos com colunas incompatíveis.
+
+### Validar os resultados das etapas
+
+Depois de executar os três scripts, confira no terminal as linhas, colunas e
+validações de cada saída:
 
 ```bash
-python Tratamento_Dados/Validar_Resultado.py
+python -m Tratamento_Dados.Validar_Resultado
 ```
 
-O verificador mostra as quantidades de linhas e colunas e os resultados das
-validações após cada etapa: UFs do Norte/Nordeste, clientes PF e faixas de renda
-selecionadas.
+Com os sete arquivos de janeiro a julho de 2026 usados no teste, os resultados
+esperados foram:
+
+| Etapa | Linhas após o filtro | Colunas |
+|---|---:|---:|
+| Norte e Nordeste | 1.003.958 | 24 |
+| Pessoas físicas (`PF`) | 622.708 | 24 |
+| Baixa renda | 182.157 | 24 |
+
+O verificador também deve mostrar `OK` para as UFs do Norte/Nordeste, clientes
+PF e faixas de renda permitidas. Essas contagens são uma referência para essa
+versão dos sete CSVs; podem mudar se os arquivos de entrada forem diferentes.
+`data_base` é preservada para identificar o mês de cada linha. Os CSVs nas
+pastas `entrada/` e `saida/` são ignorados pelo Git. Reexecutar uma etapa
+substitui a saída anterior com o mesmo nome.

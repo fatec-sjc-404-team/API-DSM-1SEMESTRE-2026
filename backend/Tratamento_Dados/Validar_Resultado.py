@@ -1,29 +1,28 @@
 from pathlib import Path
 
 import pandas as pd
-from Estados import ESTADOS_NORTE_NORDESTE
-from Renda import FAIXAS_BAIXA_RENDA
+from Tratamento_Dados.csv_pipeline import TAMANHO_LOTE
+from Tratamento_Dados.Estados import ESTADOS_NORTE_NORDESTE
+from Tratamento_Dados.Renda import FAIXAS_BAIXA_RENDA
 
 PASTA_DADOS = Path(__file__).parent
 # Arquivos intermediários usados para conferir cada filtro separadamente.
 ARQUIVOS_ETAPAS = (
     (
         "Etapa 1 - Região Norte e Nordeste",
-        PASTA_DADOS / "saida" / "scrdata_202601_norte_nordeste.csv",
+        PASTA_DADOS / "saida" / "scrdata_norte_nordeste.csv",
         False,
         False,
     ),
     (
         "Etapa 2 - Pessoas físicas",
-        PASTA_DADOS / "saida" / "scrdata_202601_norte_nordeste_pessoa_fisica.csv",
+        PASTA_DADOS / "saida" / "scrdata_norte_nordeste_pessoa_fisica.csv",
         True,
         False,
     ),
     (
         "Etapa 3 - Faixas de baixa renda",
-        PASTA_DADOS
-        / "saida"
-        / "scrdata_202601_norte_nordeste_pessoa_fisica_baixa_renda.csv",
+        PASTA_DADOS / "saida" / "scrdata_norte_nordeste_pessoa_fisica_baixa_renda.csv",
         True,
         True,
     ),
@@ -43,32 +42,61 @@ def validar_etapa(
         )
 
     # Cada etapa exige colunas adicionais conforme os filtros já aplicados.
-    dados = pd.read_csv(caminho, sep=";")
     colunas_necessarias = {"uf"}
     if validar_pessoa:
         colunas_necessarias.add("cliente")
     if validar_renda:
         colunas_necessarias.add("porte")
 
-    colunas_ausentes = colunas_necessarias.difference(dados.columns)
-    if colunas_ausentes:
-        raise ValueError(
-            f"Colunas necessárias ausentes em {caminho}: {sorted(colunas_ausentes)}"
-        )
+    linhas = 0
+    colunas: list[str] | None = None
+    ufs_validas = True
+    clientes_pf = True
+    rendas_validas = True
+    for dados in pd.read_csv(
+        caminho,
+        sep=";",
+        decimal=",",
+        chunksize=TAMANHO_LOTE,
+    ):
+        if colunas is None:
+            colunas = dados.columns.tolist()
+            colunas_ausentes = colunas_necessarias.difference(colunas)
+            if colunas_ausentes:
+                raise ValueError(
+                    f"Colunas necessárias ausentes em {caminho}: "
+                    f"{sorted(colunas_ausentes)}"
+                )
+        elif dados.columns.tolist() != colunas:
+            raise ValueError(f"As colunas mudam dentro do arquivo {caminho}.")
 
-    uf = dados["uf"].astype("string").str.strip().str.upper()
-    ufs_validas = not dados.empty and uf.isin(ESTADOS_NORTE_NORDESTE).all()
+        linhas += len(dados)
+        uf = dados["uf"].astype("string").str.strip().str.upper()
+        ufs_validas = ufs_validas and uf.isin(ESTADOS_NORTE_NORDESTE).all()
+
+        if validar_pessoa:
+            cliente = dados["cliente"].astype("string").str.strip().str.upper()
+            clientes_pf = clientes_pf and cliente.eq("PF").all()
+
+        if validar_renda:
+            porte = dados["porte"].astype("string").str.strip().str.casefold()
+            rendas_validas = rendas_validas and porte.isin(FAIXAS_BAIXA_RENDA).all()
+
+    ufs_validas = ufs_validas and linhas > 0
+    if validar_pessoa:
+        clientes_pf = clientes_pf and linhas > 0
+    if validar_renda:
+        rendas_validas = rendas_validas and linhas > 0
 
     resultados = [ufs_validas]
     print(f"\n{nome}")
     print(f"Arquivo: {caminho}")
-    print(f"Linhas: {len(dados)}")
-    print(f"Colunas: {len(dados.columns)}")
+    print(f"Linhas: {linhas}")
+    print(f"Colunas: {len(colunas) if colunas else 0}")
     print(f"Todas as UFs são do Norte/Nordeste: {'OK' if ufs_validas else 'FALHOU'}")
 
     if validar_pessoa:
-        cliente = dados["cliente"].astype("string").str.strip().str.upper()
-        clientes_pf = not dados.empty and cliente.eq("PF").all()
+        clientes_pf = clientes_pf and linhas > 0
         resultados.append(clientes_pf)
         print(
             f"Todas as linhas são de pessoas físicas: "
@@ -76,8 +104,7 @@ def validar_etapa(
         )
 
     if validar_renda:
-        porte = dados["porte"].astype("string").str.strip().str.casefold()
-        rendas_validas = not dados.empty and porte.isin(FAIXAS_BAIXA_RENDA).all()
+        rendas_validas = rendas_validas and linhas > 0
         resultados.append(rendas_validas)
         print(
             f"Todas as faixas de renda são permitidas: "

@@ -1,11 +1,13 @@
 from pathlib import Path
 
 import pandas as pd
+from Tratamento_Dados.csv_pipeline import filtrar_arquivos_csv
 
 PASTA_DADOS = Path(__file__).parent
 
-# Esta etapa usa o CSV original colocado na pasta de entrada.
-ARQUIVO_ENTRADA = PASTA_DADOS / "entrada" / "scrdata_202601.csv"
+# Todos os CSVs mensais colocados nesta pasta entram no primeiro recorte.
+PASTA_ENTRADA = PASTA_DADOS / "entrada"
+ARQUIVO_SAIDA = PASTA_DADOS / "saida" / "scrdata_norte_nordeste.csv"
 
 # Siglas das UFs mantidas no primeiro recorte.
 ESTADOS_NORTE_NORDESTE = frozenset(
@@ -41,20 +43,21 @@ def filtrar_norte_nordeste(dados: pd.DataFrame) -> pd.DataFrame:
 
 
 def main() -> None:
-    if not ARQUIVO_ENTRADA.is_file():
+    arquivos_entrada = sorted(PASTA_ENTRADA.glob("*.csv"))
+    if not arquivos_entrada:
         raise FileNotFoundError(
-            f"CSV não encontrado: {ARQUIVO_ENTRADA}. "
-            "Coloque scrdata_202601.csv na pasta Tratamento_Dados/entrada/."
+            f"Nenhum CSV encontrado em {PASTA_ENTRADA}. "
+            "Coloque os arquivos mensais nessa pasta."
         )
 
-    # Salva uma cópia filtrada; o CSV original permanece intacto.
-    arquivo_saida = PASTA_DADOS / "saida" / f"{ARQUIVO_ENTRADA.stem}_norte_nordeste.csv"
-    dados = pd.read_csv(ARQUIVO_ENTRADA, sep=";")
-    filtrados = filtrar_norte_nordeste(dados)
-
-    arquivo_saida.parent.mkdir(parents=True, exist_ok=True)
-    filtrados.to_csv(arquivo_saida, sep=";", index=False)
-    print(f"{len(filtrados)} linhas salvas em: {arquivo_saida}")
+    # Processa os arquivos em lotes e grava uma saída combinada.
+    total_linhas = filtrar_arquivos_csv(
+        arquivos_entrada, ARQUIVO_SAIDA, filtrar_norte_nordeste
+    )
+    print(
+        f"{len(arquivos_entrada)} arquivos processados; "
+        f"{total_linhas} linhas salvas em: {ARQUIVO_SAIDA}"
+    )
 
 
 if __name__ == "__main__":

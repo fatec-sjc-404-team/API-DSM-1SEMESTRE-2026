@@ -1,16 +1,13 @@
 from pathlib import Path
 
 import pandas as pd
+from Tratamento_Dados.csv_pipeline import filtrar_arquivos_csv
 
 PASTA_DADOS = Path(__file__).parent
 # Continua a partir da saída que já contém somente clientes PF.
-ARQUIVO_ENTRADA = (
-    PASTA_DADOS / "saida" / "scrdata_202601_norte_nordeste_pessoa_fisica.csv"
-)
+ARQUIVO_ENTRADA = PASTA_DADOS / "saida" / "scrdata_norte_nordeste_pessoa_fisica.csv"
 ARQUIVO_SAIDA = (
-    PASTA_DADOS
-    / "saida"
-    / "scrdata_202601_norte_nordeste_pessoa_fisica_baixa_renda.csv"
+    PASTA_DADOS / "saida" / "scrdata_norte_nordeste_pessoa_fisica_baixa_renda.csv"
 )
 
 # As categorias são comparadas sem diferenciar maiúsculas/minúsculas.
@@ -41,12 +38,10 @@ def main() -> None:
         )
 
     # Cada etapa escreve um novo resultado e deixa sua entrada preservada.
-    dados = pd.read_csv(ARQUIVO_ENTRADA, sep=";")
-    filtrados = filtrar_baixa_renda(dados)
-
-    ARQUIVO_SAIDA.parent.mkdir(parents=True, exist_ok=True)
-    filtrados.to_csv(ARQUIVO_SAIDA, sep=";", index=False)
-    print(f"{len(filtrados)} linhas salvas em: {ARQUIVO_SAIDA}")
+    total_linhas = filtrar_arquivos_csv(
+        [ARQUIVO_ENTRADA], ARQUIVO_SAIDA, filtrar_baixa_renda
+    )
+    print(f"{total_linhas} linhas salvas em: {ARQUIVO_SAIDA}")
 
 
 if __name__ == "__main__":

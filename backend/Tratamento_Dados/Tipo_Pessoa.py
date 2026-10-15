@@ -1,16 +1,14 @@
 from pathlib import Path
 
 import pandas as pd
+from Tratamento_Dados.csv_pipeline import filtrar_arquivos_csv
 
 PASTA_DADOS = Path(__file__).parent
 
-# Lê a saída da etapa de região, em vez de recomeçar pelo CSV original.
-ARQUIVO_ENTRADA = PASTA_DADOS / "saida" / "scrdata_202601_norte_nordeste.csv"
+ARQUIVO_ENTRADA = PASTA_DADOS / "saida" / "scrdata_norte_nordeste.csv"
 
 # Gera outro arquivo para preservar a saída da etapa anterior.
-ARQUIVO_SAIDA = (
-    PASTA_DADOS / "saida" / "scrdata_202601_norte_nordeste_pessoa_fisica.csv"
-)
+ARQUIVO_SAIDA = PASTA_DADOS / "saida" / "scrdata_norte_nordeste_pessoa_fisica.csv"
 
 
 def filtrar_pessoas_fisicas(dados: pd.DataFrame) -> pd.DataFrame:
@@ -30,12 +28,10 @@ def main() -> None:
             "Execute primeiro Estados.py."
         )
 
-    dados = pd.read_csv(ARQUIVO_ENTRADA, sep=";")
-    filtrados = filtrar_pessoas_fisicas(dados)
-
-    ARQUIVO_SAIDA.parent.mkdir(parents=True, exist_ok=True)
-    filtrados.to_csv(ARQUIVO_SAIDA, sep=";", index=False)
-    print(f"{len(filtrados)} linhas salvas em: {ARQUIVO_SAIDA}")
+    total_linhas = filtrar_arquivos_csv(
+        [ARQUIVO_ENTRADA], ARQUIVO_SAIDA, filtrar_pessoas_fisicas
+    )
+    print(f"{total_linhas} linhas salvas em: {ARQUIVO_SAIDA}")
 
 
 if __name__ == "__main__":
