@@ -4,38 +4,59 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}API FATEC{% endblock %}</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    
-    <header>
-        <div class="top-header">
-            <div>
-                <h2 style="margin-bottom: 5px;">{% block header_title %}Texto do Header{% endblock %}</h2>
-                <p style="margin-top: 5px;">{% block header_desc %}Descrição do header{% endblock %}</p>
-            </div>
 
-            <div style="display: flex; justify-content: flex-end;">
+
+    <div style="display: flex;">
+        
+        <aside class="sidebar">
+            <div style="display: flex; margin: 20px; align-items: center; gap: 10px;">
+                <img src="{{ url_for('static', filename='images/avocredit-logo.png')}}" alt="avocredit" style="width: 40px;">
                 <div>
-                    <h4 style="margin-bottom: 5px; opacity: 0.4;">Última atualização:</h4>
-                    <p style="margin-top: 5px;"><b>16/10/2026</b></p>
+                    <h3 style="color: rgb(107, 155, 36);">AvoCredit</h3>
+                    <p style="color: rgb(59, 59, 59); font-size: small;">Potencial de Crédito</p>
                 </div>
-
-                <div>
-
-                </div>
-                
             </div>
+            <hr style="color: lightgreen; opacity: 0.7;">
+
+        </aside>
+
+        <div style="display: flex; flex-direction: column; flex: 1; overflow-x: hidden;">
+            <header>
+                <div class="top-header">
+                    <div style="justify-content: center;">
+                        <h2 style="margin-bottom: 5px;">{% block header_title %}Texto do Header{% endblock %}</h2>
+                        <p style="margin-top: 5px;">{% block header_desc %}Descrição do header{% endblock %}</p>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 20px; margin-right: 0;">
+                        <div>
+                            <h4 style="margin-bottom: 5px; opacity: 0.4;">Última atualização:</h4>
+                            <p style="margin-top: 5px;"><b>16/10/2026</b></p>
+                        </div>
+
+                        <hr class="divisor">
+                        
+                        <div>
+                            <h4 style="margin-bottom: 5px;"><b>Analista de crédito:</b></h4>
+                            <p style="margin-top: 5px; opacity: 0.4;">Uso interno</p>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="main">
+                {% block content %}
+
+                {% endblock %}
+            </main>
         </div>
-    </header>
+        
+    </div>
 
-    <main>
-        {% block content %}
-
-        {% endblock %}
-    </main>
     
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js" integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y" crossorigin="anonymous"></script>
+    
 </body>
 </html>

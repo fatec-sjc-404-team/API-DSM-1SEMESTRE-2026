@@ -1,11 +1,44 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 body {
     background-color: rgb(240, 237, 237);
+    font-family: sans-serif;
 }
 
 .top-header{
-    padding: 0 20px;
+    padding: 20px;
     display: flex;
     justify-content: space-between;
+    align-items: center;
     width: 100%;
+    gap: 20px;
     box-sizing: border-box;
 } 
+
+header{
+    border-bottom: 1px solid lightgrey;
+    padding-bottom: 21px;
+    margin-bottom: 21px;
+}
+
+.divisor{
+    border: none;
+    border-left: 1px solid lightgray;
+    height: 35px;
+    margin: 0;
+}
+
+.sidebar {
+    background-color: rgb(253, 252, 252);
+    width: fit-content;
+    align-content: flex-start;
+    padding: 15px;
+    height: 100vh;
+}
+
+.main {
+    margin: 15px;
+}
