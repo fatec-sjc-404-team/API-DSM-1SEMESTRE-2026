@@ -10,5 +10,12 @@ __pycache__/
 *.py[cod]
 .venv/
 *.egg-info/
+.pytest_cache/
+
+# CSVs locais (podem conter dados grandes ou sensíveis)
+backend/Tratamento_Dados/entrada/*
+!backend/Tratamento_Dados/entrada/.gitkeep
+backend/Tratamento_Dados/saida/*
+!backend/Tratamento_Dados/saida/.gitkeep
 
 .astro/
