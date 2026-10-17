@@ -12,5 +12,6 @@ __pycache__/
 venv/
 env/
 *.egg-info/
+**/venv/
 
 .astro/
