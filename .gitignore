@@ -9,6 +9,8 @@ npm-debug.log*
 __pycache__/
 *.py[cod]
 .venv/
+venv/
+env/
 *.egg-info/
 
 .astro/
