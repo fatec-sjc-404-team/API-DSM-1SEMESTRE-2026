@@ -7,7 +7,7 @@ app = Flask(__name__)
 Swagger(app)
 
 @app.get("/")
-def home():
+def inicio():
     """Renderiza a página principal.
     tags:
       - Páginas
@@ -16,6 +16,15 @@ def home():
         description: Página HTML carregada com sucesso
     """
     return render_template("index.html")
+
+@app.get("/graficos")
+def graficos():
+    return render_template("graficos.html")
+
+@app.get("/filtros_salvos")
+def filtros_salvos():
+    return render_template("filtros_salvos.html")
+
 
 @app.get("/health")
 def health():
