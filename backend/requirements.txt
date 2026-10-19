@@ -1,3 +1,5 @@
 flask
 flasgger
+pandas
 ruff
+pytest
