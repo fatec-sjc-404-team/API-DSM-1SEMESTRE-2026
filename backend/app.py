@@ -1,10 +1,29 @@
 from flasgger import Swagger
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template
 
 app = Flask(__name__)
 
 # Gera a documentação Swagger a partir das docstrings das rotas (acessível em /apidocs)
 Swagger(app)
+
+@app.get("/")
+def inicio():
+    """Renderiza a página principal.
+    tags:
+      - Páginas
+    responses:
+      200:
+        description: Página HTML carregada com sucesso
+    """
+    return render_template("index.html")
+
+@app.get("/graficos")
+def graficos():
+    return render_template("graficos.html")
+
+@app.get("/filtros_salvos")
+def filtros_salvos():
+    return render_template("filtros_salvos.html")
 
 
 @app.get("/health")

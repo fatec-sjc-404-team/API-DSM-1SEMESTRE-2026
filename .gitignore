@@ -5,11 +5,14 @@
 node_modules/
 npm-debug.log*
 
-# Python
+# Python e ambientes virtuais
 __pycache__/
 *.py[cod]
 .venv/
+venv/
+env/
 *.egg-info/
+**/venv/
 .pytest_cache/
 
 # CSVs locais (podem conter dados grandes ou sensíveis)
