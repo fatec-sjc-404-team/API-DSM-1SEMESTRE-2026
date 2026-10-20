@@ -3,3 +3,4 @@ flasgger
 pandas
 ruff
 pytest
+matplotlib
