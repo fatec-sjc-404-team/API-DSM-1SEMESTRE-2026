@@ -22,3 +22,6 @@ backend/Tratamento_Dados/saida/*
 !backend/Tratamento_Dados/saida/.gitkeep
 
 .astro/
+
+#base de dados para gerar os graficos
+backend/graficos/scrdata_norte_nordeste_pessoa_fisica_baixa_renda.csv
