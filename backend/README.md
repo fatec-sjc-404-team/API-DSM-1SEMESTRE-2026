@@ -146,3 +146,23 @@ versão dos sete CSVs; podem mudar se os arquivos de entrada forem diferentes.
 `data_base` é preservada para identificar o mês de cada linha. Os CSVs nas
 pastas `entrada/` e `saida/` são ignorados pelo Git. Reexecutar uma etapa
 substitui a saída anterior com o mesmo nome.
+
+## Modelo físico no MySQL
+
+O script [`database/schema.sql`](database/schema.sql) cria o banco `api_dsm` e a
+tabela `dados_tratados`, com as 24 colunas do CSV final. Também adiciona uma
+coluna técnica `id` como chave primária, sem precisar que ela exista no CSV.
+Os valores monetários usam `DECIMAL(20, 2)` para manter precisão decimal, e o
+banco/tabela usam `utf8mb4` para armazenar texto.
+
+Para criar o modelo pelo MySQL Workbench:
+
+1. Abra `backend/database/schema.sql`.
+2. Conecte-se ao servidor MySQL e execute o script inteiro.
+3. Atualize a lista de schemas; o banco `api_dsm` e a tabela `dados_tratados`
+   deverão aparecer.
+
+O script não apaga nem altera tabelas já existentes. `CREATE TABLE IF NOT
+EXISTS` não atualiza uma tabela que já tenha sido criada com outra estrutura.
+Este passo cria somente o modelo; a carga automática do CSV para o MySQL ainda
+precisa ser implementada.
