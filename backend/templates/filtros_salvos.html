@@ -1,1 +1,93 @@
 {% extends "base.html" %}
+
+{% block content %}
+<div class="painel-filtros">
+  <form action="" method="get" id="painel-filtros-container">
+    
+    <div class="linha-filtros">
+      
+      <div class="filtro-campo">
+        <label for="filtro-regiao">Região</label>
+        <select id="filtro-regiao" name="regiao">
+          <option value="todos">Todos</option>
+          <option value="norte" selected>Norte</option>
+          <option value="nordeste">Nordeste</option>
+        </select>
+      </div>
+
+      <div class="filtro-campo">
+        <label for="filtro-estado">Estado</label>
+        <select id="filtro-estado" name="estado">
+          <option value="" selected>Todos</option>
+          <optgroup label="Região Norte">
+            <option value="AC">AC - Acre</option>
+            <option value="AM">AM - Amazonas</option>
+            <option value="AP">AP - Amapá</option>
+            <option value="PA">PA - Pará</option>
+            <option value="RO">RO - Rondônia</option>
+            <option value="RR">RR - Roraima</option>
+            <option value="TO">TO - Tocantins</option>
+          </optgroup>
+          <optgroup label="Região Nordeste">
+            <option value="AL">AL - Alagoas</option>
+            <option value="BA">BA - Bahia</option>
+            <option value="CE">CE - Ceará</option>
+            <option value="MA">MA - Maranhão</option>
+            <option value="PB">PB - Paraíba</option>
+            <option value="PE">PE - Pernambuco</option>
+            <option value="PI">PI - Piauí</option>
+            <option value="RN">RN - Rio Grande do Norte</option>
+            <option value="SE">SE - Sergipe</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <div class="filtro-campo">
+        <label for="filtro-periodo">Período</label>
+        <select id="filtro-periodo" name="periodo">
+            <option value="1_mes" selected>Último 1 mês</option>
+            <option value="2_meses">Últimas 2 meses</option>
+            <option value="3_meses">Últimas 3 meses</option>
+            <option value="4_meses">Últimos 4 meses</option>
+            <option value="5_meses">Últimos 5 meses</option>
+            <option value="6_meses">Últimos 6 meses</option>
+            <option value="7_meses">Últimos 7 meses</option>
+            <option value="8_meses">Últimos 8 meses</option>
+            <option value="9_meses">Últimos 9 meses</option>
+            <option value="10_meses">Últimos 10 meses</option>
+            <option value="11_meses">Últimos 11 meses</option>
+            <option value="12_meses">Último Ano</option>
+        </select>
+      </div>
+
+      <div class="filtro-campo">
+        <label for="filtro-divida">Tipo de dívida</label>
+        <select id="filtro-divida" name="tipoDivida">
+          <option value="" selected>Todos</option>
+          <option value="saudavel">Saudável</option>
+          <option value="critica">Crítica</option>
+          <option value="mista">Mista</option>
+        </select>
+      </div>
+      
+      <div class="filtro-acao-principal">
+        <button type="submit" id="butao-aplicar" class="btn-aplicar">
+          <span class="material-symbols-outlined">filter_alt</span>
+          Aplicar filtros
+        </button>
+      </div>
+
+    </div>
+    
+    <div class="linha-salvar">
+      <label for="input-salvar-filtro">Salvar como:</label>
+      <input type="text" id="input-salvar-filtro" placeholder="Ex.: Norte — Últimos 6 Meses">
+      <button type="button" id="butao-salvar-filtro" class="btn-salvar">
+        <span class="material-symbols-outlined">download</span>
+        Salvar filtro
+      </button>
+    </div>
+
+  </form>
+</div>
+{% endblock %}
