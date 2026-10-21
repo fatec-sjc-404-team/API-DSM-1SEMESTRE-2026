@@ -3,7 +3,95 @@
 {% block title %}Página Inicial - API <FATEC>{% endblock %}</FATEC>
 
 {% block content %}
-    <h1>Bem vindo a página incial</h1>
-    <p>Conteudo da pagina</p>
+    <main class="dashboard">
 
+        <section class="dashboard-header">
+            <div class="filters">
+                <div class="input-group">
+                    <label>Região</label>
+                    <select>
+                        <option>Norte</option>
+                        <option>Nordeste</option>
+                    </select>
+                </div>
+
+                <div class="switch-group">
+                    <input type="checkbox" id="estado" checked>
+                    <label for="estado">Detalhar por estado</label>
+                </div>
+
+                <div class="input-group">
+                    <label>Estado</label>
+                    <select>
+                        <option>Norte</option>
+                        <option>Acre</option>
+                        <option>Alagoas</option>
+                        <option>Amapá</option>
+                        <option>Amazonas</option>
+                        <option>Roraima</option>
+                        <option>Rondônia</option>
+                        <option>Tocantins</option>
+                    </select>
+                </div>
+                <button>Atualizar</button>
+            </div>
+        </section>
+
+        <!--potencial de crédito-->
+        <section class="hero">
+            <article class="hero-card">
+                <span class="card-title">Potencial de Crédito Geral</span>
+                <h1>68,4</h1>
+                <p>Resultado da combinação dos indicadores abaixo. Quanto maior, melhor o potencial.</p>
+                <a href="#">Ver análise detalhada em Gráficos →</a>
+            </article>
+
+            <!--mapa-->
+            <aside class="map-card">
+                <img src="download.jpeg" alt="Mapa do Brasil">
+                <span>Região selecionada</span>
+                <h3>Norte</h3>
+                <small>Estados incluídos</small>
+                <p>AC, AM, AP, PA, RO, RR, TO</p>
+            </aside>
+
+        </section>
+
+        <!-- Indicadores -->
+        <section class="indicators">
+
+            <h2>Indicadores que compõem o potencial de crédito</h2>
+
+            <div class="cards">
+                <article class="indicator-card">
+                    <h3>Inadimplência de Recuperação Rápida</h3>
+                    <strong>72,3</strong>
+                    <p>Regiões com inadimplência alta, mas que pagam em menos de 20 dias e raramente viram
+                        inadimplêncialonga.</p>
+                    <small>Quanto maior, melhor.</small>
+                </article>
+
+                <article class="indicator-card">
+                    <h3>Concentração de Crédito Caro</h3>
+                    <strong>65,7</strong>
+                    <p>Regiões onde a maioria das ofertas de crédito é cara e vem de bancos grandes.</p>
+                    <small>Quanto menor, melhor.</small>
+                </article>
+
+                <article class="indicator-card">
+                    <h3>Dívida Saudável x Crítica</h3>
+                    <strong>61,2</strong>
+                    <p>Ex: dívida imobiliária de longo prazo é saudável; dívida de consumo é crítica.</p>
+                    <small>Quanto maior, melhor.</small>
+                </article>
+
+                <article class="indicator-card">
+                    <h3>Endividamento por Apostas / Bets</h3>
+                    <strong>48,9</strong>
+                    <p>Comprometimento de renda com apostas.</p>
+                    <small>Quanto menor, melhor.</small>
+                </article>
+            </div>
+        </section>
+    </main>
 {% endblock %}
