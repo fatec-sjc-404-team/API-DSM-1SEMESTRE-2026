@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import pandas as pd
+
 from Tratamento_Dados.csv_pipeline import TAMANHO_LOTE
 from Tratamento_Dados.Estados import ESTADOS_NORTE_NORDESTE
 from Tratamento_Dados.Renda import FAIXAS_BAIXA_RENDA

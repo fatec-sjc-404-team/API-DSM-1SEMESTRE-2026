@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 
-
 # 1 DADOS
 segmentos = [
     "Pessoas fiísicas\ncrédito livre",
@@ -13,19 +12,23 @@ nordeste = [12.0, 12.2, 5.8]
 
 
 # 2  POSIÇÕES DAS BARRAS
-posicoes = list(range(len(segmentos))) # cria uma variável com os índices dos segmentos para com possição 0 1 2
+posicoes = list(
+    range(len(segmentos))
+)  # cria uma variável com os índices dos segmentos para com possição 0 1 2
 
-largura = 0.35 # Define a largura das barras e o tamanho do gráfico
+largura = 0.35  # Define a largura das barras e o tamanho do gráfico
 
 # 3) DESENHO
-fig, ax = plt.subplots(figsize=(9, 5)) #define o tamanho da tela do gráfico
+fig, ax = plt.subplots(figsize=(9, 5))  # define o tamanho da tela do gráfico
 
 
 # Cria as barras para cada região
 barras_norte = ax.bar(
-    [p - largura / 2 for p in posicoes], norte, largura, label="Norte")
+    [p - largura / 2 for p in posicoes], norte, largura, label="Norte"
+)
 barras_nordeste = ax.bar(
-    [p + largura / 2 for p in posicoes], nordeste, largura, label="Nordeste")
+    [p + largura / 2 for p in posicoes], nordeste, largura, label="Nordeste"
+)
 
 # Adiciona os rótulos de valor nas barras
 ax.bar_label(barras_norte, fmt="%.2f%%")

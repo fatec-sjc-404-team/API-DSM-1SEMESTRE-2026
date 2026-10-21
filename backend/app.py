@@ -6,6 +6,7 @@ app = Flask(__name__)
 # Gera a documentação Swagger a partir das docstrings das rotas (acessível em /apidocs)
 Swagger(app)
 
+
 @app.get("/")
 def inicio():
     """Renderiza a página principal.
@@ -17,9 +18,11 @@ def inicio():
     """
     return render_template("index.html")
 
+
 @app.get("/graficos")
 def graficos():
     return render_template("graficos.html")
+
 
 @app.get("/filtros_salvos")
 def filtros_salvos():

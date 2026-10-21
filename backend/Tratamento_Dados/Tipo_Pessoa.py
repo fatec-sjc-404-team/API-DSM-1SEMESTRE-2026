@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import pandas as pd
+
 from Tratamento_Dados.csv_pipeline import filtrar_arquivos_csv
 
 PASTA_DADOS = Path(__file__).parent
