@@ -1,5 +1,6 @@
 import pandas as pd
 import pytest
+
 from Tratamento_Dados.csv_pipeline import filtrar_arquivos_csv
 from Tratamento_Dados.Estados import filtrar_norte_nordeste
 from Tratamento_Dados.Renda import filtrar_baixa_renda
