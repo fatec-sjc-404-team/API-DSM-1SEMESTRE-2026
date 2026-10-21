@@ -4,3 +4,4 @@ pandas
 ruff
 pytest
 matplotlib
+PyMySQL

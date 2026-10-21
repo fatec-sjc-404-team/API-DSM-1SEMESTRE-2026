@@ -146,3 +146,39 @@ versão dos sete CSVs; podem mudar se os arquivos de entrada forem diferentes.
 `data_base` é preservada para identificar o mês de cada linha. Os CSVs nas
 pastas `entrada/` e `saida/` são ignorados pelo Git. Reexecutar uma etapa
 substitui a saída anterior com o mesmo nome.
+
+## Modelo físico no MySQL
+
+O script [`database/AvoData.sql`](database/AvoData.sql) cria o banco `AvoCredit` e a
+tabela `BCB`, com as 24 colunas do CSV final. Também adiciona uma
+coluna técnica `id` como chave primária, sem precisar que ela exista no CSV.
+Os valores monetários usam `DECIMAL(20, 2)` para manter precisão decimal, e o
+banco/tabela usam `utf8mb4` para armazenar texto.
+
+Para criar o modelo pelo MySQL Workbench:
+
+1. Abra `backend/database/AvoData.sql`.
+2. Conecte-se ao servidor MySQL e execute o script inteiro.
+3. Atualize a lista de schemas; o banco `AvoCredit` e a tabela `BCB`
+   deverão aparecer.
+
+O script não apaga nem altera tabelas já existentes. `CREATE TABLE IF NOT
+EXISTS` não atualiza uma tabela que já tenha sido criada com outra estrutura.
+
+### Importar o CSV para o MySQL
+
+Antes da importação, execute as três etapas de tratamento descritas acima e
+confirme que o arquivo final existe em
+`Tratamento_Dados/saida/scrdata_norte_nordeste_pessoa_fisica_baixa_renda.csv`.
+Crie o banco e a tabela usando `database/AvoData.sql` e instale as dependências
+do projeto (`python -m pip install -r requirements.txt`). Na pasta `backend/`,
+execute:
+
+```bash
+python database/Importar_csv.py
+```
+
+O script solicita o usuário e a senha do MySQL no terminal. A carga substitui
+os registros existentes em `BCB` pelos dados do CSV dentro de uma única
+transação; se ocorrer um erro, a transação é revertida e os dados anteriores
+são preservados.
