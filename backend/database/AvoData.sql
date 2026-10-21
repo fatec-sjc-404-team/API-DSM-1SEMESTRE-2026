@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS BCB (
 
     PRIMARY KEY (id),
     -- Otimizo consultas que filtram ou ordenam os dados pela data-base.
-    INDEX idx_dados_tratados_data_base (data_base)
+    INDEX idx_bcb_data_base (data_base)
 )
   -- Escolho InnoDB para ter suporte a transações e recuperação de falhas.
   ENGINE=InnoDB
