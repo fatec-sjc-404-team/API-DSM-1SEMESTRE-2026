@@ -2,6 +2,10 @@
 
 {% block title %}Gráficos{% endblock %}
 
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/graficos.css')}}">
+{% endblock %}
+
 {% block header_title %}Gráficos{% endblock %}
 {% block header_desc %}Análise por região, estado e indicadores {% endblock %}
 
@@ -127,8 +131,5 @@
 
   <div class="g-rodape"><span>Os gráficos são atualizados automaticamente de acordo com os filtros aplicados.</span><span>Dados atualizados em 04/09/2025</span></div>
 </div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="{{ url_for('static', filename='java.js') }}"></script>
 
 {% endblock %}

@@ -1,0 +1,247 @@
+/* CSS do Lucas */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+}
+
+.dashboard {
+    width: 100%;
+}
+
+.dashboard-header{
+    background-color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 10px;
+    padding-bottom: 0;
+    margin-bottom: 20px;
+}
+
+
+.filters {
+    display: flex;
+    align-items: flex-end;
+    gap: 40px;
+    margin-bottom: 55px;
+}
+
+/*esse é das REGIOES*/
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group label {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.input-group select {
+    width: 210px;
+    height: 44px;
+    padding: 0 14px;
+    background: transparent;
+    border: none;
+    font: 16px 'Inter', sans-serif;
+    cursor: pointer;
+    outline: none;
+}
+
+.switch-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 8px;
+}
+
+.switch-group input {
+    width: 48px;
+    height: 24px;
+    accent-color: rgb(96, 156, 106);
+    cursor: pointer;
+}
+
+.switch-group label {
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.filters button {
+    margin-left: auto;
+    width: 120px;
+    height: 42px;
+    border: none;
+    border-radius: 8px;
+    background: rgba(44, 85, 36, 0.8);
+    color: #fff;
+    font: 600 15px 'Inter', sans-serif;
+    cursor: pointer;
+    transition: .25s;
+}
+
+.filters button:hover {
+    background: #283d2b;
+}
+
+.hero {
+    display: grid;
+    grid-template-columns: 1.8fr 320px;
+    gap: 100px;
+    margin-bottom: 70px;
+    background-color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 10px;
+    padding-bottom: 10px;
+}
+
+.card-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 22px;
+}
+
+.hero-card h1 {
+    font-size: 81px;
+    font-weight: 700;
+    line-height: 1;
+    color: #303030;
+    margin-bottom: 10px;
+}
+
+.hero-card p {
+    max-width: 540px;
+    margin: 30px 0;
+    font-size: 15px;
+    line-height: 1.7;
+    color: #555;
+}
+
+.hero-card a {
+    color: rgba(44, 85, 36, 0.8);
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.hero-card a:hover {
+    text-decoration: underline;
+}
+
+.map-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.map-card img {
+    width: 170px;
+    margin-bottom: 20px;
+}
+
+.map-card span {
+    font-size: 14px;
+    color: #888;
+}
+
+.map-card h3 {
+    margin: 8px 0;
+    font-size: 22px;
+    color: #222;
+}
+
+.map-card small {
+    margin-top: 12px;
+    font-size: 13px;
+    color: #777;
+}
+
+.map-card p {
+    margin-top: 8px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #555;
+}
+
+/*indicador*/
+
+.indicators h2 {
+    font-size: 27px;
+    font-weight: 700;
+    margin-bottom: 35px;
+    color: #303030;
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+}
+
+.indicator-card {
+    background: #FFF;
+    border: 2px solid #f1f1f1;
+    border-radius: 15px;
+    padding: 28px;
+    box-shadow: 0 7px 23px rgba(32, 32, 32, 0.8);
+    display: flex;
+    flex-direction: column;
+    transition: .25s;
+    min-height: 420px;
+}
+
+.indicator-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 2px 5px rgba(32, 32, 32, 0.8);
+}
+
+.indicator-card h3 {
+    font-size: 19px;
+    font-weight: 600;
+    line-height: 1.45;
+    min-height: 82px;
+    margin-bottom: 22px;
+    color: #303030;
+}
+
+.indicator-card strong {
+    font-size: 54px;
+    font-weight: 700;
+    line-height: 1;
+    color: #303030;
+    margin-bottom: 12px;
+}
+
+.indicator-card span {
+    display: block;
+    font-size: 15px;
+    font-weight: 600;
+    color: #008A17;
+    margin-bottom: 22px;
+}
+
+.indicator-card p {
+    font-size: 15px;
+    line-height: 1.7;
+    color: #666;
+    margin-bottom: auto;
+}
+
+.indicator-card small {
+    margin-top: 22px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #406446;
+}

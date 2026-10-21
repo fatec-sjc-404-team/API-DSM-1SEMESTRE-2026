@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 
 {% block title %}Potencial de Crédito{% endblock %}
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css')}}">
+{% endblock %}
 
 {% block header_title %}Potencial de Crédito{% endblock %}
 {% block header_desc %}Regiões Norte e Nordeste{% endblock %}
@@ -52,7 +55,10 @@
 
             <!--mapa-->
             <aside class="map-card">
-                <img src="download.jpeg" alt="Mapa do Brasil">
+                <svg viewBox="0 0 500 500" class="mapa-svg">
+                    <path id="Norte" class="regiao ativa" d="{{ url_for('static', filename='images/br.svg')}}"></path>
+                    <path id="Nordeste" class="regiao" d="{{ url_for('static', filename='images/br.svg')}}"></path>
+                </svg>
                 <span>Região selecionada</span>
                 <h3>Norte</h3>
                 <small>Estados incluídos</small>
