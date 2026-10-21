@@ -1,4 +1,18 @@
-const VERDE = '#2e7d32';
+document.addEventListener('DOMContentLoaded', () => {
+
+  const checkboxEstado = document.getElementById('estado');
+  const grupoEstado = document.getElementById('group-by-state');
+
+  function visibleState() {
+  grupoEstado.style.display = checkboxEstado.checked ? '' : 'none';
+}
+
+visibleState();
+
+checkboxEstado.addEventListener('change', visibleState);
+
+
+  const VERDE = '#2e7d32';
 
 const ESTADOS = { AL: 57.4, BA: 64.2, CE: 68.9, MA: 53.1, PB: 59.7, PE: 66.3, PI: 50.8, RN: 63.5, SE: 55.9 };
 const SEMANAS = ['Sem 29 (14/07)', 'Sem 30 (21/07)', 'Sem 31 (28/07)', 'Sem 32 (04/08)', 'Sem 33 (11/08)',
@@ -40,4 +54,6 @@ new Chart(document.getElementById('linha'), {
     plugins: { legend: { display: false } },
     scales: { y: { min: 40, max: 80, ticks: { stepSize: 10 }, grid: { color: 'rgba(128,128,128,.15)' } }, x: { grid: { display: false } } }
   }
+});
+
 });

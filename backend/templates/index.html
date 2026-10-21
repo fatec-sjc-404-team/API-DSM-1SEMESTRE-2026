@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 
-{% block title %}Página Inicial - API <FATEC>{% endblock %}</FATEC>
+{% block title %}Potencial de Crédito{% endblock %}
+
+{% block header_title %}Potencial de Crédito{% endblock %}
+{% block header_desc %}Regiões Norte e Nordeste{% endblock %}
 
 {% block content %}
     <main class="dashboard">
@@ -9,7 +12,8 @@
             <div class="filters">
                 <div class="input-group">
                     <label>Região</label>
-                    <select>
+                    <select style="border: 0.5px solid rgb(184, 180, 180); border-radius: 7px; padding: 5px;">
+                        <option value="" disabled selected hidden>Selecione uma região...</option>
                         <option>Norte</option>
                         <option>Nordeste</option>
                     </select>
@@ -20,10 +24,10 @@
                     <label for="estado">Detalhar por estado</label>
                 </div>
 
-                <div class="input-group">
+                <div class="input-group" id="group-by-state">
                     <label>Estado</label>
-                    <select>
-                        <option>Norte</option>
+                    <select style="border: 0.5px solid rgb(184, 180, 180); border-radius: 7px; padding: 5px;">
+                        <option value="" disabled selected hidden style="color: rgb(211, 211, 211);">Selecione um estado... </option>
                         <option>Acre</option>
                         <option>Alagoas</option>
                         <option>Amapá</option>
@@ -94,4 +98,5 @@
             </div>
         </section>
     </main>
+
 {% endblock %}
