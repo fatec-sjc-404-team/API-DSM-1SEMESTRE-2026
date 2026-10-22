@@ -122,3 +122,6 @@
     <div class="g-rodape"><span>Os gráficos são atualizados automaticamente de acordo com os filtros aplicados.</span><span>Dados atualizados em 04/09/2025</span></div>
   </div>
 {% endblock %}
+{% block scripts %}
+  <script src="{{ url_for('static', filename='js/graficos.js') }}"></script>
+{% endblock %}

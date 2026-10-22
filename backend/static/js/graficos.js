@@ -1,17 +1,5 @@
+// Gráficos da página "Gráficos" (Chart.js é carregado no base.html).
 document.addEventListener('DOMContentLoaded', () => {
-  const checkboxEstado = document.getElementById('estado');
-  const grupoEstado = document.getElementById('group-by-state');
-
-  if (checkboxEstado && grupoEstado) {
-    function visibleState() {
-      grupoEstado.style.display = checkboxEstado.checked ? '' : 'none';
-    }
-
-    visibleState();
-
-    checkboxEstado.addEventListener('change', visibleState);
-  }
-
   const VERDE = '#2e7d32';
   const ESTADOS = {
     AL: 57.4,
@@ -102,37 +90,6 @@ document.addEventListener('DOMContentLoaded', () => {
         plugins: { legend: { display: false } },
         scales: { y: { min: 40, max: 80 }, x: { grid: { display: false } } },
       },
-    });
-  }
-
-  const dadosRegioes = {
-    Norte: 'AC, AM, AP, PA, RO, RR, TO',
-    Nordeste: 'AL, BA, CE, MA, PB, PE, PI, RN, SE',
-    CentroOeste: 'GO, MT, MS, DF',
-    Sudeste: 'ES, MG, RJ, SP',
-    Sul: 'PR, RS, SC',
-  };
-
-  const regioesSvg = document.querySelectorAll('.regiao');
-  const tituloCard = document.getElementById('card-titulo');
-  const estadosCard = document.getElementById('card-estados');
-
-  // Adiciona o evento de clique só se o mapa existir na tela
-  if (regioesSvg.length > 0) {
-    regioesSvg.forEach((regiao) => {
-      regiao.addEventListener('click', (evento) => {
-        // Limpa a cor de todos
-        regioesSvg.forEach((r) => r.classList.remove('ativa'));
-
-        // Pinta a região clicada (DOM element)
-        const regiaoClicada = evento.target;
-        regiaoClicada.classList.add('ativa');
-
-        // Atualiza o texto dinamicamente
-        const nomeRegiao = regiaoClicada.id;
-        tituloCard.textContent = nomeRegiao;
-        estadosCard.textContent = dadosRegioes[nomeRegiao] || '';
-      });
     });
   }
 });

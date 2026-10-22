@@ -101,3 +101,7 @@
     </section>
   </main>
 {% endblock %}
+{% block scripts %}
+  <script src="{{ url_for('static', filename='js/filtros-estado.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/mapa-regioes.js') }}"></script>
+{% endblock %}
