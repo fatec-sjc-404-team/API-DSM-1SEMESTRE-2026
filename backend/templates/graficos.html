@@ -1,60 +1,52 @@
 {% extends "base.html" %}
-
 {% block title %}Gráficos{% endblock %}
-
 {% block css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/graficos.css')}}">
+  <link rel="stylesheet"
+        href="{{ url_for('static', filename='css/graficos.css') }}">
 {% endblock %}
-
 {% block header_title %}Gráficos{% endblock %}
-{% block header_desc %}Análise por região, estado e indicadores {% endblock %}
-
-
+{% block header_desc %}Análise por região, estado e indicadores{% endblock %}
 {% block content %}
-<div class="painel-filtros">
-  <form action="" method="get" id="painel-filtros-container">
-    
-    <div class="linha-filtros">
-      
-      <div class="filtro-campo">
-        <label for="filtro-regiao">Região</label>
-        <select id="filtro-regiao" name="regiao">
-          <option value="todos">Todos</option>
-          <option value="norte" selected>Norte</option>
-          <option value="nordeste">Nordeste</option>
-        </select>
-      </div>
-
-      <div class="filtro-campo">
-        <label for="filtro-estado">Estado</label>
-        <select id="filtro-estado" name="estado">
-          <option value="" selected>Todos</option>
-          <optgroup label="Região Norte">
-            <option value="AC">AC - Acre</option>
-            <option value="AM">AM - Amazonas</option>
-            <option value="AP">AP - Amapá</option>
-            <option value="PA">PA - Pará</option>
-            <option value="RO">RO - Rondônia</option>
-            <option value="RR">RR - Roraima</option>
-            <option value="TO">TO - Tocantins</option>
-          </optgroup>
-          <optgroup label="Região Nordeste">
-            <option value="AL">AL - Alagoas</option>
-            <option value="BA">BA - Bahia</option>
-            <option value="CE">CE - Ceará</option>
-            <option value="MA">MA - Maranhão</option>
-            <option value="PB">PB - Paraíba</option>
-            <option value="PE">PE - Pernambuco</option>
-            <option value="PI">PI - Piauí</option>
-            <option value="RN">RN - Rio Grande do Norte</option>
-            <option value="SE">SE - Sergipe</option>
-          </optgroup>
-        </select>
-      </div>
-
-      <div class="filtro-campo">
-        <label for="filtro-periodo">Período</label>
-        <select id="filtro-periodo" name="periodo">
+  <div class="painel-filtros">
+    <form action="" method="get" id="painel-filtros-container">
+      <div class="linha-filtros">
+        <div class="filtro-campo">
+          <label for="filtro-regiao">Região</label>
+          <select id="filtro-regiao" name="regiao">
+            <option value="todos">Todos</option>
+            <option value="norte" selected>Norte</option>
+            <option value="nordeste">Nordeste</option>
+          </select>
+        </div>
+        <div class="filtro-campo">
+          <label for="filtro-estado">Estado</label>
+          <select id="filtro-estado" name="estado">
+            <option value="" selected>Todos</option>
+            <optgroup label="Região Norte">
+              <option value="AC">AC - Acre</option>
+              <option value="AM">AM - Amazonas</option>
+              <option value="AP">AP - Amapá</option>
+              <option value="PA">PA - Pará</option>
+              <option value="RO">RO - Rondônia</option>
+              <option value="RR">RR - Roraima</option>
+              <option value="TO">TO - Tocantins</option>
+            </optgroup>
+            <optgroup label="Região Nordeste">
+              <option value="AL">AL - Alagoas</option>
+              <option value="BA">BA - Bahia</option>
+              <option value="CE">CE - Ceará</option>
+              <option value="MA">MA - Maranhão</option>
+              <option value="PB">PB - Paraíba</option>
+              <option value="PE">PE - Pernambuco</option>
+              <option value="PI">PI - Piauí</option>
+              <option value="RN">RN - Rio Grande do Norte</option>
+              <option value="SE">SE - Sergipe</option>
+            </optgroup>
+          </select>
+        </div>
+        <div class="filtro-campo">
+          <label for="filtro-periodo">Período</label>
+          <select id="filtro-periodo" name="periodo">
             <option value="1_mes" selected>Último 1 mês</option>
             <option value="2_meses">Últimos 2 meses</option>
             <option value="3_meses">Últimos 3 meses</option>
@@ -67,69 +59,66 @@
             <option value="10_meses">Últimos 10 meses</option>
             <option value="11_meses">Últimos 11 meses</option>
             <option value="12_meses">Último Ano</option>
-        </select>
+          </select>
+        </div>
+        <div class="filtro-campo">
+          <label for="filtro-divida">Tipo de dívida</label>
+          <select id="filtro-divida" name="tipoDivida">
+            <option value="" selected>Todos</option>
+            <option value="saudavel">Saudável</option>
+            <option value="critica">Crítica</option>
+            <option value="mista">Mista</option>
+          </select>
+        </div>
+        <div class="filtro-acao-principal">
+          <button type="submit" id="butao-aplicar" class="btn-aplicar">
+            <span class="material-symbols-outlined">filter_alt</span>
+            Aplicar filtros
+          </button>
+        </div>
       </div>
-
-      <div class="filtro-campo">
-        <label for="filtro-divida">Tipo de dívida</label>
-        <select id="filtro-divida" name="tipoDivida">
-          <option value="" selected>Todos</option>
-          <option value="saudavel">Saudável</option>
-          <option value="critica">Crítica</option>
-          <option value="mista">Mista</option>
-        </select>
-      </div>
-      
-      <div class="filtro-acao-principal">
-        <button type="submit" id="butao-aplicar" class="btn-aplicar">
-          <span class="material-symbols-outlined">filter_alt</span>
-          Aplicar filtros
+      <div class="linha-salvar">
+        <label for="input-salvar-filtro">Salvar como:</label>
+        <input type="text"
+               id="input-salvar-filtro"
+               placeholder="Ex.: Norte — Últimos 6 Meses">
+        <button type="button" id="butao-salvar-filtro" class="btn-salvar">
+          <span class="material-symbols-outlined">download</span>
+          Salvar filtro
         </button>
       </div>
-
-    </div>
-    
-    <div class="linha-salvar">
-      <label for="input-salvar-filtro">Salvar como:</label>
-      <input type="text" id="input-salvar-filtro" placeholder="Ex.: Norte — Últimos 6 Meses">
-      <button type="button" id="butao-salvar-filtro" class="btn-salvar">
-        <span class="material-symbols-outlined">download</span>
-        Salvar filtro
-      </button>
-    </div>
-
-  </form>
-</div>
-
-<div class="pg-graficos">
-  <div class="g-card">
-    <div class="g-hd">
-      <div><h3>Indicador Geral de Potencial de Crédito por Estado</h3><div class="g-sub">Comparativo entre os estados da região selecionada (Nordeste)</div></div>
-      <span class="g-sub">● Potencial de crédito (%)</span>
-    </div>
-    <div class="g-box"><canvas id="barras"></canvas></div>
+    </form>
   </div>
-
-  <div class="g-card">
-  <div class="g-hd">
-    <div>
-      <h3>Evolução do Potencial de Crédito na Região Nordeste</h3>
-      <div class="g-sub">Acompanhamento semanal do indicador geral (média da região)</div>
+  <div class="pg-graficos">
+    <div class="g-card">
+      <div class="g-hd">
+        <div>
+          <h3>Indicador Geral de Potencial de Crédito por Estado</h3>
+          <div class="g-sub">Comparativo entre os estados da região selecionada (Nordeste)</div>
+        </div>
+        <span class="g-sub">● Potencial de crédito (%)</span>
+      </div>
+      <div class="g-box">
+        <canvas id="barras"></canvas>
+      </div>
     </div>
-    <select>
-      <option value="potencial">Potencial Geral</option>
-      <option value="recuperacao">Recuperação Rápida</option>
-      <option value="credito">Crédito Caro</option>
-      <option value="divida" selected>Dívida Saudável x Crítica</option>
-    </select>
+    <div class="g-card">
+      <div class="g-hd">
+        <div>
+          <h3>Evolução do Potencial de Crédito na Região Nordeste</h3>
+          <div class="g-sub">Acompanhamento semanal do indicador geral (média da região)</div>
+        </div>
+        <select>
+          <option value="potencial">Potencial Geral</option>
+          <option value="recuperacao">Recuperação Rápida</option>
+          <option value="credito">Crédito Caro</option>
+          <option value="divida" selected>Dívida Saudável x Crítica</option>
+        </select>
+      </div>
+      <div class="g-box">
+        <canvas id="linha"></canvas>
+      </div>
+    </div>
+    <div class="g-rodape"><span>Os gráficos são atualizados automaticamente de acordo com os filtros aplicados.</span><span>Dados atualizados em 04/09/2025</span></div>
   </div>
-  
-  <div class="g-box">
-    <canvas id="linha"></canvas>
-  </div>
-</div>
-
-  <div class="g-rodape"><span>Os gráficos são atualizados automaticamente de acordo com os filtros aplicados.</span><span>Dados atualizados em 04/09/2025</span></div>
-</div>
-
 {% endblock %}

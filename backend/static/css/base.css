@@ -1,113 +1,111 @@
-@media (max-width: 768px){
+@media (max-width: 768px) {
   .main {
     flex-direction: column;
     padding: 15px;
     width: 100%;
-    
   }
 }
 
-*{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 body {
-    background-color: rgb(240, 237, 237);
-    font-family: sans-serif;
+  background-color: rgb(240, 237, 237);
+  font-family: sans-serif;
 }
 
-.top-header{
-    padding: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    gap: 20px;
-    box-sizing: border-box;
-} 
-
-header{
-    border-bottom: 1px none lightgrey;
-    padding-bottom: 21px;
-    margin-bottom: 21px;
+.top-header {
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  gap: 20px;
+  box-sizing: border-box;
 }
 
-.divisor{
-    border: none;
-    border-left: 1px solid lightgray;
-    height: 35px;
-    margin: 0;
-    margin-top: 20px;
+header {
+  border-bottom: 1px none lightgrey;
+  padding-bottom: 21px;
+  margin-bottom: 21px;
+}
+
+.divisor {
+  border: none;
+  border-left: 1px solid lightgray;
+  height: 35px;
+  margin: 0;
+  margin-top: 20px;
 }
 
 .sidebar {
-    background-color: rgb(253, 252, 252);
-    width: fit-content;
-    align-content: flex-start;
-    padding: 15px 0px;
-    box-sizing: border-box;
-    min-height: 100vh;
-    height: auto;
-    display: flex;
-    flex-direction: column;
+  background-color: rgb(253, 252, 252);
+  width: fit-content;
+  align-content: flex-start;
+  padding: 15px 0px;
+  box-sizing: border-box;
+  min-height: 100vh;
+  height: auto;
+  display: flex;
+  flex-direction: column;
 }
 
-.sidebar-menu{
-    display: block; 
-    margin: 20px 0px; 
-    align-items: center; 
-    gap: 15px; 
+.sidebar-menu {
+  display: block;
+  margin: 20px 0px;
+  align-items: center;
+  gap: 15px;
 }
 
-.sidebar-item{
-    display: block;
-    padding: 12px 20px;
-    color: #333; 
-    text-decoration: none;
-    box-sizing: border-box;
-    width: 100%;
-    border-radius: 0px;
-    margin-bottom: 5px;
-    transition: background-color 0.2s;
+.sidebar-item {
+  display: block;
+  padding: 12px 20px;
+  color: #333;
+  text-decoration: none;
+  box-sizing: border-box;
+  width: 100%;
+  border-radius: 0px;
+  margin-bottom: 5px;
+  transition: background-color 0.2s;
 }
 
-.sidebar-item.active{
-    background-color: rgb(12, 87, 12);
-    color: #ffffff;
+.sidebar-item.active {
+  background-color: rgb(12, 87, 12);
+  color: #ffffff;
 }
 
-.sidebar-footer{
-    margin-top: auto;
-    padding-top: 16px;
-    border-top: 1px solid rgba(144, 238, 144, 0.12);
+.sidebar-footer {
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid rgba(144, 238, 144, 0.12);
 }
 
-footer p{
-    padding-left: 10px;
-    color: rgb(92, 92, 92);
-    opacity: 1;
-    box-sizing: border-box;
-    overflow: hidden;
-    font-size: small;
+footer p {
+  padding-left: 10px;
+  color: rgb(92, 92, 92);
+  opacity: 1;
+  box-sizing: border-box;
+  overflow: hidden;
+  font-size: small;
 }
 .main {
-    margin: 15px;
-    margin-top: 0px;
-    margin-left: 20px;
+  margin: 15px;
+  margin-top: 0px;
+  margin-left: 20px;
 }
 
-.icons{
-    width: 30px;
+.icons {
+  width: 30px;
 }
 
-.sidebar-icon{
-    display: flex; 
-    margin: 20px; 
-    align-items: center; 
-    gap: 15px; 
-    background-color: green;
+.sidebar-icon {
+  display: flex;
+  margin: 20px;
+  align-items: center;
+  gap: 15px;
+  background-color: green;
 }
 
 /* fim do CSS base */
-
