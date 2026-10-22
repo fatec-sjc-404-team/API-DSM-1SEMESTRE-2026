@@ -38,6 +38,8 @@ A API fica disponível em `http://localhost:8000`.
 | ------ | -------------- | ----------------------------------- |
 | GET    | `/health`      | Verifica se a API está no ar        |
 | GET    | `/hello-world` | Retorna uma mensagem de boas-vindas |
+| GET    | `/api/dados` | Dados do BCB só com as linhas que atendem aos filtros |
+| GET    | `/api/indicadores` | Indicadores calculados só com os dados que atendem aos filtros |
 
 Para testar pelo terminal:
 
@@ -48,6 +50,65 @@ curl http://localhost:8000/health
 curl http://localhost:8000/hello-world
 # {"mensagem": "Hello, World!"}
 ```
+
+## Filtros
+
+Os filtros (`filtros.py`) chegam como parâmetros na URL de `/api/dados` e `/api/indicadores`, por exemplo `/api/indicadores?regiao=nordeste&estado=BA&periodo=6_meses`. Eles são aplicados nos dados antes de qualquer cálculo, então o gráfico ou a tela que consumir essas rotas já recebe o resultado filtrado.
+
+| Parâmetro    | Valores                                   | Observação                                                  |
+| ------------ | ----------------------------------------- | ----------------------------------------------------------- |
+| `regiao`     | `todos`, `norte`, `nordeste`              |                                                             |
+| `estado`     | sigla da UF (ex. `BA`) ou `todos`         | precisa pertencer à região escolhida                        |
+| `periodo`    | `1_mes`, `2_meses` ... `12_meses`         | conta por mês, a partir do mês mais recente dos dados       |
+| `tipoDivida` | `todos`, `saudavel`, `critica`, `mista`   | veja "Tipo de dívida" abaixo                                |
+
+- Valor vazio ou `todos` conta como filtro não usado, então remover um filtro traz os dados de volta.
+- Valor inválido devolve erro `400` com a mensagem do problema.
+- Se o MySQL e o CSV não estiverem disponíveis, a API devolve erro `503`.
+
+### De onde vêm os dados
+
+`dados.py` lê a tabela `BCB` e soma por mês, UF e tipo de dívida. Se a variável `DB_USER` estiver definida, lê do MySQL; senão, lê o CSV `Tratamento_Dados/saida/scrdata_norte_nordeste_pessoa_fisica_baixa_renda.csv`. O resultado fica 5 minutos na memória, então depois de reimportar o CSV espere esse tempo ou reinicie a API.
+
+| Variável      | Padrão      | Descrição                  |
+| ------------- | ----------- | -------------------------- |
+| `DB_USER`     | (sem valor) | usuário do MySQL; ativa a leitura pelo banco |
+| `DB_PASSWORD` | vazio       | senha do MySQL             |
+| `DB_HOST`     | `localhost` | servidor do MySQL          |
+| `DB_PORT`     | `3306`      | porta do MySQL             |
+| `DB_NAME`     | `AvoCredit` | banco                      |
+
+```bash
+DB_USER=root DB_PASSWORD=sua_senha python app.py
+```
+
+### Respostas
+
+`/api/dados` devolve as linhas que sobraram nos filtros, somadas por mês (`data_base`), UF e tipo de dívida, com `carteira_ativa` e `carteira_inadimplencia`.
+
+`/api/indicadores` devolve os indicadores `geral`, `por_regiao` e `por_estado`:
+
+| Indicador            | Como é calculado                                                        |
+| -------------------- | ----------------------------------------------------------------------- |
+| `carteira_ativa`     | soma da carteira ativa                                                  |
+| `taxa_inadimplencia` | `carteira_inadimplencia ÷ carteira_ativa × 100`                         |
+| `pct_saudavel`, `pct_critica`, `pct_mista` | quanto da carteira ativa é de cada tipo de dívida, em % |
+
+Os valores são somados antes de dividir, então regiões e estados com carteira maior pesam mais. Grupos sem carteira ativa não aparecem. Se houver filtro de `tipoDivida`, os `pct_*` valem só para o que sobrou do filtro. As duas respostas trazem os `filtros` usados e a `ultima_data_base` dos dados.
+
+Os indicadores da US01 que ainda não existem (recuperação rápida, crédito caro e apostas) devem usar `dados_filtrados(filtros)` em `dados.py`, que já devolve a tabela filtrada.
+
+### Tipo de dívida
+
+A coluna `tipo_divida` não existe no CSV: `dados.py` calcula a partir da modalidade e da submodalidade (função `classificar_tipo_divida`), seguindo a regra de [`docs/pesquisa/regras-de-indicador.md`](../docs/pesquisa/regras-de-indicador.md):
+
+| Tipo       | O que entra                                                                                     |
+| ---------- | ----------------------------------------------------------------------------------------------- |
+| `critica`  | cartão de crédito (rotativo, fatura parcelada, não migrado), cheque especial, adiantamento a depositantes, capital de giro com teto rotativo |
+| `saudavel` | financiamentos imobiliários, financiamentos rurais, microcrédito, financiamentos agroindustriais |
+| `mista`    | todo o resto (consignado, crédito pessoal, veículos, compras no cartão sem juros etc.)         |
+
+Essa classificação é **temporária**: é uma proposta que ainda não foi validada pelo grupo e pode ser ajustada nas constantes no topo de `dados.py`.
 
 ## Documentação (Swagger)
 
