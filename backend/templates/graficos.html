@@ -19,8 +19,8 @@
       <div class="filtro-campo">
         <label for="filtro-regiao">Região</label>
         <select id="filtro-regiao" name="regiao">
-          <option value="todos">Todos</option>
-          <option value="norte" selected>Norte</option>
+          <option value="todos" selected>Todos</option>
+          <option value="norte">Norte</option>
           <option value="nordeste">Nordeste</option>
         </select>
       </div>
@@ -52,31 +52,49 @@
         </select>
       </div>
 
-      <div class="filtro-campo">
+       <div class="filtro-campo">
         <label for="filtro-periodo">Período</label>
         <select id="filtro-periodo" name="periodo">
             <option value="1_mes" selected>Último 1 mês</option>
-            <option value="2_meses">Últimos 2 meses</option>
-            <option value="3_meses">Últimos 3 meses</option>
-            <option value="4_meses">Últimos 4 meses</option>
-            <option value="5_meses">Últimos 5 meses</option>
-            <option value="6_meses">Últimos 6 meses</option>
-            <option value="7_meses">Últimos 7 meses</option>
-            <option value="8_meses">Últimos 8 meses</option>
-            <option value="9_meses">Últimos 9 meses</option>
-            <option value="10_meses">Últimos 10 meses</option>
-            <option value="11_meses">Últimos 11 meses</option>
-            <option value="12_meses">Último Ano</option>
+            <option value="2_mes">Últimos 2 meses</option>
+            <option value="3_mes">Últimos 3 meses</option>
+            <option value="4_mes">Últimos 4 meses</option>
+            <option value="5_mes">Últimos 5 meses</option>
+            <option value="6_mes">Últimos 6 meses</option>
+            <option value="7_mes">Últimos 7 meses</option>
+            <option value="8_mes">Últimos 8 meses</option>
+            <option value="9_mes">Últimos 9 meses</option>
+            <option value="10_mes">Últimos 10 meses</option>
+            <option value="11_mes">Últimos 11 meses</option>
+            <option value="12_mes">Últimos 12 meses</option>
         </select>
       </div>
 
       <div class="filtro-campo">
-        <label for="filtro-divida">Tipo de dívida</label>
+        <label for="filtro-prazo">Prazo</label>
+        <select id="filtro-prazo" name="periodo">
+            <option value="a_vencer_ate_90_dias" selected>Vencer até 90 dias</option>
+            <option value="a_vencer_de_91_ate_360_dias">Vencer de 91 a 360 dias</option>
+            <option value="a_vencer_de_361_ate_1080_dias">Vencer de 361 a 1080 dias</option>
+            <option value="a_vencer_de_1081_ate_1800_dias">Vencer de 1081 a 1800 dias</option>
+            <option value="a_vencer_de_1801_ate_5400_dias">Vencer de 1801 a 5400 dias</option>
+            <option value="a_vencer_acima_de_5400_dias">Vencer acima de 5400 dias</option>
+             <option value="vencido_de_15_ate_90_dias">Vencido 15 até 90 dias</option>
+            <option value="vencido_acima_de_90_dias">Vencido acima de 90 dias</option>
+
+        </select>
+      </div>
+
+      <div class="filtro-campo">
+        <label for="filtro-divida">Tipo de Carteira</label>
         <select id="filtro-divida" name="tipoDivida">
           <option value="" selected>Todos</option>
-          <option value="saudavel">Saudável</option>
-          <option value="critica">Crítica</option>
-          <option value="mista">Mista</option>
+          <option value="carteira_vencida">Carteira vencida</option>
+          <option value="carteira_a_vencer">Carteira a vencer</option>
+          <option value="carteira_ativa">Carteira ativa</option>
+          <option value="carteira_inadimplencia">Carteira inadimplência</option>
+          <option value="Ativo_problematico">Ativo Problemático</option>
+
         </select>
       </div>
       
