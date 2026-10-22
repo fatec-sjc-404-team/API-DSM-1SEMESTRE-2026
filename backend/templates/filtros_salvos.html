@@ -6,22 +6,22 @@
 {% endblock %}
 {% block header_title %}Filtros Salvos{% endblock %}
 {% block header_desc %}Gerencie suas composições de filtros e acesse rapidamente suas análises{% endblock %}
-
 {% block content %}
-
-<div class="main-card">
-    <div style="justify-content: space-between; display: flex; width: 100%; align-items: center;">
-        <div style="display: flex; align-items: center; justify-content: center;">
-            <img src="" alt="">
-            <h3>Filtros Salvos</h3>
-        </div>
-        <div>
-            <button class="button-filter">
-                <img src="{{ url_for('static', filename='images/Add.svg')}}" alt="plus_simbol">
-                Novo Filtro
-            </button>
-        </div>
+  <div class="main-card">
+    <div style="justify-content: space-between;
+                display: flex;
+                width: 100%;
+                align-items: center">
+      <div style="display: flex; align-items: center; justify-content: center;">
+        <h3>Filtros Salvos</h3>
+      </div>
+      <div>
+        <button class="button-filter">
+          <img src="{{ url_for('static', filename='images/Add.svg') }}"
+               alt="plus_simbol">
+          Novo Filtro
+        </button>
+      </div>
     </div>
-</div>
-
+  </div>
 {% endblock %}

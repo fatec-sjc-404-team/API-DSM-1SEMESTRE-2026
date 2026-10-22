@@ -4,7 +4,7 @@
   --borda: #e6e6e6;
 
   font-size: 14px;
-  color: var(--tx);
+  color: var(--texo);
 }
 
 .pg-graficos h3 {
@@ -48,7 +48,7 @@
 
 .pg-graficos select {
   padding: 9px 10px;
-  border: 1px solid var(--bd);
+  border: 1px solid var(--borda);
   border-radius: 6px;
   background: #fff;
   font: inherit;

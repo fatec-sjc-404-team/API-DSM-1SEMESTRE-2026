@@ -25,3 +25,6 @@ backend/Tratamento_Dados/saida/*
 
 #base de dados para gerar os graficos
 backend/graficos/scrdata_norte_nordeste_pessoa_fisica_baixa_renda.csv
+
+# Configuração pessoal de editor
+.vscode/
