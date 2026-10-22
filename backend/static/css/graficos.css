@@ -1,4 +1,3 @@
-
 .pg-graficos {
   --texo: #14213d;
   --mut: #8a8f98;
@@ -33,9 +32,9 @@
 }
 
 .pg-graficos .g-box {
-    position: relative;
-    width: 100%;
-    height: 300px;
+  position: relative;
+  width: 100%;
+  height: 300px;
 }
 
 .pg-graficos .g-rodape {
@@ -60,7 +59,7 @@
   justify-content: space-between;
   margin-bottom: 24px;
   font-family: Arial, sans-serif;
-  background-color: #ffffff;  
+  background-color: #ffffff;
   padding: 16px 20px;
   border-radius: 12px;
   max-width: 1200px;
