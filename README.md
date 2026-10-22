@@ -99,7 +99,7 @@ Para que qualquer User Story e Pull Request seja definido como concluído e seja
 
 - [ ] O código está integrado em `develop` (ou superior) via PR aprovado.
 - [ ] O PR teve ao menos 2 aprovações e todos os comentários foram resolvidos.
-- [ ] O CI passou com sucesso — Frontend CI e/ou Backend CI conforme os arquivos alterados.
+- [ ] O CI passou com sucesso — Backend CI conforme os arquivos alterados.
 - [ ] A branch de origem foi criada a partir de `develop` com o nome no padrão correto.
 - [ ] Os commits seguem o Conventional Commits com o ticket Jira no escopo.
 - [ ] Os critérios de aceite definidos no card do Backlog da Sprint foram atendidos.
@@ -154,21 +154,20 @@ O [Lefthook](https://github.com/evilmartians/lefthook) gerencia os hooks do Git 
 
 | Hook         | Quando executa      | O que faz                                                                                                                                                                              |
 | :----------- | :------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `pre-commit` | A cada `git commit` | Roda ESLint + Prettier nos arquivos `.ts`/`.tsx` do frontend e Ruff nos arquivos `.py` do backend que estão em stage. Arquivos corrigidos automaticamente são re-adicionados ao stage. |
+| `pre-commit` | A cada `git commit` | Roda Ruff nos arquivos `.py` do backend que estão em stage (o job está comentado no `lefthook.yml`). Arquivos corrigidos automaticamente são re-adicionados ao stage. |
 | `pre-push`   | A cada `git push`   | Valida se o nome da branch segue o padrão obrigatório. Bloqueia o push caso contrário.                                                                                                 |
 | `commit-msg` | A cada `git commit` | Valida se a mensagem de commit segue o padrão Conventional Commits com ticket Jira.                                                                                                    |
 
 ### Workflows Remotos — GitHub Actions
 
-Três workflows são executados no GitHub em resposta a pushes e pull requests:
+Dois workflows são executados no GitHub em resposta a pushes e pull requests:
 
 | Workflow              | Arquivo                             | Gatilho                                        | O que faz                                 |
 | :-------------------- | :---------------------------------- | :--------------------------------------------- | :---------------------------------------- |
-| **Frontend CI**       | `.github/workflows/frontend.yml`    | Push ou PR com mudanças em `frontend/**`       | Instala dependências, roda lint e build   |
 | **Backend CI**        | `.github/workflows/backend.yml`     | Push ou PR com mudanças em `backend/**`        | Roda `ruff check` e `ruff format --check` |
 | **Branch Name Check** | `.github/workflows/branch-name.yml` | Abertura de PR para `main`, `stg` ou `develop` | Valida o nome da branch de origem         |
 
-> Os workflows de frontend e backend são disparados **apenas quando arquivos da respectiva pasta mudam**, evitando execuções desnecessárias.
+> O workflow do backend é disparado **apenas quando arquivos de `backend/` mudam**, evitando execuções desnecessárias.
 
 ## Ferramentas
 
@@ -176,7 +175,6 @@ Três workflows são executados no GitHub em resposta a pushes e pull requests:
 | :--------------------------------------------------------------- | :---------------------------------- |
 | [Lefthook](https://github.com/evilmartians/lefthook)             | Gerenciador de hooks Git (local)    |
 | [commitlint](https://commitlint.js.org/)                         | Validação de mensagens de commit    |
-| [ESLint](https://eslint.org/) + [Prettier](https://prettier.io/) | Lint e formatação do frontend       |
 | [Ruff](https://docs.astral.sh/ruff/)                             | Lint e formatação do backend Python |
 | [GitHub Actions](https://docs.github.com/en/actions)             | CI remoto                           |
 

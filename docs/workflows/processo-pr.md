@@ -98,7 +98,7 @@ Para que qualquer User Story e Pull Request seja definido como concluído e seja
 
 - [ ] O código está integrado em `develop` (ou superior) via PR aprovado.
 - [ ] O PR teve ao menos 2 aprovações e todos os comentários foram resolvidos.
-- [ ] O CI passou com sucesso — Frontend CI e/ou Backend CI conforme os arquivos alterados.
+- [ ] O CI passou com sucesso — Backend CI conforme os arquivos alterados.
 - [ ] A branch de origem foi criada a partir de `develop` com o nome no padrão correto.
 - [ ] Os commits seguem o Conventional Commits com o ticket Jira no escopo.
 - [ ] Os critérios de aceite definidos no card do Backlog da Sprint foram atendidos.

@@ -1,9 +1,0 @@
-{
-  "extends": "astro/tsconfigs/base",
-  "compilerOptions": {
-    "strict": false,
-    "noImplicitAny": false,
-    "skipLibCheck": true,
-    "checkJs": false
-  }
-}

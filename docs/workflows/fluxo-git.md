@@ -85,7 +85,7 @@ O [Lefthook](https://github.com/evilmartians/lefthook) executa validações auto
 
 | Hook         | Quando executa      | O que faz                                                                                                                                    |
 | :----------- | :------------------ | :------------------------------------------------------------------------------------------------------------------------------------------- |
-| `pre-commit` | A cada `git commit` | Roda ESLint + Prettier nos `.ts`/`.tsx` do frontend e Ruff nos `.py` do backend que estão em stage. Correções automáticas voltam ao stage.   |
+| `pre-commit` | A cada `git commit` | Roda Ruff nos `.py` do backend que estão em stage (o job está comentado no `lefthook.yml`). Correções automáticas voltam ao stage.   |
 | `pre-push`   | A cada `git push`   | Valida se o nome da branch segue o padrão obrigatório. Bloqueia o push caso contrário.                                                       |
 | `commit-msg` | A cada `git commit` | Valida se a mensagem segue o Conventional Commits com escopo Jira obrigatório via commitlint.                                                |
 
