@@ -112,6 +112,6 @@
         </main>
       </div>
     </div>
-    <script src="{{ url_for('static', filename='java.js') }}"></script>
+    {% block scripts %}{% endblock %}
   </body>
 </html>
