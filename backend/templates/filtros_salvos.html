@@ -7,21 +7,162 @@
 {% block header_title %}Filtros Salvos{% endblock %}
 {% block header_desc %}Gerencie suas composições de filtros e acesse rapidamente suas análises{% endblock %}
 {% block content %}
-  <div class="main-card">
-    <div style="justify-content: space-between;
-                display: flex;
-                width: 100%;
-                align-items: center">
+<div class="main-card">
+    <div class="filtros-header">
       <div style="display: flex; align-items: center; justify-content: center;">
-        <h3>Filtros Salvos</h3>
+        <h3 style="margin: 0;">Filtros Salvos</h3>
       </div>
       <div>
         <button class="button-filter">
-          <img src="{{ url_for('static', filename='images/Add.svg') }}"
-               alt="plus_simbol">
+          <img src="{{ url_for('static', filename='images/Add.svg') }}" alt="plus_simbol">
           Novo Filtro
         </button>
       </div>
     </div>
+    <table class="tabela-filtros-salvos">
+      <thead>
+        <tr>
+          <th>Nome do filtro</th>
+          <th>Região</th>
+          <th>Estado(s)</th>
+          <th>Período</th>
+          <th>Tipo de dívida</th>
+          <th>Apostas / Bets</th>
+          <th>Criado em</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Nordeste — dívida crítica alta</td>
+          <td>Nordeste</td>
+          <td>BA, PE, RN</td>
+          <td>Últimos 12 meses</td>
+          <td>Crítica</td>
+          <td>Com apostas</td>
+          <td>28/08/2025 09:12</td>
+          <td>
+            <span class="material-symbols-outlined" aria-hidden="true">play_arrow</span>
+            <span class="material-symbols-outlined" aria-hidden="true">edit</span>
+            <span class="material-symbols-outlined" aria-hidden="true">delete</span>
+          </td>
+        </tr>
+        <tr>
+          <td>Norte — potencial alto</td>
+          <td>Norte</td>
+          <td>AC, AM, PA</td>
+          <td>Últimos 6 meses</td>
+          <td>Saudável</td>
+          <td>Sem apostas</td>
+          <td>20/08/2025 14:50</td>
+          <td>
+            <span class="material-symbols-outlined" aria-hidden="true">play_arrow</span>
+            <span class="material-symbols-outlined" aria-hidden="true">edit</span>
+            <span class="material-symbols-outlined" aria-hidden="true">delete</span>
+          </td>
+        </tr>
+        <tr>
+          <td>Nordeste — crédito caro</td>
+          <td>Nordeste</td>
+          <td>CE, RN, PB</td>
+          <td>Últimos 12 meses</td>
+          <td>Mista</td>
+          <td>Com apostas</td>
+          <td>15/08/2025 11:03</td>
+          <td>
+            <span class="material-symbols-outlined" aria-hidden="true">play_arrow</span>
+            <span class="material-symbols-outlined" aria-hidden="true">edit</span>
+            <span class="material-symbols-outlined" aria-hidden="true">delete</span>
+          </td>
+        </tr>
+        <tr>
+          <td>Norte — inadimplência rápida</td>
+          <td>Norte</td>
+          <td>PA, RO, TO</td>
+          <td>Últimos 12 meses</td>
+          <td>Mista</td>
+          <td>Sem apostas</td>
+          <td>10/08/2025 16:22</td>
+          <td>
+            <span class="material-symbols-outlined" aria-hidden="true">play_arrow</span>
+            <span class="material-symbols-outlined" aria-hidden="true">edit</span>
+            <span class="material-symbols-outlined" aria-hidden="true">delete</span>
+          </td>
+        </tr>
+        <tr>
+          <td>Amazonas — análise completa</td>
+          <td>Norte</td>
+          <td>AM</td>
+          <td>Últimos 12 meses</td>
+          <td>Todos</td>
+          <td>Todos</td>
+          <td>05/08/2025 10:17</td>
+          <td>
+            <span class="material-symbols-outlined" aria-hidden="true">play_arrow</span>
+            <span class="material-symbols-outlined" aria-hidden="true">edit</span>
+            <span class="material-symbols-outlined" aria-hidden="true">delete</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="main-card">
+    <div class="filtros-header">
+      <div>
+        <h3 style="margin: 0;">Base de Dados</h3>
+        <p class="base-descricao">Fontes utilizadas pelo sistema e status de atualização</p>
+      </div>
+      <div class="base-atualizacao">
+        <span class="material-symbols-outlined" aria-hidden="true">sync</span>
+        Atualização automática semanal
+      </div>
+    </div>
+    <table class="tabela-base-dados">
+      <thead>
+        <tr>
+          <th>Fonte</th>
+          <th>Descrição</th>
+          <th>Status</th>
+          <th>Última atualização</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="base-fonte">BCB</td>
+          <td>Dados de crédito, inadimplência e operações financeiras.</td>
+          <td><span class="base-status atualizado">Atualizado</span></td>
+          <td>04/09/2025 03:12</td>
+        </tr>
+        <tr>
+          <td class="base-fonte">IBGE</td>
+          <td>Dados socioeconômicos e demográficos das regiões.</td>
+          <td><span class="base-status atualizado">Atualizado</span></td>
+          <td>03/09/2025 22:45</td>
+        </tr>
+        <tr>
+          <td class="base-fonte">BACEN</td>
+          <td>Informações sobre crédito, taxas e instituições financeiras.</td>
+          <td><span class="base-status atualizado">Atualizado</span></td>
+          <td>03/09/2025 18:20</td>
+        </tr>
+        <tr>
+          <td class="base-fonte">SPA</td>
+          <td>Dados sobre apostas e bets (volume, frequência, perfil).</td>
+          <td><span class="base-status atualizado">Atualizado</span></td>
+          <td>02/09/2025 16:10</td>
+        </tr>
+        <tr>
+          <td class="base-fonte">Data Senado</td>
+          <td>Dados legislativos e indicadores regionais.</td>
+          <td><span class="base-status em-atualizacao">Em atualização</span></td>
+          <td>02/09/2025 09:37</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="base-aviso">
+      <span class="material-symbols-outlined" aria-hidden="true">info</span>
+      A base de dados é atualizada automaticamente toda semana. Caso alguma fonte esteja indisponível, o sistema continua utilizando os dados disponíveis da semana anterior.
+    </p>
   </div>
 {% endblock %}
