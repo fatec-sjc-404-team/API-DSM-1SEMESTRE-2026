@@ -369,6 +369,7 @@ Após esse passo, os comandos abaixo ficam disponíveis globalmente no terminal:
 - [Processo de Pull Request, Code Review e Definition of Done](docs/workflows/processo-pr.md)
 - [Jira — Fluxo de Trabalho e Gestão de Cards](docs/workflows/jira.md)
 - [Planejamento das 3 Sprints](docs/produto/planejamento_sprints.md)
+- [Especificação dos Filtros da Página de Gráficos](docs/produto/filtros-pagina-graficos.md)
 - [Estudo do Flask](docs/pesquisa/estudo-do-flask.md)
 - [Raspagem de Dados](docs/pesquisa/raspagem-de-dados.md)
 - [Pesquisa sobre Streamlit](docs/pesquisa/pesquisa-streamlit.md)

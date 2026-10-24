@@ -55,14 +55,14 @@
 }
 
 .painel-filtros {
-  width: fit-content;
+  width: 100%;
+  box-sizing: border-box;
   justify-content: space-between;
   margin-bottom: 24px;
   font-family: Arial, sans-serif;
   background-color: #ffffff;
   padding: 16px 20px;
   border-radius: 12px;
-  max-width: 1200px;
 }
 
 .form_box {
