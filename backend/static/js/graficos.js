@@ -33,6 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
     atualizarEstados();
   }
 
+  
   const VERDE = '#2e7d32';
   const ESTADOS = {
     AL: 57.4,
