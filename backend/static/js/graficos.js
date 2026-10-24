@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const grupoEstadoSelecionado = Array.from(
         filtroEstado.querySelectorAll('optgroup[data-regiao]'),
       ).find((grupo) =>
-        Array.from(grupo.options).some(
+        Array.from(grupo.querySelectorAll('option')).some(
           (opcao) => opcao.value === filtroEstado.value,
         ),
       );
@@ -33,7 +33,6 @@ document.addEventListener('DOMContentLoaded', () => {
     atualizarEstados();
   }
 
-  
   const VERDE = '#2e7d32';
   const ESTADOS = {
     AL: 57.4,
