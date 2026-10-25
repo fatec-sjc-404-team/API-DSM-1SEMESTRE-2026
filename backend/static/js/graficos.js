@@ -1,5 +1,38 @@
 // Gráficos da página "Gráficos" (Chart.js é carregado no base.html).
 document.addEventListener('DOMContentLoaded', () => {
+  const filtroRegiao = document.getElementById('filtro-regiao');
+  const filtroEstado = document.getElementById('filtro-estado');
+
+  if (filtroRegiao && filtroEstado) {
+    const atualizarEstados = () => {
+      const regiaoSelecionada = filtroRegiao.value;
+
+      filtroEstado.querySelectorAll('optgroup[data-regiao]').forEach((grupo) => {
+        grupo.hidden = regiaoSelecionada !== 'todos'
+          && grupo.dataset.regiao !== regiaoSelecionada;
+      });
+
+      const grupoEstadoSelecionado = Array.from(
+        filtroEstado.querySelectorAll('optgroup[data-regiao]'),
+      ).find((grupo) =>
+        Array.from(grupo.querySelectorAll('option')).some(
+          (opcao) => opcao.value === filtroEstado.value,
+        ),
+      );
+
+      if (
+        grupoEstadoSelecionado
+        && regiaoSelecionada !== 'todos'
+        && grupoEstadoSelecionado.dataset.regiao !== regiaoSelecionada
+      ) {
+        filtroEstado.value = '';
+      }
+    };
+
+    filtroRegiao.addEventListener('change', atualizarEstados);
+    atualizarEstados();
+  }
+
   const VERDE = '#2e7d32';
   const ESTADOS = {
     AL: 57.4,

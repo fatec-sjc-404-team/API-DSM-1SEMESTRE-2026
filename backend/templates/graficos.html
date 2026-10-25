@@ -22,7 +22,7 @@
           <label for="filtro-estado">Estado</label>
           <select id="filtro-estado" name="estado">
             <option value="" selected>Todos</option>
-            <optgroup label="Região Norte">
+            <optgroup label="Região Norte" data-regiao="norte">
               <option value="AC">AC - Acre</option>
               <option value="AM">AM - Amazonas</option>
               <option value="AP">AP - Amapá</option>
@@ -31,7 +31,7 @@
               <option value="RR">RR - Roraima</option>
               <option value="TO">TO - Tocantins</option>
             </optgroup>
-            <optgroup label="Região Nordeste">
+            <optgroup label="Região Nordeste" data-regiao="nordeste">
               <option value="AL">AL - Alagoas</option>
               <option value="BA">BA - Bahia</option>
               <option value="CE">CE - Ceará</option>
@@ -64,26 +64,27 @@
         <div class="filtro-campo">
           <label for="filtro-prazo">Prazo</label>
           <select id="filtro-prazo" name="prazo">
-            <option value="" selected>Todos os prazos</option>
-            <option value="a_vencer_ate_90_dias">Vencer até 90 dias</option>
-            <option value="a_vencer_91_ate_360_dias">Vencer 91 a 360 dias</option>
-            <option value="a_vencer_361_ate_1080_dias">Vencer 361 a 1080 dias</option>
-            <option value="a_vencer_1081_ate_1800_dias">Vencer 1081 a 1800 dias</option>
-            <option value="a_vencer_1801_ate_5400_dias">Vencer de 1801 a 5400 dias</option>
-            <option value="a_vencer_acima_de_5400_dias">A vencer acima de 5400 dias</option>
+            <option value="" selected>Todos</option>
+            <option value="a_vencer_ate_90_dias">Até 90 dias</option>
+            <option value="a_vencer_91_ate_360_dias">91–360 dias</option>
+            <option value="a_vencer_361_ate_1080_dias">361–1.080 dias</option>
+            <option value="a_vencer_1081_ate_1800_dias">1.081–1.800 dias</option>
+            <option value="a_vencer_1801_ate_5400_dias">1.801–5.400 dias</option>
+            <option value="a_vencer_acima_de_5400_dias">Acima de 5.400 dias</option>
+            <option value="vencido_15_a_90_dias">Vencidos: 15–90 dias</option>
+            <option value="vencido_acima_de_90_dias">Vencidos: acima de 90 dias</option>
           </select>
         </div>
         <div class="filtro-campo">
-          <label for="filtro-divida">Tipo de Carteira</label>
+          <label for="filtro-divida">Indicador</label>
           <select id="filtro-divida" name="tipoDivida">
-            <option value="" selected>Todas as carteiras</option>
-            <option value="carteira_ativa">Carteira Ativa</option>
-            <option value="carteira_a_vencer">Carteira a Vencer</option>
-            <option value="carteira_vencida">Carteira Vencida</option>
-            <option value="carteira_inadimplente">Carteira Inadimplente</option>
-            <option value="ativo_problematico">Ativo Problematico</option>
-            <option value="vencido_ate_de_15_dias">Vencido 15 até 90 dias</option>
-            <option value="vencido_acima_de_90_dias">Vencido Acima de 90 dias</option>
+            <option value="" selected>Todos</option>
+            <option value="carteira_inadimplente">Carteira em inadimplência</option>
+            <option value="numero_operacoes">Número de operações</option>
+            <option value="carteira_a_vencer">Carteira a vencer</option>
+            <option value="carteira_vencida">Carteira vencida</option>
+            <option value="carteira_ativa">Carteira ativa</option>
+            <option value="ativo_problematico">Ativo problemático</option>
           </select>
         </div>
         <div class="filtro-acao-principal">
@@ -105,6 +106,7 @@
       </div>
     </form>
   </div>
+  
   <div class="pg-graficos">
     <div class="g-card">
       <div class="g-hd">
