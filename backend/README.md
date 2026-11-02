@@ -215,6 +215,10 @@ tabela `BCB`, com as 24 colunas do CSV final. Também adiciona uma
 coluna técnica `id` como chave primária, sem precisar que ela exista no CSV.
 Os valores monetários usam `DECIMAL(20, 2)` para manter precisão decimal, e o
 banco/tabela usam `utf8mb4` para armazenar texto.
+As colunas de operações e valores monetários aceitam `NULL`, e uma restrição
+`CHECK` rejeita valores negativos. O importador transforma qualquer valor
+numérico negativo do CSV em `NULL`, preservando as linhas sem registrar
+negativos nem substituir os valores por zero.
 
 Para criar o modelo pelo MySQL Workbench:
 
@@ -223,8 +227,9 @@ Para criar o modelo pelo MySQL Workbench:
 3. Atualize a lista de schemas; o banco `AvoCredit` e a tabela `BCB`
    deverão aparecer.
 
-O script não apaga nem altera tabelas já existentes. `CREATE TABLE IF NOT
-EXISTS` não atualiza uma tabela que já tenha sido criada com outra estrutura.
+`CREATE TABLE IF NOT EXISTS` não recria uma tabela existente. O `ALTER TABLE`
+ao final do script permite `NULL` nas colunas numéricas também em uma tabela
+existente; os dados já gravados não são apagados por essa alteração.
 
 ### Importar o CSV para o MySQL
 
