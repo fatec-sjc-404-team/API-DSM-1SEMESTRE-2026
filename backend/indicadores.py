@@ -19,6 +19,8 @@ def calcular_indicadores(dados: pd.DataFrame) -> dict[str, float | None]:
     - pct_recuperacao_rapida: quanto da carteira vencida ainda está no atraso
       inicial (15 a 90 dias), em % (indicador de recuperação rápida). Fica None
       se o grupo não tiver nada vencido.
+    - indicador_geral: nota de 0 a 100 que junta os indicadores acima
+      (veja calcular_indicador_geral).
 
     Os valores são somados antes de dividir, então grupos grandes pesam mais que
     os pequenos. Devolve {} se o grupo não tiver carteira ativa.
@@ -41,6 +43,7 @@ def calcular_indicadores(dados: pd.DataFrame) -> dict[str, float | None]:
         dados["carteira_credito_caro"].sum(), carteira_ativa
     )
     indicadores["pct_recuperacao_rapida"] = calcular_recuperacao_rapida(dados)
+    indicadores["indicador_geral"] = calcular_indicador_geral(indicadores)
     return indicadores
 
 
@@ -61,6 +64,37 @@ def calcular_recuperacao_rapida(dados: pd.DataFrame) -> float | None:
     if vencido <= 0:
         return None
     return _pct(atraso_inicial, vencido)
+
+
+def calcular_indicador_geral(indicadores: dict[str, float | None]) -> float | None:
+    """Junta os indicadores menores em uma nota de 0 a 100 (maior é melhor).
+
+    Cada indicador vira uma nota de 0 a 100 e o geral é a média simples delas:
+    - crédito caro: 100 - pct_credito_caro (menos crédito caro, nota maior).
+    - dívida saudável x crítica: 50 + (pct_saudavel - pct_critica) / 2, ou seja,
+      100 se for tudo saudável, 0 se for tudo crítico e 50 se for tudo misto.
+    - recuperação rápida: o próprio pct_recuperacao_rapida. Fica de fora da
+      média quando é None (nada vencido).
+    - endividamento por apostas: ainda não existe (depende dos dados da US08).
+      Quando existir, entra aqui como mais uma nota.
+
+    Devolve None se nenhuma nota puder ser calculada.
+    """
+    notas = []
+
+    if indicadores.get("pct_credito_caro") is not None:
+        notas.append(100 - indicadores["pct_credito_caro"])
+
+    if indicadores.get("pct_saudavel") is not None:
+        saldo = indicadores["pct_saudavel"] - indicadores["pct_critica"]
+        notas.append(50 + saldo / 2)
+
+    if indicadores.get("pct_recuperacao_rapida") is not None:
+        notas.append(indicadores["pct_recuperacao_rapida"])
+
+    if not notas:
+        return None
+    return round(sum(notas) / len(notas), 2)
 
 
 def consultar_indicadores(filtros: Filtros) -> dict:

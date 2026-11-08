@@ -1,7 +1,9 @@
 import pandas as pd
+import pytest
 
 from filtros import Filtros
 from indicadores import (
+    calcular_indicador_geral,
     calcular_indicadores,
     calcular_recuperacao_rapida,
     consultar_indicadores,
@@ -41,6 +43,8 @@ def test_calcular_indicadores_soma_antes_de_dividir() -> None:
         "pct_mista": 0.0,
         "pct_credito_caro": 6.0,
         "pct_recuperacao_rapida": 50.0,
+        # notas: crédito caro 94, saudável x crítica 90, recuperação 50
+        "indicador_geral": 78.0,
     }
 
 
@@ -55,6 +59,36 @@ def test_recuperacao_rapida_e_o_atraso_inicial_sobre_todo_o_vencido() -> None:
 
 def test_recuperacao_rapida_sem_nada_vencido_nao_se_aplica() -> None:
     assert calcular_recuperacao_rapida(_grupo(carteira_ativa=[100.0])) is None
+
+
+def test_sem_nada_vencido_o_geral_usa_so_as_outras_notas() -> None:
+    indicadores = calcular_indicadores(
+        _grupo(
+            tipo_divida=["saudavel", "critica"],
+            carteira_ativa=[800.0, 200.0],
+            carteira_credito_caro=[0.0, 100.0],
+        )
+    )
+
+    assert indicadores["pct_recuperacao_rapida"] is None
+    # notas: crédito caro 90, saudável x crítica 50 + (80 - 20) / 2 = 80
+    assert indicadores["indicador_geral"] == 85.0
+
+
+@pytest.mark.parametrize(
+    ("pct_saudavel", "pct_critica", "nota"),
+    [(100.0, 0.0, 100.0), (0.0, 100.0, 0.0), (0.0, 0.0, 50.0), (50.0, 50.0, 50.0)],
+)
+def test_nota_de_divida_saudavel_x_critica(
+    pct_saudavel: float, pct_critica: float, nota: float
+) -> None:
+    indicadores = {"pct_saudavel": pct_saudavel, "pct_critica": pct_critica}
+
+    assert calcular_indicador_geral(indicadores) == nota
+
+
+def test_geral_sem_nenhuma_nota_devolve_none() -> None:
+    assert calcular_indicador_geral({}) is None
 
 
 def test_calcular_indicadores_sem_carteira_ativa_devolve_vazio() -> None:
@@ -84,6 +118,7 @@ def test_sem_filtro_calcula_geral_por_regiao_e_por_estado(fonte_falsa) -> None:
         "pct_mista": 37.74,
         "pct_credito_caro": 5.66,
         "pct_recuperacao_rapida": 55.37,  # 526 / (526 + 424)
+        "indicador_geral": 75.06,  # (94.34 + 75.47 + 55.37) / 3
     }
     assert resultado["por_regiao"]["norte"] == {
         "carteira_ativa": 200.0,
@@ -93,6 +128,7 @@ def test_sem_filtro_calcula_geral_por_regiao_e_por_estado(fonte_falsa) -> None:
         "pct_mista": 0.0,
         "pct_credito_caro": 100.0,
         "pct_recuperacao_rapida": 62.5,  # 50 / (50 + 30)
+        "indicador_geral": 20.83,  # (0 + 0 + 62.5) / 3
     }
     assert resultado["por_regiao"]["nordeste"] == {
         "carteira_ativa": 5100.0,
@@ -102,6 +138,7 @@ def test_sem_filtro_calcula_geral_por_regiao_e_por_estado(fonte_falsa) -> None:
         "pct_mista": 39.22,
         "pct_credito_caro": 1.96,
         "pct_recuperacao_rapida": 54.71,  # 476 / (476 + 394)
+        "indicador_geral": 77.06,  # (98.04 + 78.43 + 54.71) / 3
     }
     assert sorted(resultado["por_estado"]) == ["AC", "BA", "CE"]
     assert resultado["por_estado"]["BA"]["taxa_inadimplencia"] == 11.29
@@ -147,6 +184,7 @@ def test_periodo_de_um_mes_usa_so_o_ultimo_mes(fonte_falsa) -> None:
         "pct_mista": 62.5,
         "pct_credito_caro": 6.25,
         "pct_recuperacao_rapida": 56.72,  # 346 / (346 + 264)
+        "indicador_geral": 70.99,  # (93.75 + 62.5 + 56.72) / 3
     }
 
 
