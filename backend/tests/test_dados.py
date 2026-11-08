@@ -69,6 +69,8 @@ def test_carregar_bcb_soma_por_mes_uf_e_tipo_de_divida(fonte_falsa) -> None:
         "tipo_divida",
         "carteira_ativa",
         "carteira_inadimplencia",
+        "vencido_de_15_ate_90_dias",
+        "vencido_acima_de_90_dias",
         "carteira_credito_caro",
     ]
     # BA em jul/2026: imobiliário (saudável) e cheque especial (crítica) separados
@@ -85,6 +87,8 @@ def test_carregar_bcb_separa_a_carteira_de_credito_caro(fonte_falsa) -> None:
     assert tabela["carteira_credito_caro"].sum() == 300.0
     imobiliario = tabela[tabela["tipo_divida"] == "saudavel"]
     assert imobiliario["carteira_credito_caro"].sum() == 0.0
+    assert tabela["vencido_de_15_ate_90_dias"].sum() == 526.0
+    assert tabela["vencido_acima_de_90_dias"].sum() == 424.0
 
 
 def test_ultima_data_base(fonte_falsa) -> None:
@@ -117,9 +121,10 @@ def test_carregar_bcb_le_o_csv_quando_nao_ha_mysql_configurado(
 ) -> None:
     csv = tmp_path / "dados.csv"
     csv.write_text(
-        "data_base;uf;modalidade;submodalidade;carteira_ativa;carteira_inadimplencia;extra\n"
-        "2026-07-31;BA;Empréstimos;Cheque especial;1000,50;100,25;x\n"
-        "2026-07-31;BA;Empréstimos;Cheque especial;500,00;50,00;y\n",
+        "data_base;uf;modalidade;submodalidade;carteira_ativa;carteira_inadimplencia;"
+        "vencido_de_15_ate_90_dias;vencido_acima_de_90_dias;extra\n"
+        "2026-07-31;BA;Empréstimos;Cheque especial;1000,50;100,25;30,00;100,25;x\n"
+        "2026-07-31;BA;Empréstimos;Cheque especial;500,00;50,00;10,00;50,00;y\n",
         encoding="utf-8",
     )
     monkeypatch.delenv("DB_USER", raising=False)
@@ -132,6 +137,7 @@ def test_carregar_bcb_le_o_csv_quando_nao_ha_mysql_configurado(
     assert tabela.loc[0, "tipo_divida"] == "critica"
     assert tabela.loc[0, "carteira_ativa"] == pytest.approx(1500.50)
     assert tabela.loc[0, "carteira_inadimplencia"] == pytest.approx(150.25)
+    assert tabela.loc[0, "vencido_de_15_ate_90_dias"] == pytest.approx(40.0)
     assert tabela.loc[0, "carteira_credito_caro"] == pytest.approx(1500.50)
     dados.limpar_cache()
 
@@ -168,6 +174,8 @@ def test_carregar_bcb_normaliza_a_uf(monkeypatch: pytest.MonkeyPatch) -> None:
             "submodalidade": ["Cheque especial", "Cheque especial"],
             "carteira_ativa": [100.0, 50.0],
             "carteira_inadimplencia": [10.0, 5.0],
+            "vencido_de_15_ate_90_dias": [2.0, 1.0],
+            "vencido_acima_de_90_dias": [10.0, 5.0],
         }
     )
     monkeypatch.setattr(dados, "_ler_fonte", lambda: bruto)

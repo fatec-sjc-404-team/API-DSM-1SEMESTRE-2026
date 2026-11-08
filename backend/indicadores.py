@@ -16,6 +16,9 @@ def calcular_indicadores(dados: pd.DataFrame) -> dict[str, float | None]:
       tipo de dívida, em % (indicador de dívida saudável x crítica).
     - pct_credito_caro: quanto da carteira ativa é rotativo do cartão ou cheque
       especial, em % (indicador de crédito caro).
+    - pct_recuperacao_rapida: quanto da carteira vencida ainda está no atraso
+      inicial (15 a 90 dias), em % (indicador de recuperação rápida). Fica None
+      se o grupo não tiver nada vencido.
 
     Os valores são somados antes de dividir, então grupos grandes pesam mais que
     os pequenos. Devolve {} se o grupo não tiver carteira ativa.
@@ -37,7 +40,27 @@ def calcular_indicadores(dados: pd.DataFrame) -> dict[str, float | None]:
     indicadores["pct_credito_caro"] = _pct(
         dados["carteira_credito_caro"].sum(), carteira_ativa
     )
+    indicadores["pct_recuperacao_rapida"] = calcular_recuperacao_rapida(dados)
     return indicadores
+
+
+def calcular_recuperacao_rapida(dados: pd.DataFrame) -> float | None:
+    """Parte da carteira vencida que está no atraso inicial (15 a 90 dias), em %.
+
+    A regra de docs/pesquisa/regras-de-indicador.md olha a data de pagamento de
+    cada dívida (quitada até 20 dias depois do vencimento). Os dados do BCB não
+    têm datas de pagamento, só o saldo vencido por faixa de atraso, e a primeira
+    faixa já começa em 15 dias. Então usamos a faixa de 15 a 90 dias como sinal
+    de atraso que ainda pode ser recuperado: quanto maior a porcentagem, menos
+    dívida virou atraso longo (acima de 90 dias).
+
+    Devolve None se não houver nada vencido, porque aí o indicador não se aplica.
+    """
+    atraso_inicial = dados["vencido_de_15_ate_90_dias"].sum()
+    vencido = atraso_inicial + dados["vencido_acima_de_90_dias"].sum()
+    if vencido <= 0:
+        return None
+    return _pct(atraso_inicial, vencido)
 
 
 def consultar_indicadores(filtros: Filtros) -> dict:

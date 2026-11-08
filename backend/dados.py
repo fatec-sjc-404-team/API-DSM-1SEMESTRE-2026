@@ -14,7 +14,14 @@ ARQUIVO_CSV = (
     / "scrdata_norte_nordeste_pessoa_fisica_baixa_renda.csv"
 )
 
-COLUNAS_VALORES = ["carteira_ativa", "carteira_inadimplencia"]
+# Colunas de valor lidas da fonte. As faixas de vencido são usadas no indicador
+# de recuperação rápida (veja indicadores.py).
+COLUNAS_VALORES = [
+    "carteira_ativa",
+    "carteira_inadimplencia",
+    "vencido_de_15_ate_90_dias",
+    "vencido_acima_de_90_dias",
+]
 
 # Colunas que a /api/dados devolve em cada linha.
 COLUNAS_RESPOSTA = [
@@ -99,9 +106,9 @@ def eh_credito_caro(submodalidade: str) -> bool:
 def carregar_bcb() -> pd.DataFrame:
     """Dados do BCB somados por mês, UF e tipo de dívida.
 
-    Colunas: data_base, uf, tipo_divida, carteira_ativa, carteira_inadimplencia
-    e carteira_credito_caro (parte da carteira ativa que é crédito caro, veja
-    eh_credito_caro).
+    Colunas: data_base, uf, tipo_divida, carteira_ativa, carteira_inadimplencia,
+    vencido_de_15_ate_90_dias, vencido_acima_de_90_dias e carteira_credito_caro
+    (parte da carteira ativa que é crédito caro, veja eh_credito_caro).
     Lê do MySQL se DB_USER estiver definido; senão, do CSV do tratamento de dados.
     """
     global _cache

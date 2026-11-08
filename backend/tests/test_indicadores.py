@@ -1,7 +1,11 @@
 import pandas as pd
 
 from filtros import Filtros
-from indicadores import calcular_indicadores, consultar_indicadores
+from indicadores import (
+    calcular_indicadores,
+    calcular_recuperacao_rapida,
+    consultar_indicadores,
+)
 
 
 def _grupo(**colunas) -> pd.DataFrame:
@@ -10,6 +14,8 @@ def _grupo(**colunas) -> pd.DataFrame:
         "tipo_divida": ["mista"],
         "carteira_ativa": [0.0],
         "carteira_inadimplencia": [0.0],
+        "vencido_de_15_ate_90_dias": [0.0],
+        "vencido_acima_de_90_dias": [0.0],
         "carteira_credito_caro": [0.0],
     }
     tamanho = len(next(iter(colunas.values())))
@@ -22,6 +28,8 @@ def test_calcular_indicadores_soma_antes_de_dividir() -> None:
         tipo_divida=["saudavel", "critica"],
         carteira_ativa=[900.0, 100.0],
         carteira_inadimplencia=[0.0, 50.0],
+        vencido_de_15_ate_90_dias=[30.0, 20.0],
+        vencido_acima_de_90_dias=[0.0, 50.0],
         carteira_credito_caro=[0.0, 60.0],
     )
 
@@ -32,7 +40,21 @@ def test_calcular_indicadores_soma_antes_de_dividir() -> None:
         "pct_critica": 10.0,
         "pct_mista": 0.0,
         "pct_credito_caro": 6.0,
+        "pct_recuperacao_rapida": 50.0,
     }
+
+
+def test_recuperacao_rapida_e_o_atraso_inicial_sobre_todo_o_vencido() -> None:
+    dados = _grupo(
+        vencido_de_15_ate_90_dias=[60.0, 20.0],
+        vencido_acima_de_90_dias=[10.0, 10.0],
+    )
+
+    assert calcular_recuperacao_rapida(dados) == 80.0
+
+
+def test_recuperacao_rapida_sem_nada_vencido_nao_se_aplica() -> None:
+    assert calcular_recuperacao_rapida(_grupo(carteira_ativa=[100.0])) is None
 
 
 def test_calcular_indicadores_sem_carteira_ativa_devolve_vazio() -> None:
@@ -61,6 +83,7 @@ def test_sem_filtro_calcula_geral_por_regiao_e_por_estado(fonte_falsa) -> None:
         "pct_critica": 5.66,
         "pct_mista": 37.74,
         "pct_credito_caro": 5.66,
+        "pct_recuperacao_rapida": 55.37,  # 526 / (526 + 424)
     }
     assert resultado["por_regiao"]["norte"] == {
         "carteira_ativa": 200.0,
@@ -69,6 +92,7 @@ def test_sem_filtro_calcula_geral_por_regiao_e_por_estado(fonte_falsa) -> None:
         "pct_critica": 100.0,
         "pct_mista": 0.0,
         "pct_credito_caro": 100.0,
+        "pct_recuperacao_rapida": 62.5,  # 50 / (50 + 30)
     }
     assert resultado["por_regiao"]["nordeste"] == {
         "carteira_ativa": 5100.0,
@@ -77,6 +101,7 @@ def test_sem_filtro_calcula_geral_por_regiao_e_por_estado(fonte_falsa) -> None:
         "pct_critica": 1.96,
         "pct_mista": 39.22,
         "pct_credito_caro": 1.96,
+        "pct_recuperacao_rapida": 54.71,  # 476 / (476 + 394)
     }
     assert sorted(resultado["por_estado"]) == ["AC", "BA", "CE"]
     assert resultado["por_estado"]["BA"]["taxa_inadimplencia"] == 11.29
@@ -121,6 +146,7 @@ def test_periodo_de_um_mes_usa_so_o_ultimo_mes(fonte_falsa) -> None:
         "pct_critica": 6.25,
         "pct_mista": 62.5,
         "pct_credito_caro": 6.25,
+        "pct_recuperacao_rapida": 56.72,  # 346 / (346 + 264)
     }
 
 
