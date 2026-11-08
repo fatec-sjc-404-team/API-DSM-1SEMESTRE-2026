@@ -145,6 +145,21 @@ def test_sem_filtro_calcula_geral_por_regiao_e_por_estado(fonte_falsa) -> None:
     assert resultado["por_estado"]["CE"]["taxa_inadimplencia"] == 2.2
 
 
+def test_por_mes_traz_os_indicadores_de_cada_mes_em_ordem(fonte_falsa) -> None:
+    por_mes = consultar_indicadores(Filtros(regiao="nordeste"))["por_mes"]
+
+    assert list(por_mes) == ["2026-05-31", "2026-06-30", "2026-07-31"]
+    assert por_mes["2026-05-31"]["carteira_ativa"] == 1000.0
+    # julho no Nordeste: imobiliário BA + cheque especial BA + consignado CE
+    assert por_mes["2026-07-31"]["carteira_ativa"] == 3100.0
+
+
+def test_por_mes_respeita_o_filtro_de_periodo(fonte_falsa) -> None:
+    por_mes = consultar_indicadores(Filtros(meses=2))["por_mes"]
+
+    assert list(por_mes) == ["2026-06-30", "2026-07-31"]
+
+
 def test_resposta_traz_os_filtros_usados_e_a_data_mais_recente(fonte_falsa) -> None:
     resultado = consultar_indicadores(Filtros(regiao="norte", meses=2))
 

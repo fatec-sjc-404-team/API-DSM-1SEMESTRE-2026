@@ -121,7 +121,7 @@ def api_dados():
 @app.get("/api/indicadores")
 def api_indicadores():
     """Devolve os indicadores calculados só com os dados que atendem aos filtros.
-    Vêm o resultado geral, por região (norte, nordeste) e por estado.
+    Vêm o resultado geral, por região (norte, nordeste), por estado e por mês.
     ---
     tags:
       - Filtros
@@ -195,6 +195,11 @@ def api_indicadores():
             por_estado:
               type: object
               description: Mesmos indicadores de "geral", uma chave por UF
+            por_mes:
+              type: object
+              description: >
+                Mesmos indicadores de "geral", uma chave por mês (data_base,
+                ex. "2026-07-31"), em ordem. Usado no gráfico de evolução
       400:
         description: Algum filtro tem valor inválido
         schema:
