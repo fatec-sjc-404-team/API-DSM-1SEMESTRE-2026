@@ -33,30 +33,37 @@ document.addEventListener('DOMContentLoaded', () => {
     atualizarEstados();
   }
 
+  // ---- Dados dos gráficos vindos da API (FC404-159) ----
+  // Os filtros do formulário são mandados para /api/indicadores e os gráficos
+  // são desenhados com a resposta. Veja docs/pesquisa/calculo-dos-indicadores.md.
+
   const VERDE = '#2e7d32';
-  const ESTADOS = {
-    AL: 57.4,
-    BA: 64.2,
-    CE: 68.9,
-    MA: 53.1,
-    PB: 59.7,
-    PE: 66.3,
-    PI: 50.8,
-    RN: 63.5,
-    SE: 55.9,
-  };
-  const SEMANAS = [
-    'Sem 29',
-    'Sem 30',
-    'Sem 31',
-    'Sem 32',
-    'Sem 33',
-    'Sem 34',
-    'Sem 35',
-    'Sem 36',
-    'Sem 37',
+  const URL_INDICADORES = '/api/indicadores';
+
+  // Filtros que a API entende (mesmos names do formulário).
+  // O "prazo" ainda não existe na API, então não vai.
+  const FILTROS_DA_API = ['regiao', 'estado', 'periodo', 'tipoDivida'];
+
+  const NOMES_REGIAO = { norte: 'Norte', nordeste: 'Nordeste' };
+  const NOMES_MES = [
+    'jan', 'fev', 'mar', 'abr', 'mai', 'jun',
+    'jul', 'ago', 'set', 'out', 'nov', 'dez',
   ];
-  const SERIE = [51.2, 53.5, 55, 56.8, 58.3, 59.7, 61, 62.2, 62.2];
+
+  // Opções do select do gráfico de linha -> campo da resposta da API.
+  const INDICADORES_DA_LINHA = {
+    potencial: { campo: 'indicador_geral', nome: 'Potencial de Crédito' },
+    recuperacao: { campo: 'pct_recuperacao_rapida', nome: 'Recuperação Rápida (%)' },
+    credito: { campo: 'pct_credito_caro', nome: 'Crédito Caro (%)' },
+    divida: { campo: 'pct_saudavel', nome: 'Dívida Saudável (%)' },
+  };
+
+  const formulario = document.getElementById('painel-filtros-container');
+  const seletorLinha = document.getElementById('seletor-linha');
+  const aviso = document.getElementById('graficos-aviso');
+  const subBarras = document.getElementById('sub-barras');
+  const tituloLinha = document.getElementById('titulo-linha');
+  const dataAtualizacao = document.getElementById('data-atualizacao');
 
   const rotulos = {
     id: 'rotulos',
@@ -66,22 +73,27 @@ document.addEventListener('DOMContentLoaded', () => {
       x.fillStyle = '#333';
       x.font = '11px sans-serif';
       x.textAlign = 'center';
-      c.getDatasetMeta(0).data.forEach((b, i) =>
-        x.fillText(c.data.datasets[0].data[i], b.x, b.y - 6),
-      );
+      c.getDatasetMeta(0).data.forEach((b, i) => {
+        const valor = c.data.datasets[0].data[i];
+        if (valor !== null && valor !== undefined) {
+          x.fillText(valor.toFixed(1), b.x, b.y - 6);
+        }
+      });
       x.restore();
     },
   };
 
+  let graficoBarras = null;
   const canvasBarras = document.getElementById('barras');
   if (canvasBarras && canvasBarras.tagName === 'CANVAS') {
-    new Chart(canvasBarras, {
+    graficoBarras = new Chart(canvasBarras, {
       type: 'bar',
       data: {
-        labels: Object.keys(ESTADOS),
+        labels: [],
         datasets: [
           {
-            data: Object.values(ESTADOS),
+            label: 'Potencial de crédito',
+            data: [],
             backgroundColor: VERDE,
             borderRadius: 3,
             barPercentage: 0.8,
@@ -100,20 +112,22 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  let graficoLinha = null;
   const canvasLinha = document.getElementById('linha');
   if (canvasLinha && canvasLinha.tagName === 'CANVAS') {
-    new Chart(canvasLinha, {
+    graficoLinha = new Chart(canvasLinha, {
       type: 'line',
       data: {
-        labels: SEMANAS,
+        labels: [],
         datasets: [
           {
-            label: 'Potencial Geral',
-            data: SERIE,
+            label: INDICADORES_DA_LINHA.potencial.nome,
+            data: [],
             borderColor: VERDE,
             backgroundColor: VERDE,
             pointRadius: 4,
             tension: 0,
+            spanGaps: true,
           },
         ],
       },
@@ -121,8 +135,145 @@ document.addEventListener('DOMContentLoaded', () => {
         responsive: true,
         maintainAspectRatio: false,
         plugins: { legend: { display: false } },
-        scales: { y: { min: 40, max: 80 }, x: { grid: { display: false } } },
+        scales: { y: { min: 0, max: 100 }, x: { grid: { display: false } } },
       },
     });
+  }
+
+  // Última resposta da API: trocar o select da linha redesenha sem buscar de novo.
+  let ultimaResposta = null;
+  // Se dois pedidos se cruzarem, só o mais recente desenha.
+  let ultimoPedido = 0;
+
+  function montarParametros() {
+    const parametros = new URLSearchParams();
+    if (!formulario) {
+      return parametros;
+    }
+
+    const campos = new FormData(formulario);
+    FILTROS_DA_API.forEach((nome) => {
+      const valor = campos.get(nome);
+      if (valor) {
+        parametros.set(nome, valor);
+      }
+    });
+    return parametros;
+  }
+
+  function mostrarAviso(texto) {
+    if (aviso) {
+      aviso.textContent = texto;
+      aviso.hidden = !texto;
+    }
+  }
+
+  function nomeDoMes(dataBase) {
+    const [ano, mes] = dataBase.split('-');
+    return `${NOMES_MES[Number(mes) - 1]}/${ano.slice(2)}`;
+  }
+
+  function dataBrasileira(dataBase) {
+    const [ano, mes, dia] = dataBase.split('-');
+    return `${dia}/${mes}/${ano}`;
+  }
+
+  function descreverLocal(filtros) {
+    if (filtros.estado) {
+      return `o estado ${filtros.estado}`;
+    }
+    if (filtros.regiao) {
+      return `a região ${NOMES_REGIAO[filtros.regiao] || filtros.regiao}`;
+    }
+    return 'as regiões Norte e Nordeste';
+  }
+
+  function desenharBarras(resposta) {
+    if (!graficoBarras) {
+      return;
+    }
+    const estados = Object.keys(resposta.por_estado).sort();
+    graficoBarras.data.labels = estados;
+    graficoBarras.data.datasets[0].data = estados.map(
+      (uf) => resposta.por_estado[uf].indicador_geral ?? null,
+    );
+    graficoBarras.update();
+
+    if (subBarras) {
+      subBarras.textContent = `Comparativo entre os estados (${descreverLocal(resposta.filtros)})`;
+    }
+  }
+
+  function desenharLinha(resposta) {
+    if (!graficoLinha) {
+      return;
+    }
+    const escolhido = INDICADORES_DA_LINHA[seletorLinha?.value]
+      || INDICADORES_DA_LINHA.potencial;
+    const meses = Object.keys(resposta.por_mes).sort();
+
+    graficoLinha.data.labels = meses.map(nomeDoMes);
+    graficoLinha.data.datasets[0].label = escolhido.nome;
+    graficoLinha.data.datasets[0].data = meses.map(
+      (mes) => resposta.por_mes[mes][escolhido.campo] ?? null,
+    );
+    graficoLinha.update();
+
+    if (tituloLinha) {
+      tituloLinha.textContent = `Evolução de ${escolhido.nome} — ${descreverLocal(resposta.filtros)}`;
+    }
+  }
+
+  function desenhar(resposta) {
+    desenharBarras(resposta);
+    desenharLinha(resposta);
+
+    if (dataAtualizacao && resposta.ultima_data_base) {
+      dataAtualizacao.textContent = `Dados atualizados em ${dataBrasileira(resposta.ultima_data_base)}`;
+    }
+    const semDados = Object.keys(resposta.por_estado).length === 0;
+    mostrarAviso(semDados ? 'Nenhum dado encontrado para esses filtros.' : '');
+  }
+
+  // Busca os indicadores com os filtros do formulário e redesenha os gráficos.
+  // Pode ser chamada de fora (ex.: ao trocar um filtro, FC404-154).
+  async function aplicarFiltros() {
+    const pedido = ++ultimoPedido;
+    try {
+      const resposta = await fetch(`${URL_INDICADORES}?${montarParametros()}`);
+      const corpo = await resposta.json();
+      if (pedido !== ultimoPedido) {
+        return;
+      }
+      if (!resposta.ok) {
+        throw new Error(corpo.erro || `erro ${resposta.status}`);
+      }
+      ultimaResposta = corpo;
+      desenhar(corpo);
+    } catch (erro) {
+      if (pedido === ultimoPedido) {
+        mostrarAviso(`Não foi possível carregar os gráficos: ${erro.message}`);
+      }
+    }
+  }
+  window.aplicarFiltrosGraficos = aplicarFiltros;
+
+  if (formulario) {
+    formulario.addEventListener('submit', (evento) => {
+      evento.preventDefault();
+      aplicarFiltros();
+    });
+  }
+
+  if (seletorLinha) {
+    seletorLinha.addEventListener('change', () => {
+      if (ultimaResposta) {
+        desenharLinha(ultimaResposta);
+      }
+    });
+  }
+
+  if (graficoBarras || graficoLinha) {
+    aplicarFiltros();
   }
 });
