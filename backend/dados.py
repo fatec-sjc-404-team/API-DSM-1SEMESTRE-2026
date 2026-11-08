@@ -16,6 +16,15 @@ ARQUIVO_CSV = (
 
 COLUNAS_VALORES = ["carteira_ativa", "carteira_inadimplencia"]
 
+# Colunas que a /api/dados devolve em cada linha.
+COLUNAS_RESPOSTA = [
+    "data_base",
+    "uf",
+    "tipo_divida",
+    "carteira_ativa",
+    "carteira_inadimplencia",
+]
+
 # Quanto tempo a tabela fica guardada na memória antes de ler a fonte de novo.
 SEGUNDOS_DE_CACHE = 300
 
@@ -46,6 +55,20 @@ SUBMODALIDADES_CRITICAS = frozenset(
 MODALIDADES_SAUDAVEIS = ("financiamentos imobiliários", "financiamentos rurais")
 SUBMODALIDADES_SAUDAVEIS = frozenset({"microcrédito", "financiamentos agroindustriais"})
 
+# Crédito caro, seguindo a regra de docs/pesquisa/regras-de-indicador.md:
+# rotativo do cartão e cheque especial (as linhas de juros mais altos).
+# É uma parte da dívida "crítica": o parcelamento da fatura fica de fora porque
+# tem juros menores e, pela regra, é uma operação de consolidação da dívida.
+# Classificação temporária: proposta ainda não validada pelo grupo.
+SUBMODALIDADES_CREDITO_CARO = frozenset(
+    {
+        "cartão de crédito - não migrado",
+        "crédito rotativo vinculado a cartão de crédito",
+        "cheque especial",
+        "adiantamentos a depositantes",
+    }
+)
+
 _cache: tuple[float, pd.DataFrame] | None = None
 
 
@@ -68,10 +91,17 @@ def classificar_tipo_divida(modalidade: str, submodalidade: str) -> str:
     return "mista"
 
 
+def eh_credito_caro(submodalidade: str) -> bool:
+    """True se a submodalidade é rotativo do cartão ou cheque especial."""
+    return _normalizar(submodalidade) in SUBMODALIDADES_CREDITO_CARO
+
+
 def carregar_bcb() -> pd.DataFrame:
     """Dados do BCB somados por mês, UF e tipo de dívida.
 
-    Colunas: data_base, uf, tipo_divida, carteira_ativa, carteira_inadimplencia.
+    Colunas: data_base, uf, tipo_divida, carteira_ativa, carteira_inadimplencia
+    e carteira_credito_caro (parte da carteira ativa que é crédito caro, veja
+    eh_credito_caro).
     Lê do MySQL se DB_USER estiver definido; senão, do CSV do tratamento de dados.
     """
     global _cache
@@ -106,7 +136,8 @@ def descrever_consulta(filtros: Filtros) -> dict:
 
 def consultar_dados(filtros: Filtros) -> dict:
     """Resposta de /api/dados: as linhas filtradas, somadas por mês, UF e tipo de dívida."""
-    tabela = dados_filtrados(filtros).sort_values(["data_base", "uf", "tipo_divida"])
+    tabela = dados_filtrados(filtros)[COLUNAS_RESPOSTA]
+    tabela = tabela.sort_values(["data_base", "uf", "tipo_divida"])
     tabela = tabela.assign(data_base=tabela["data_base"].dt.strftime("%Y-%m-%d"))
     linhas = tabela.round(2).to_dict("records")
 
@@ -145,8 +176,8 @@ def _ler_mysql() -> pd.DataFrame:
         with conexao.cursor() as cursor:
             cursor.execute(
                 "SELECT data_base, uf, modalidade, submodalidade, "
-                "SUM(carteira_ativa), SUM(carteira_inadimplencia) "
-                "FROM BCB GROUP BY data_base, uf, modalidade, submodalidade"
+                + ", ".join(f"SUM({coluna})" for coluna in COLUNAS_VALORES)
+                + " FROM BCB GROUP BY data_base, uf, modalidade, submodalidade"
             )
             linhas = cursor.fetchall()
     except pymysql.MySQLError as erro:
@@ -171,7 +202,11 @@ def _ler_csv() -> pd.DataFrame:
 
 
 def _resumir(dados: pd.DataFrame) -> pd.DataFrame:
-    """Troca modalidade/submodalidade pelo tipo de dívida e soma de novo."""
+    """Troca modalidade/submodalidade pelo tipo de dívida e soma de novo.
+
+    Antes de somar, separa a carteira ativa de crédito caro numa coluna própria,
+    porque depois de agrupar por tipo de dívida a submodalidade se perde.
+    """
     dados = dados.copy()
     dados["data_base"] = pd.to_datetime(dados["data_base"])
     dados["uf"] = dados["uf"].astype("string").str.strip().str.upper()
@@ -182,8 +217,12 @@ def _resumir(dados: pd.DataFrame) -> pd.DataFrame:
             dados["modalidade"], dados["submodalidade"], strict=True
         )
     ]
+    caro = dados["submodalidade"].map(eh_credito_caro).astype(bool)
+    dados["carteira_credito_caro"] = dados["carteira_ativa"].where(caro, 0.0)
+
     chaves = ["data_base", "uf", "tipo_divida"]
-    return dados.groupby(chaves, as_index=False)[COLUNAS_VALORES].sum()
+    valores = [*COLUNAS_VALORES, "carteira_credito_caro"]
+    return dados.groupby(chaves, as_index=False)[valores].sum()
 
 
 def _normalizar(texto: str) -> str:

@@ -7,13 +7,15 @@ TIPOS_DIVIDA = ("saudavel", "critica", "mista")
 REGIAO_DA_UF = {uf: regiao for regiao, ufs in UFS_POR_REGIAO.items() for uf in ufs}
 
 
-def calcular_indicadores(dados: pd.DataFrame) -> dict[str, float]:
+def calcular_indicadores(dados: pd.DataFrame) -> dict[str, float | None]:
     """Indicadores de um grupo de linhas (tudo, uma região ou um estado).
 
     - carteira_ativa: soma da carteira ativa.
     - taxa_inadimplencia: carteira inadimplente / carteira ativa, em %.
     - pct_saudavel, pct_critica, pct_mista: quanto da carteira ativa é de cada
-      tipo de dívida, em %.
+      tipo de dívida, em % (indicador de dívida saudável x crítica).
+    - pct_credito_caro: quanto da carteira ativa é rotativo do cartão ou cheque
+      especial, em % (indicador de crédito caro).
 
     Os valores são somados antes de dividir, então grupos grandes pesam mais que
     os pequenos. Devolve {} se o grupo não tiver carteira ativa.
@@ -25,14 +27,16 @@ def calcular_indicadores(dados: pd.DataFrame) -> dict[str, float]:
     inadimplencia = dados["carteira_inadimplencia"].sum()
     por_tipo = dados.groupby("tipo_divida")["carteira_ativa"].sum()
 
-    indicadores = {
+    indicadores: dict[str, float | None] = {
         "carteira_ativa": round(carteira_ativa, 2),
-        "taxa_inadimplencia": round(inadimplencia / carteira_ativa * 100, 2),
+        "taxa_inadimplencia": _pct(inadimplencia, carteira_ativa),
     }
     for tipo in TIPOS_DIVIDA:
-        indicadores[f"pct_{tipo}"] = round(
-            por_tipo.get(tipo, 0) / carteira_ativa * 100, 2
-        )
+        indicadores[f"pct_{tipo}"] = _pct(por_tipo.get(tipo, 0), carteira_ativa)
+
+    indicadores["pct_credito_caro"] = _pct(
+        dados["carteira_credito_caro"].sum(), carteira_ativa
+    )
     return indicadores
 
 
@@ -53,10 +57,16 @@ def consultar_indicadores(filtros: Filtros) -> dict:
     }
 
 
-def _por_grupo(dados: pd.DataFrame, grupos: pd.Series) -> dict[str, dict[str, float]]:
+def _por_grupo(
+    dados: pd.DataFrame, grupos: pd.Series
+) -> dict[str, dict[str, float | None]]:
     resultado = {}
     for nome, linhas in dados.groupby(grupos):
         indicadores = calcular_indicadores(linhas)
         if indicadores:
             resultado[str(nome)] = indicadores
     return resultado
+
+
+def _pct(parte: float, total: float) -> float:
+    return round(parte / total * 100, 2)

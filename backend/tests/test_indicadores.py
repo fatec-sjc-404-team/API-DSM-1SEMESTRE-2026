@@ -4,13 +4,25 @@ from filtros import Filtros
 from indicadores import calcular_indicadores, consultar_indicadores
 
 
+def _grupo(**colunas) -> pd.DataFrame:
+    """Linhas no formato de carregar_bcb, com zero nas colunas não informadas."""
+    padrao = {
+        "tipo_divida": ["mista"],
+        "carteira_ativa": [0.0],
+        "carteira_inadimplencia": [0.0],
+        "carteira_credito_caro": [0.0],
+    }
+    tamanho = len(next(iter(colunas.values())))
+    padrao = {nome: valores * tamanho for nome, valores in padrao.items()}
+    return pd.DataFrame({**padrao, **colunas})
+
+
 def test_calcular_indicadores_soma_antes_de_dividir() -> None:
-    dados = pd.DataFrame(
-        {
-            "tipo_divida": ["saudavel", "critica"],
-            "carteira_ativa": [900.0, 100.0],
-            "carteira_inadimplencia": [0.0, 50.0],
-        }
+    dados = _grupo(
+        tipo_divida=["saudavel", "critica"],
+        carteira_ativa=[900.0, 100.0],
+        carteira_inadimplencia=[0.0, 50.0],
+        carteira_credito_caro=[0.0, 60.0],
     )
 
     assert calcular_indicadores(dados) == {
@@ -19,6 +31,7 @@ def test_calcular_indicadores_soma_antes_de_dividir() -> None:
         "pct_saudavel": 90.0,
         "pct_critica": 10.0,
         "pct_mista": 0.0,
+        "pct_credito_caro": 6.0,
     }
 
 
@@ -47,6 +60,7 @@ def test_sem_filtro_calcula_geral_por_regiao_e_por_estado(fonte_falsa) -> None:
         "pct_saudavel": 56.6,
         "pct_critica": 5.66,
         "pct_mista": 37.74,
+        "pct_credito_caro": 5.66,
     }
     assert resultado["por_regiao"]["norte"] == {
         "carteira_ativa": 200.0,
@@ -54,6 +68,7 @@ def test_sem_filtro_calcula_geral_por_regiao_e_por_estado(fonte_falsa) -> None:
         "pct_saudavel": 0.0,
         "pct_critica": 100.0,
         "pct_mista": 0.0,
+        "pct_credito_caro": 100.0,
     }
     assert resultado["por_regiao"]["nordeste"] == {
         "carteira_ativa": 5100.0,
@@ -61,6 +76,7 @@ def test_sem_filtro_calcula_geral_por_regiao_e_por_estado(fonte_falsa) -> None:
         "pct_saudavel": 58.82,
         "pct_critica": 1.96,
         "pct_mista": 39.22,
+        "pct_credito_caro": 1.96,
     }
     assert sorted(resultado["por_estado"]) == ["AC", "BA", "CE"]
     assert resultado["por_estado"]["BA"]["taxa_inadimplencia"] == 11.29
@@ -104,6 +120,7 @@ def test_periodo_de_um_mes_usa_so_o_ultimo_mes(fonte_falsa) -> None:
         "pct_saudavel": 31.25,
         "pct_critica": 6.25,
         "pct_mista": 62.5,
+        "pct_credito_caro": 6.25,
     }
 
 
