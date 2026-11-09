@@ -98,19 +98,22 @@ def calcular_indicador_geral(indicadores: dict[str, float | None]) -> float | No
 
 
 def consultar_indicadores(filtros: Filtros) -> dict:
-    """Resposta de /api/indicadores: indicadores gerais, por região e por estado.
+    """Resposta de /api/indicadores: indicadores gerais, por região, por estado e
+    por mês (para o gráfico de evolução).
 
     Os filtros são aplicados nos dados antes de calcular. Se houver filtro de tipo
     de dívida, os percentuais por tipo valem só para o que sobrou do filtro.
     """
     dados = dados_filtrados(filtros)
     regioes = dados["uf"].map(REGIAO_DA_UF)
+    meses = pd.to_datetime(dados["data_base"]).dt.strftime("%Y-%m-%d")
 
     return {
         **descrever_consulta(filtros),
         "geral": calcular_indicadores(dados),
         "por_regiao": _por_grupo(dados, regioes),
         "por_estado": _por_grupo(dados, dados["uf"]),
+        "por_mes": _por_grupo(dados, meses),
     }
 
 
