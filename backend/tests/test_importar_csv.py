@@ -59,6 +59,63 @@ def test_converter_linha_converte_data_operacoes_e_valores_monetarios() -> None:
     assert resultado == (date(2026, 1, 1), 42, Decimal("1234.56"), "SP")
 
 
+@pytest.mark.parametrize(
+    ("coluna", "valor", "colunas_decimais"),
+    [
+        ("numero_de_operacoes", "-1", set()),
+        ("a_vencer_ate_90_dias", "-123,45", {"a_vencer_ate_90_dias"}),
+        (
+            "a_vencer_de_91_ate_360_dias",
+            "-123,45",
+            {"a_vencer_de_91_ate_360_dias"},
+        ),
+        (
+            "a_vencer_de_361_ate_1080_dias",
+            "-123,45",
+            {"a_vencer_de_361_ate_1080_dias"},
+        ),
+        (
+            "a_vencer_de_1081_ate_1800_dias",
+            "-123,45",
+            {"a_vencer_de_1081_ate_1800_dias"},
+        ),
+        (
+            "a_vencer_de_1801_ate_5400_dias",
+            "-123,45",
+            {"a_vencer_de_1801_ate_5400_dias"},
+        ),
+        (
+            "a_vencer_acima_de_5400_dias",
+            "-123,45",
+            {"a_vencer_acima_de_5400_dias"},
+        ),
+        ("carteira_a_vencer", "-123,45", {"carteira_a_vencer"}),
+        ("vencido_de_15_ate_90_dias", "-123,45", {"vencido_de_15_ate_90_dias"}),
+        ("vencido_acima_de_90_dias", "-123,45", {"vencido_acima_de_90_dias"}),
+        ("carteira_vencida", "-123,45", {"carteira_vencida"}),
+        ("carteira_ativa", "-123,45", {"carteira_ativa"}),
+        ("carteira_inadimplencia", "-123,45", {"carteira_inadimplencia"}),
+        ("ativo_problematico", "-123,45", {"ativo_problematico"}),
+    ],
+)
+def test_converter_linha_converte_valores_negativos_em_null(
+    coluna: str, valor: str, colunas_decimais: set[str]
+) -> None:
+    resultado = converter_linha({coluna: valor}, [coluna], colunas_decimais)
+
+    assert resultado == (None,)
+
+
+def test_converter_linha_preserva_valores_numericos_nao_negativos() -> None:
+    resultado = converter_linha(
+        {"numero_de_operacoes": "0", "carteira_ativa": "123,45"},
+        ["numero_de_operacoes", "carteira_ativa"],
+        {"carteira_ativa"},
+    )
+
+    assert resultado == (0, Decimal("123.45"))
+
+
 def test_importar_csv_substitui_dados_em_uma_transacao(tmp_path: Path) -> None:
     arquivo_csv = tmp_path / "dados.csv"
     arquivo_csv.write_text(
@@ -74,6 +131,22 @@ def test_importar_csv_substitui_dados_em_uma_transacao(tmp_path: Path) -> None:
     assert len(conexao.cursor_falso.lotes) == 1
     assert conexao.commits == 1
     assert conexao.rollbacks == 0
+
+
+def test_importar_csv_envia_valores_negativos_como_null(tmp_path: Path) -> None:
+    arquivo_csv = tmp_path / "dados.csv"
+    arquivo_csv.write_text(
+        "data_base;numero_de_operacoes;carteira_ativa;uf\n"
+        "2026-01-01;-1;-123,45;SP\n",
+        encoding="utf-8",
+    )
+    conexao = ConexaoFalsa()
+
+    importar_csv(conexao, arquivo_csv)
+
+    assert conexao.cursor_falso.lotes[0][1] == [
+        (date(2026, 1, 1), None, None, "SP")
+    ]
 
 
 def test_importar_csv_reverte_a_transacao_se_a_insercao_falhar(

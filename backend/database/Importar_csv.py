@@ -19,7 +19,7 @@ def converter_linha(
     linha: dict[str, str | None],
     colunas: list[str],
     colunas_decimais: set[str],
-) -> tuple[date | Decimal | int | str, ...]:
+) -> tuple[date | Decimal | int | str | None, ...]:
     valores = []
 
     for coluna in colunas:
@@ -30,10 +30,14 @@ def converter_linha(
         valor = valor.strip()
         if coluna == "data_base":
             valores.append(date.fromisoformat(valor))
-        elif coluna == "numero_de_operacoes":
-            valores.append(int(valor))
-        elif coluna in colunas_decimais:
-            valores.append(Decimal(valor.replace(",", ".")))
+        elif coluna == "numero_de_operacoes" or coluna in colunas_decimais:
+            valor_numerico = Decimal(valor.replace(",", "."))
+            if valor_numerico < 0:
+                valores.append(None)
+            elif coluna == "numero_de_operacoes":
+                valores.append(int(valor))
+            else:
+                valores.append(valor_numerico)
         else:
             valores.append(valor)
 
