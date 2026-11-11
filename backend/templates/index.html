@@ -10,13 +10,14 @@
   <section class="dashboard-header">
     <div class="filters">
       <div class="input-group">
-        <label>Região</label>
-        <select style="border: 0.5px solid rgb(184, 180, 180);
+        <label for="filtro-regiao">Região</label>
+        <select id="filtro-regiao"
+                style="border: 0.5px solid rgb(184, 180, 180);
                        border-radius: 7px;
                        padding: 5px">
-          <option value="" disabled selected hidden>Selecione uma região...</option>
-          <option>Norte</option>
-          <option>Nordeste</option>
+          <option value="">Norte e Nordeste</option>
+          <option value="norte">Norte</option>
+          <option value="nordeste">Nordeste</option>
         </select>
       </div>
       <div class="switch-group">
@@ -24,71 +25,73 @@
         <label for="estado">Detalhar por estado</label>
       </div>
       <div class="input-group" id="group-by-state">
-        <label>Estado</label>
-        <select style="border: 0.5px solid rgb(184, 180, 180);
+        <label for="filtro-estado">Estado</label>
+        <!-- As opções vêm do potencial-credito.js, conforme a região escolhida -->
+        <select id="filtro-estado"
+                style="border: 0.5px solid rgb(184, 180, 180);
                        border-radius: 7px;
                        padding: 5px">
-          <option value="" disabled selected hidden style="color: rgb(211, 211, 211)">Selecione um estado...</option>
-          <option>Acre</option>
-          <option>Alagoas</option>
-          <option>Amapá</option>
-          <option>Amazonas</option>
-          <option>Roraima</option>
-          <option>Rondônia</option>
-          <option>Tocantins</option>
+          <option value="">Todos os estados</option>
         </select>
       </div>
-      <button>Atualizar</button>
+      <button type="button" id="btn-atualizar">Atualizar</button>
     </div>
   </section>
   <!--potencial de crédito-->
   <section class="hero">
     <article class="hero-card">
-      <span class="card-title">Potencial de Crédito Geral</span>
-      <h1>68,4</h1>
+      <span class="card-title" id="titulo-potencial">Potencial de Crédito Geral</span>
+      <h1 id="valor-potencial">—</h1>
+      <p class="aviso-potencial" id="aviso-potencial" hidden></p>
       <p>Resultado da combinação dos indicadores abaixo. Quanto maior, melhor o potencial.</p>
-      <a href="#">Ver análise detalhada em Gráficos →</a>
+      <a href="{{ url_for('graficos') }}" id="link-graficos">Ver análise detalhada em Gráficos →</a>
     </article>
     <!--mapa-->
     <aside class="map-card">
       <svg viewBox="0 0 500 500" class="mapa-svg">
-        <path id="Norte" class="regiao ativa" d="{{ url_for('static', filename='images/br.svg') }}"></path>
+        <path id="Norte" class="regiao" d="{{ url_for('static', filename='images/br.svg') }}"></path>
         <path id="Nordeste" class="regiao" d="{{ url_for('static', filename='images/br.svg') }}"></path>
       </svg>
       <span>Região selecionada</span>
-      <h3>Norte</h3>
+      <h3 id="card-titulo">Norte e Nordeste</h3>
       <small>Estados incluídos</small>
-      <p>AC, AM, AP, PA, RO, RR, TO</p>
+      <p id="card-estados">AC, AM, AP, PA, RO, RR, TO, AL, BA, CE, MA, PB, PE, PI, RN, SE</p>
     </aside>
+  </section>
+  <!-- Potencial de crédito de cada estado da região escolhida (preenchido pelo potencial-credito.js) -->
+  <section class="estados-section" id="secao-estados" hidden>
+    <h2>Potencial de crédito por estado</h2>
+    <p class="estados-desc" id="estados-desc"></p>
+    <ul class="estados-lista" id="lista-estados"></ul>
   </section>
   <!-- Indicadores -->
   <section class="indicators">
     <h2>Indicadores que compõem o potencial de crédito</h2>
     <div class="cards">
-      <article class="indicator-card">
+      <article class="indicator-card" data-indicador="recuperacao">
         <h3>Inadimplência de Recuperação Rápida</h3>
-        <strong>72,3</strong>
+        <strong data-valor>—</strong>
         <p>
           Regiões com inadimplência alta, mas que pagam em menos de 20 dias e raramente viram
           inadimplêncialonga.
         </p>
         <small>Quanto maior, melhor.</small>
       </article>
-      <article class="indicator-card">
+      <article class="indicator-card" data-indicador="credito_caro">
         <h3>Concentração de Crédito Caro</h3>
-        <strong>65,7</strong>
+        <strong data-valor>—</strong>
         <p>Regiões onde a maioria das ofertas de crédito é cara e vem de bancos grandes.</p>
         <small>Quanto menor, melhor.</small>
       </article>
-      <article class="indicator-card">
+      <article class="indicator-card" data-indicador="divida_saudavel">
         <h3>Dívida Saudável x Crítica</h3>
-        <strong>61,2</strong>
+        <strong data-valor>—</strong>
         <p>Ex: dívida imobiliária de longo prazo é saudável; dívida de consumo é crítica.</p>
         <small>Quanto maior, melhor.</small>
       </article>
-      <article class="indicator-card">
+      <article class="indicator-card" data-indicador="apostas">
         <h3>Endividamento por Apostas / Bets</h3>
-        <strong>48,9</strong>
+        <strong data-valor>—</strong>
         <p>Comprometimento de renda com apostas.</p>
         <small>Quanto menor, melhor.</small>
       </article>
@@ -98,5 +101,5 @@
 {% endblock %}
 {% block scripts %}
 <script src="{{ url_for('static', filename='js/filtros-estado.js') }}"></script>
-<script src="{{ url_for('static', filename='js/mapa-regioes.js') }}"></script>
+<script src="{{ url_for('static', filename='js/potencial-credito.js') }}"></script>
 {% endblock %}
