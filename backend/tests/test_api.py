@@ -162,7 +162,10 @@ def test_pagina_inicio_renderiza_mapa_e_elementos_de_indicadores(cliente) -> Non
     assert 'id="filtro-regiao"' in html
     assert 'id="filtro-estado"' in html
     assert 'id="valor-potencial"' in html
+    assert 'id="badge-potencial"' in html
+    assert 'id="btn-limpar-estado"' in html
     assert "mapa-brasil-svg" in html
+    assert 'id="mapa-tooltip"' in html
     assert 'id="regiao-norte"' in html
     assert 'id="regiao-nordeste"' in html
     assert 'id="secao-estados"' in html

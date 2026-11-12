@@ -61,9 +61,13 @@ document.addEventListener('DOMContentLoaded', () => {
     detalharEstado: document.getElementById('estado'),
     tituloPotencial: document.getElementById('titulo-potencial'),
     valorPotencial: document.getElementById('valor-potencial'),
+    badgePotencial: document.getElementById('badge-potencial'),
+    btnLimparEstado: document.getElementById('btn-limpar-estado'),
     aviso: document.getElementById('aviso-potencial'),
     linkGraficos: document.getElementById('link-graficos'),
     mapa: document.querySelector('.mapa-brasil-svg'),
+    mapaContainer: document.querySelector('.mapa-container'),
+    mapaTooltip: document.getElementById('mapa-tooltip'),
     gruposRegiao: document.querySelectorAll('.mapa-brasil-svg .regiao-grupo[data-regiao]'),
     estadosMapa: document.querySelectorAll('.mapa-brasil-svg path[data-uf]'),
     cardTitulo: document.getElementById('card-titulo'),
@@ -200,11 +204,39 @@ document.addEventListener('DOMContentLoaded', () => {
     return 'Norte e Nordeste';
   }
 
+  function classificarPotencial(valor) {
+    if (valor === null || valor === undefined || Number.isNaN(valor)) {
+      return null;
+    }
+    if (valor >= 70) {
+      return { classe: 'alto', texto: 'Alto Potencial' };
+    }
+    if (valor >= 50) {
+      return { classe: 'medio', texto: 'Médio Potencial' };
+    }
+    return { classe: 'baixo', texto: 'Potencial Baixo' };
+  }
+
   function renderizar() {
     const indicadores = indicadoresSelecionados();
 
     elementos.tituloPotencial.textContent = `Potencial de Crédito Geral · ${nomeSelecionado()}`;
     elementos.valorPotencial.textContent = formatar(indicadores?.indicador_geral);
+
+    if (elementos.badgePotencial) {
+      const badge = classificarPotencial(indicadores?.indicador_geral);
+      if (badge) {
+        elementos.badgePotencial.textContent = badge.texto;
+        elementos.badgePotencial.className = `badge-potencial ${badge.classe}`;
+        elementos.badgePotencial.hidden = false;
+      } else {
+        elementos.badgePotencial.hidden = true;
+      }
+    }
+
+    if (elementos.btnLimparEstado) {
+      elementos.btnLimparEstado.hidden = !(estado.uf && detalhandoPorEstado());
+    }
 
     if (estado.resposta && !indicadores) {
       mostrarAviso('Não há dados para essa seleção.');
@@ -376,6 +408,10 @@ document.addEventListener('DOMContentLoaded', () => {
     elementos.detalharEstado.addEventListener('change', renderizar);
   }
 
+  if (elementos.btnLimparEstado) {
+    elementos.btnLimparEstado.addEventListener('click', () => escolherEstado(''));
+  }
+
   if (elementos.mapa) {
     elementos.mapa.addEventListener('click', (evento) => {
       const pathUf = evento.target.closest('path[data-uf]');
@@ -398,6 +434,36 @@ document.addEventListener('DOMContentLoaded', () => {
         escolherRegiao(estado.regiao === regiao ? '' : regiao);
       }
     });
+
+    if (elementos.mapaTooltip && elementos.mapaContainer) {
+      elementos.mapa.addEventListener('mousemove', (evento) => {
+        const pathUf = evento.target.closest('path[data-uf]');
+        if (!pathUf) {
+          elementos.mapaTooltip.hidden = true;
+          return;
+        }
+        const uf = pathUf.dataset.uf;
+        const nome = pathUf.dataset.nome || uf;
+        const regiao = regiaoDaUf(uf);
+        if (!regiao) {
+          elementos.mapaTooltip.hidden = true;
+          return;
+        }
+        const valor = estado.resposta?.por_estado?.[uf]?.indicador_geral ?? null;
+        elementos.mapaTooltip.innerHTML = `<strong>${nome} (${uf})</strong> · Potencial: ${formatar(valor)}`;
+
+        const containerRect = elementos.mapaContainer.getBoundingClientRect();
+        const x = evento.clientX - containerRect.left;
+        const y = evento.clientY - containerRect.top;
+        elementos.mapaTooltip.style.left = `${x}px`;
+        elementos.mapaTooltip.style.top = `${y}px`;
+        elementos.mapaTooltip.hidden = false;
+      });
+
+      elementos.mapa.addEventListener('mouseleave', () => {
+        elementos.mapaTooltip.hidden = true;
+      });
+    }
   }
 
   if (elementos.listaEstados) {
