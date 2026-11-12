@@ -61,7 +61,6 @@ document.addEventListener('DOMContentLoaded', () => {
     detalharEstado: document.getElementById('estado'),
     tituloPotencial: document.getElementById('titulo-potencial'),
     valorPotencial: document.getElementById('valor-potencial'),
-    badgePotencial: document.getElementById('badge-potencial'),
     btnLimparEstado: document.getElementById('btn-limpar-estado'),
     aviso: document.getElementById('aviso-potencial'),
     linkGraficos: document.getElementById('link-graficos'),
@@ -204,35 +203,11 @@ document.addEventListener('DOMContentLoaded', () => {
     return 'Norte e Nordeste';
   }
 
-  function classificarPotencial(valor) {
-    if (valor === null || valor === undefined || Number.isNaN(valor)) {
-      return null;
-    }
-    if (valor >= 70) {
-      return { classe: 'alto', texto: 'Alto Potencial' };
-    }
-    if (valor >= 50) {
-      return { classe: 'medio', texto: 'Médio Potencial' };
-    }
-    return { classe: 'baixo', texto: 'Potencial Baixo' };
-  }
-
   function renderizar() {
     const indicadores = indicadoresSelecionados();
 
     elementos.tituloPotencial.textContent = `Potencial de Crédito Geral · ${nomeSelecionado()}`;
     elementos.valorPotencial.textContent = formatar(indicadores?.indicador_geral);
-
-    if (elementos.badgePotencial) {
-      const badge = classificarPotencial(indicadores?.indicador_geral);
-      if (badge) {
-        elementos.badgePotencial.textContent = badge.texto;
-        elementos.badgePotencial.className = `badge-potencial ${badge.classe}`;
-        elementos.badgePotencial.hidden = false;
-      } else {
-        elementos.badgePotencial.hidden = true;
-      }
-    }
 
     if (elementos.btnLimparEstado) {
       elementos.btnLimparEstado.hidden = !(estado.uf && detalhandoPorEstado());
