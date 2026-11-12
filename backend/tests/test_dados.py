@@ -10,6 +10,7 @@ from dados import (
     classificar_tipo_divida,
     consultar_dados,
     dados_filtrados,
+    eh_credito_caro,
     ultima_data_base,
 )
 from filtros import Filtros
@@ -41,6 +42,24 @@ def test_classificar_ignora_maiusculas_e_espacos_repetidos() -> None:
     assert classificar_tipo_divida("EMPRÉSTIMOS", "  Cheque   Especial ") == "critica"
 
 
+@pytest.mark.parametrize(
+    ("submodalidade", "esperado"),
+    [
+        ("Cheque especial", True),
+        ("Crédito rotativo vinculado a cartão de crédito", True),
+        ("Cartão de crédito - não migrado", True),
+        ("Adiantamentos a depositantes", True),
+        ("  CHEQUE   especial ", True),
+        # crítica, mas não é crédito caro: parcelamento é consolidação da dívida
+        ("Cartão de crédito - compra ou fatura parcelada pela instituição financeira emitente do cartão", False),
+        ("Financiamento habitacional - SFH", False),
+        ("Crédito pessoal - com consignação em folha de pagam.", False),
+    ],
+)  # fmt: skip
+def test_eh_credito_caro(submodalidade: str, esperado: bool) -> None:
+    assert eh_credito_caro(submodalidade) is esperado
+
+
 def test_carregar_bcb_soma_por_mes_uf_e_tipo_de_divida(fonte_falsa) -> None:
     tabela = carregar_bcb()
 
@@ -50,12 +69,26 @@ def test_carregar_bcb_soma_por_mes_uf_e_tipo_de_divida(fonte_falsa) -> None:
         "tipo_divida",
         "carteira_ativa",
         "carteira_inadimplencia",
+        "vencido_de_15_ate_90_dias",
+        "vencido_acima_de_90_dias",
+        "carteira_credito_caro",
     ]
     # BA em jul/2026: imobiliário (saudável) e cheque especial (crítica) separados
     julho_ba = tabela[(tabela["uf"] == "BA") & (tabela["data_base"] == "2026-07-31")]
     assert sorted(julho_ba["tipo_divida"]) == ["critica", "saudavel"]
     assert tabela["carteira_ativa"].sum() == fonte_falsa["carteira_ativa"].sum()
     assert pd.api.types.is_datetime64_any_dtype(tabela["data_base"])
+
+
+def test_carregar_bcb_separa_a_carteira_de_credito_caro(fonte_falsa) -> None:
+    tabela = carregar_bcb()
+
+    # só as 3 linhas de cheque especial (100 cada) são crédito caro
+    assert tabela["carteira_credito_caro"].sum() == 300.0
+    imobiliario = tabela[tabela["tipo_divida"] == "saudavel"]
+    assert imobiliario["carteira_credito_caro"].sum() == 0.0
+    assert tabela["vencido_de_15_ate_90_dias"].sum() == 526.0
+    assert tabela["vencido_acima_de_90_dias"].sum() == 424.0
 
 
 def test_ultima_data_base(fonte_falsa) -> None:
@@ -88,9 +121,10 @@ def test_carregar_bcb_le_o_csv_quando_nao_ha_mysql_configurado(
 ) -> None:
     csv = tmp_path / "dados.csv"
     csv.write_text(
-        "data_base;uf;modalidade;submodalidade;carteira_ativa;carteira_inadimplencia;extra\n"
-        "2026-07-31;BA;Empréstimos;Cheque especial;1000,50;100,25;x\n"
-        "2026-07-31;BA;Empréstimos;Cheque especial;500,00;50,00;y\n",
+        "data_base;uf;modalidade;submodalidade;carteira_ativa;carteira_inadimplencia;"
+        "vencido_de_15_ate_90_dias;vencido_acima_de_90_dias;extra\n"
+        "2026-07-31;BA;Empréstimos;Cheque especial;1000,50;100,25;30,00;100,25;x\n"
+        "2026-07-31;BA;Empréstimos;Cheque especial;500,00;50,00;10,00;50,00;y\n",
         encoding="utf-8",
     )
     monkeypatch.delenv("DB_USER", raising=False)
@@ -103,6 +137,8 @@ def test_carregar_bcb_le_o_csv_quando_nao_ha_mysql_configurado(
     assert tabela.loc[0, "tipo_divida"] == "critica"
     assert tabela.loc[0, "carteira_ativa"] == pytest.approx(1500.50)
     assert tabela.loc[0, "carteira_inadimplencia"] == pytest.approx(150.25)
+    assert tabela.loc[0, "vencido_de_15_ate_90_dias"] == pytest.approx(40.0)
+    assert tabela.loc[0, "carteira_credito_caro"] == pytest.approx(1500.50)
     dados.limpar_cache()
 
 
@@ -138,6 +174,8 @@ def test_carregar_bcb_normaliza_a_uf(monkeypatch: pytest.MonkeyPatch) -> None:
             "submodalidade": ["Cheque especial", "Cheque especial"],
             "carteira_ativa": [100.0, 50.0],
             "carteira_inadimplencia": [10.0, 5.0],
+            "vencido_de_15_ate_90_dias": [2.0, 1.0],
+            "vencido_acima_de_90_dias": [10.0, 5.0],
         }
     )
     monkeypatch.setattr(dados, "_ler_fonte", lambda: bruto)

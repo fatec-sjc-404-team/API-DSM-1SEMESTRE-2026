@@ -76,15 +76,12 @@
           </select>
         </div>
         <div class="filtro-campo">
-          <label for="filtro-divida">Indicador</label>
+          <label for="filtro-divida">Tipo de dívida</label>
           <select id="filtro-divida" name="tipoDivida">
             <option value="" selected>Todos</option>
-            <option value="carteira_inadimplente">Carteira em inadimplência</option>
-            <option value="numero_operacoes">Número de operações</option>
-            <option value="carteira_a_vencer">Carteira a vencer</option>
-            <option value="carteira_vencida">Carteira vencida</option>
-            <option value="carteira_ativa">Carteira ativa</option>
-            <option value="ativo_problematico">Ativo problemático</option>
+            <option value="saudavel">Saudável</option>
+            <option value="critica">Crítica</option>
+            <option value="mista">Mista</option>
           </select>
         </div>
         <div class="filtro-acao-principal">
@@ -108,36 +105,40 @@
   </div>
   
   <div class="pg-graficos">
+    <div class="g-sub" id="graficos-aviso" role="status" hidden></div>
     <div class="g-card">
       <div class="g-hd">
         <div>
           <h3>Indicador Geral de Potencial de Crédito por Estado</h3>
-          <div class="g-sub">Comparativo entre os estados da região selecionada (Nordeste)</div>
+          <div class="g-sub" id="sub-barras">Comparativo entre os estados da região selecionada</div>
         </div>
-        <span class="g-sub">● Potencial de crédito (%)</span>
+        <span class="g-sub">● Potencial de crédito (0 a 100)</span>
       </div>
       <div class="g-box">
         <canvas id="barras"></canvas>
       </div>
     </div>
-    <div class="g-card">
+    <div class="g-card g-card-linha">
       <div class="g-hd">
-        <div>
-          <h3>Evolução do Potencial de Crédito na Região Nordeste</h3>
-          <div class="g-sub">Acompanhamento semanal do indicador geral (média da região)</div>
+        <div class="g-titulo-linha">
+          <span class="material-symbols-outlined g-icone-linha" aria-hidden="true">monitoring</span>
+          <div>
+            <h3 id="titulo-linha">Evolução do Potencial de Crédito</h3>
+            <div class="g-sub">Acompanhamento mensal do indicador selecionado</div>
+          </div>
         </div>
-        <select>
-          <option value="potencial">Potencial Geral</option>
+        <select id="seletor-linha" aria-label="Indicador do gráfico de evolução">
+          <option value="potencial" selected>Potencial Geral</option>
           <option value="recuperacao">Recuperação Rápida</option>
           <option value="credito">Crédito Caro</option>
-          <option value="divida" selected>Dívida Saudável x Crítica</option>
+          <option value="divida">Dívida Saudável x Crítica</option>
         </select>
       </div>
       <div class="g-box">
         <canvas id="linha"></canvas>
       </div>
     </div>
-    <div class="g-rodape"><span>Os gráficos são atualizados automaticamente de acordo com os filtros aplicados.</span><span>Dados atualizados em 04/09/2025</span></div>
+    <div class="g-rodape"><span>Os gráficos são atualizados automaticamente de acordo com os filtros aplicados.</span><span id="data-atualizacao">Dados atualizados em —</span></div>
   </div>
 {% endblock %}
 {% block scripts %}

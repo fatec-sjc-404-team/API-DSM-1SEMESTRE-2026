@@ -31,6 +31,37 @@
   margin-bottom: 12px;
 }
 
+.pg-graficos .g-titulo-linha {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.pg-graficos .g-icone-linha {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+  place-items: center;
+  border-radius: 12px;
+  background: #e1efcf;
+  color: #2e7d32;
+  font-size: 24px;
+}
+
+.pg-graficos .g-titulo-linha h3 {
+  margin-bottom: 4px;
+  font-size: 18px;
+}
+
+.pg-graficos .g-titulo-linha .g-sub {
+  font-size: 15px;
+}
+
+.pg-graficos .g-card-linha .g-hd {
+  align-items: center;
+}
+
 .pg-graficos .g-box {
   position: relative;
   width: 100%;
@@ -52,6 +83,26 @@
   border-radius: 6px;
   background: #fff;
   font: inherit;
+}
+
+@media (max-width: 640px) {
+  .pg-graficos .g-card-linha .g-hd {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .pg-graficos .g-titulo-linha {
+    gap: 10px;
+  }
+
+  .pg-graficos .g-titulo-linha h3 {
+    font-size: 16px;
+  }
+
+  .pg-graficos .g-titulo-linha .g-sub {
+    font-size: 13px;
+  }
 }
 
 .painel-filtros {
