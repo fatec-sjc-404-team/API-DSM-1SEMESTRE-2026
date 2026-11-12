@@ -1,18 +1,4 @@
-// Página inicial: Potencial de Crédito por região e por estado.
-//
-// O usuário escolhe uma região (Norte ou Nordeste) e, se quiser, um estado dela.
-// Os valores vêm de /api/indicadores, que calcula os indicadores com a base do
-// BCB. As regras do cálculo estão em docs/pesquisa/calculo-dos-indicadores.md
-// (adaptação de docs/pesquisa/regras-de-indicador.md).
-//
-// Como funciona:
-//   1. Ao trocar a região (no select ou clicando no mapa), a página busca na API
-//      os indicadores daquela região. A resposta já traz cada estado dela.
-//   2. Ao trocar o estado, não precisa buscar de novo: usa a resposta guardada.
-//   3. O botão "Atualizar" busca de novo na API (ex.: depois de os dados mudarem).
-//
-// Para ligar um indicador novo (ex.: apostas, quando a US08 trouxer os dados),
-// basta colocar o campo da API em INDICADORES e o data-indicador no index.html.
+// Potencial de Crédito por região e por estado
 document.addEventListener('DOMContentLoaded', () => {
   const URL_INDICADORES = '/api/indicadores';
 
