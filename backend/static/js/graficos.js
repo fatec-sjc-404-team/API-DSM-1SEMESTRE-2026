@@ -8,8 +8,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const regiaoSelecionada = filtroRegiao.value;
 
       filtroEstado.querySelectorAll('optgroup[data-regiao]').forEach((grupo) => {
-        grupo.hidden = regiaoSelecionada !== 'todos'
+        const ocultar = regiaoSelecionada !== 'todos'
           && grupo.dataset.regiao !== regiaoSelecionada;
+        grupo.hidden = ocultar;
+        grupo.disabled = ocultar;
       });
 
       const grupoEstadoSelecionado = Array.from(
@@ -52,10 +54,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Opções do select do gráfico de linha -> campo da resposta da API.
   const INDICADORES_DA_LINHA = {
-    potencial: { campo: 'indicador_geral', nome: 'Potencial de Crédito' },
-    recuperacao: { campo: 'pct_recuperacao_rapida', nome: 'Recuperação Rápida (%)' },
-    credito: { campo: 'pct_credito_caro', nome: 'Crédito Caro (%)' },
-    divida: { campo: 'pct_saudavel', nome: 'Dívida Saudável (%)' },
+    potencial: { campo: 'indicador_geral', artigo: 'do', nome: 'Potencial de Crédito' },
+    recuperacao: { campo: 'pct_recuperacao_rapida', artigo: 'da', nome: 'Recuperação Rápida (%)' },
+    credito: { campo: 'pct_credito_caro', artigo: 'do', nome: 'Crédito Caro (%)' },
+    divida: { campo: 'pct_saudavel', artigo: 'da', nome: 'Dívida Saudável (%)' },
   };
 
   const formulario = document.getElementById('painel-filtros-container');
@@ -220,7 +222,12 @@ document.addEventListener('DOMContentLoaded', () => {
     graficoLinha.update();
 
     if (tituloLinha) {
-      tituloLinha.textContent = `Evolução de ${escolhido.nome} — ${descreverLocal(resposta.filtros)}`;
+      const local = resposta.filtros.estado
+        ? `no Estado ${resposta.filtros.estado}`
+        : resposta.filtros.regiao
+          ? `na Região ${NOMES_REGIAO[resposta.filtros.regiao] || resposta.filtros.regiao}`
+          : 'nas Regiões Norte e Nordeste';
+      tituloLinha.textContent = `Evolução ${escolhido.artigo} ${escolhido.nome} ${local}`;
     }
   }
 
@@ -258,9 +265,77 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   window.aplicarFiltrosGraficos = aplicarFiltros;
 
+  const inputSalvar = document.getElementById('input-salvar-filtro');
+  const botaoSalvar = document.getElementById('butao-salvar-filtro');
+  if (inputSalvar) {
+    inputSalvar.addEventListener('keydown', (evento) => {
+      if (evento.key === 'Enter') {
+        evento.preventDefault();
+      }
+    });
+  }
+
+  if (botaoSalvar && formulario && inputSalvar) {
+    botaoSalvar.addEventListener('click', () => {
+      const nome = inputSalvar.value.trim();
+      if (!nome) {
+        window.alert('Informe um nome para salvar o filtro.');
+        inputSalvar.focus();
+        return;
+      }
+
+      const obterValor = (nomeCampo) => formulario.elements[nomeCampo].value;
+      const obterRotulo = (nomeCampo) => {
+        const campo = formulario.elements[nomeCampo];
+        return campo.options[campo.selectedIndex].textContent.trim();
+      };
+      const data = new Date();
+      const criadoEm = new Intl.DateTimeFormat('pt-BR', {
+        dateStyle: 'short',
+        timeStyle: 'short',
+      }).format(data);
+      const filtro = {
+        nome,
+        regiao: obterRotulo('regiao'),
+        estado: obterValor('estado') || 'Todos',
+        periodo: obterRotulo('periodo'),
+        tipoDivida: obterRotulo('tipoDivida'),
+        apostas: 'Todos',
+        criadoEm,
+      };
+
+      try {
+        const armazenados = localStorage.getItem('avocredit:filtrosSalvos');
+        const estado = armazenados
+          ? JSON.parse(armazenados)
+          : { inicializado: false, filtros: [] };
+        if (!Array.isArray(estado.filtros)) {
+          throw new Error('Os filtros salvos neste navegador estão em um formato inválido.');
+        }
+        estado.filtros.push(filtro);
+        localStorage.setItem('avocredit:filtrosSalvos', JSON.stringify(estado));
+        window.alert('Filtro salvo com sucesso.');
+      } catch (erro) {
+        window.alert(`Não foi possível salvar o filtro: ${erro.message}`);
+      }
+    });
+  }
+
   if (formulario) {
     formulario.addEventListener('submit', (evento) => {
       evento.preventDefault();
+      aplicarFiltros();
+    });
+
+    // FC404-154: atualiza os gráficos automaticamente ao trocar qualquer filtro.
+    formulario.addEventListener('change', (evento) => {
+      const campo = evento.target;
+      if (!campo || !campo.name) {
+        return;
+      }
+      if (campo === seletorLinha) {
+        return; // o select da linha já redesenha sozinho, sem buscar de novo
+      }
       aplicarFiltros();
     });
   }
@@ -271,6 +346,30 @@ document.addEventListener('DOMContentLoaded', () => {
         desenharLinha(ultimaResposta);
       }
     });
+  }
+
+  // FC404-228: abre a página já com os filtros vindos de "Filtros Salvos"
+  // (ex.: /graficos?regiao=norte&estado=AM&periodo=6_meses&tipoDivida=saudavel&nome=...)
+  if (formulario) {
+    const consulta = new URLSearchParams(window.location.search);
+
+    // "estado" por último: a região precisa atualizar a lista de estados antes.
+    ['regiao', 'periodo', 'tipoDivida', 'estado'].forEach((nome) => {
+      const campo = formulario.elements[nome];
+      const valor = consulta.get(nome);
+      if (!campo || valor === null) {
+        return;
+      }
+      campo.value = valor;
+      if (nome === 'regiao') {
+        campo.dispatchEvent(new Event('change')); // sem bubbles: só atualiza a lista de estados
+      }
+    });
+
+    const campoNome = document.getElementById('input-salvar-filtro');
+    if (campoNome && consulta.get('nome')) {
+      campoNome.value = consulta.get('nome');
+    }
   }
 
   if (graficoBarras || graficoLinha) {

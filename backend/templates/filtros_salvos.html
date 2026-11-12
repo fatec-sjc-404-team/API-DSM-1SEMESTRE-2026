@@ -4,6 +4,9 @@
   <link rel="stylesheet"
         href="{{ url_for('static', filename='css/filtros.css') }}">
 {% endblock %}
+{% block scripts %}
+  <script src="{{ url_for('static', filename='js/filtros-estado.js') }}"></script>
+{% endblock %}
 {% block header_title %}Filtros Salvos{% endblock %}
 {% block header_desc %}Gerencie suas composições de filtros e acesse rapidamente suas análises{% endblock %}
 {% block content %}
@@ -105,8 +108,29 @@
         </tr>
       </tbody>
     </table>
+    <div class="filtro-modal" id="modal-excluir-filtro" hidden>
+      <div class="filtro-modal-fundo" data-fechar-modal></div>
+      <section class="filtro-modal-dialogo"
+               role="dialog"
+               aria-modal="true"
+               aria-labelledby="titulo-modal-exclusao"
+               aria-describedby="mensagem-modal-exclusao"
+               tabindex="-1">
+        <h2 id="titulo-modal-exclusao">Confirmar exclusão</h2>
+        <p id="mensagem-modal-exclusao">
+          Tem certeza que deseja apagar este filtro? Esta ação não pode ser desfeita.
+        </p>
+        <div class="filtro-modal-acoes">
+          <button type="button" class="filtro-modal-cancelar" id="cancelar-exclusao">
+            Cancelar
+          </button>
+          <button type="button" class="filtro-modal-apagar" id="confirmar-exclusao">
+            Apagar
+          </button>
+        </div>
+      </section>
+    </div>
   </div>
-
   
   <div class="main-card">
     <div class="filtros-header">

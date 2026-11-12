@@ -119,6 +119,111 @@
   vertical-align: middle;
 }
 
+.tabela-filtros-salvos td .material-symbols-outlined[role="button"] {
+  cursor: pointer;
+}
+
+.tabela-filtros-salvos td .material-symbols-outlined[role="button"]:focus-visible {
+  outline: 2px solid #2d6a4f;
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.filtro-edicao {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filtro-edicao input {
+  box-sizing: border-box;
+  width: min(300px, 100%);
+  min-width: 120px;
+  padding: 8px 12px;
+  border: 1px solid #dfe3eb;
+  border-radius: 6px;
+  color: #14213d;
+  font: inherit;
+}
+
+.filtro-edicao button {
+  padding: 7px 12px;
+  border: 0;
+  border-radius: 6px;
+  background: #2d7d32;
+  color: #fff;
+  font: inherit;
+  cursor: pointer;
+}
+
+.filtro-modal[hidden] {
+  display: none;
+}
+
+.filtro-modal {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+}
+
+.filtro-modal-fundo {
+  position: absolute;
+  inset: 0;
+  background: rgb(0 0 0 / 35%);
+}
+
+.filtro-modal-dialogo {
+  position: relative;
+  width: min(440px, 100%);
+  box-sizing: border-box;
+  padding: 36px;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 12px 32px rgb(0 0 0 / 18%);
+}
+
+.filtro-modal-dialogo h2 {
+  margin: 0 0 16px;
+  color: #263238;
+  font-size: 20px;
+}
+
+.filtro-modal-dialogo p {
+  margin: 0;
+  color: #737d90;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.filtro-modal-acoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.filtro-modal-acoes button {
+  padding: 12px 22px;
+  border-radius: 10px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.filtro-modal-cancelar {
+  border: 1px solid #dfe3eb;
+  background: #fff;
+  color: #526071;
+}
+
+.filtro-modal-apagar {
+  border: 1px solid #cb3030;
+  background: #cb3030;
+  color: #fff;
+}
+
 .tabela-filtros-salvos tbody tr:last-child,
 .tabela-base-dados tbody tr:last-child {
   border-bottom: none;
