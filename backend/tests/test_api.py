@@ -152,3 +152,18 @@ def test_fonte_de_dados_fora_do_ar_devolve_erro_503(
 def test_paginas_do_grupo_continuam_abrindo(cliente) -> None:
     for rota in ("/", "/graficos", "/filtros_salvos", "/health"):
         assert cliente.get(rota).status_code == 200
+
+
+def test_pagina_inicio_renderiza_mapa_e_elementos_de_indicadores(cliente) -> None:
+    resposta = cliente.get("/")
+    assert resposta.status_code == 200
+    html = resposta.get_data(as_text=True)
+
+    assert 'id="filtro-regiao"' in html
+    assert 'id="filtro-estado"' in html
+    assert 'id="valor-potencial"' in html
+    assert "mapa-brasil-svg" in html
+    assert 'id="regiao-norte"' in html
+    assert 'id="regiao-nordeste"' in html
+    assert 'id="secao-estados"' in html
+    assert "potencial-credito.js" in html

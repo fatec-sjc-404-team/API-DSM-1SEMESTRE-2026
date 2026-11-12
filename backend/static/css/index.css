@@ -136,6 +136,73 @@
   text-align: center;
 }
 
+.mapa-container {
+  width: 100%;
+  max-width: 250px;
+  margin-bottom: 12px;
+}
+
+.mapa-brasil-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  stroke: #ffffff;
+  stroke-width: 1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.08));
+}
+
+.mapa-brasil-svg .grupo-outras path {
+  fill: #e4e9e4;
+  cursor: default;
+  transition: fill 0.2s ease;
+}
+
+.mapa-brasil-svg .grupo-norte,
+.mapa-brasil-svg .grupo-nordeste {
+  cursor: pointer;
+}
+
+.mapa-brasil-svg .grupo-norte path,
+.mapa-brasil-svg .grupo-nordeste path {
+  fill: #5a8e5f;
+  transition: fill 0.2s ease, opacity 0.2s ease, stroke 0.2s ease, stroke-width 0.2s ease;
+}
+
+.mapa-brasil-svg .grupo-norte:hover path,
+.mapa-brasil-svg .grupo-nordeste:hover path {
+  filter: brightness(0.9);
+}
+
+/* Quando apenas a região Norte está selecionada */
+.mapa-brasil-svg.selecao-norte .grupo-norte path {
+  fill: #2c5524;
+}
+
+.mapa-brasil-svg.selecao-norte .grupo-nordeste path {
+  fill: #a2c2a5;
+  opacity: 0.65;
+}
+
+/* Quando apenas a região Nordeste está selecionada */
+.mapa-brasil-svg.selecao-nordeste .grupo-nordeste path {
+  fill: #2c5524;
+}
+
+.mapa-brasil-svg.selecao-nordeste .grupo-norte path {
+  fill: #a2c2a5;
+  opacity: 0.65;
+}
+
+/* Estado selecionado individualmente */
+.mapa-brasil-svg path.uf-ativa {
+  fill: #1a3815 !important;
+  stroke: #e6b800 !important;
+  stroke-width: 2.5px !important;
+  opacity: 1 !important;
+}
+
 .map-card img {
   width: 170px;
   margin-bottom: 20px;

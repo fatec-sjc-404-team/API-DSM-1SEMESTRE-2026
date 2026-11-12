@@ -46,12 +46,11 @@
       <p>Resultado da combinação dos indicadores abaixo. Quanto maior, melhor o potencial.</p>
       <a href="{{ url_for('graficos') }}" id="link-graficos">Ver análise detalhada em Gráficos →</a>
     </article>
-    <!--mapa-->
+    <!--mapa interativo-->
     <aside class="map-card">
-      <svg viewBox="0 0 500 500" class="mapa-svg">
-        <path id="Norte" class="regiao" d="{{ url_for('static', filename='images/br.svg') }}"></path>
-        <path id="Nordeste" class="regiao" d="{{ url_for('static', filename='images/br.svg') }}"></path>
-      </svg>
+      <div class="mapa-container">
+        {% include "mapa_brasil.html" %}
+      </div>
       <span>Região selecionada</span>
       <h3 id="card-titulo">Norte e Nordeste</h3>
       <small>Estados incluídos</small>

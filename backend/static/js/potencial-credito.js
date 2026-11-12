@@ -64,7 +64,9 @@ document.addEventListener('DOMContentLoaded', () => {
     valorPotencial: document.getElementById('valor-potencial'),
     aviso: document.getElementById('aviso-potencial'),
     linkGraficos: document.getElementById('link-graficos'),
-    mapa: document.querySelectorAll('.mapa-svg .regiao'),
+    mapa: document.querySelector('.mapa-brasil-svg'),
+    gruposRegiao: document.querySelectorAll('.mapa-brasil-svg .regiao-grupo[data-regiao]'),
+    estadosMapa: document.querySelectorAll('.mapa-brasil-svg path[data-uf]'),
     cardTitulo: document.getElementById('card-titulo'),
     cardEstados: document.getElementById('card-estados'),
     secaoEstados: document.getElementById('secao-estados'),
@@ -234,45 +236,68 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function renderizarMapa() {
-    const nomeRegiao = estado.regiao ? REGIOES[estado.regiao].nome : '';
-    elementos.mapa.forEach((caminho) => {
-      caminho.classList.toggle('ativa', caminho.id === nomeRegiao);
-    });
+    if (elementos.mapa) {
+      elementos.mapa.classList.toggle('selecao-norte', estado.regiao === 'norte');
+      elementos.mapa.classList.toggle('selecao-nordeste', estado.regiao === 'nordeste');
 
-    if (elementos.cardTitulo) {
-      elementos.cardTitulo.textContent = nomeRegiao || 'Norte e Nordeste';
+      elementos.estadosMapa.forEach((path) => {
+        const ativo = Boolean(
+          estado.uf && detalhandoPorEstado() && path.dataset.uf === estado.uf
+        );
+        path.classList.toggle('uf-ativa', ativo);
+      });
     }
-    if (elementos.cardEstados) {
-      const regioes = estado.regiao ? [estado.regiao] : Object.keys(REGIOES);
-      elementos.cardEstados.textContent = regioes
-        .flatMap((chave) => Object.keys(REGIOES[chave].estados))
-        .join(', ');
+
+    if (elementos.cardTitulo && elementos.cardEstados) {
+      if (estado.uf && detalhandoPorEstado()) {
+        elementos.cardTitulo.textContent = `${nomeDaUf(estado.uf)} (${estado.uf})`;
+        const regiaoNome = REGIOES[regiaoDaUf(estado.uf)]?.nome || '';
+        elementos.cardEstados.textContent = regiaoNome
+          ? `Estado da Região ${regiaoNome}`
+          : estado.uf;
+      } else if (estado.regiao) {
+        elementos.cardTitulo.textContent = REGIOES[estado.regiao].nome;
+        elementos.cardEstados.textContent = Object.keys(REGIOES[estado.regiao].estados).join(', ');
+      } else {
+        elementos.cardTitulo.textContent = 'Norte e Nordeste';
+        const todasUfs = Object.values(REGIOES).flatMap((r) => Object.keys(r.estados));
+        elementos.cardEstados.textContent = todasUfs.join(', ');
+      }
     }
   }
 
-  // Lista com o indicador geral de cada estado da região escolhida.
+  // Lista com o indicador geral de cada estado (ordenada por maior potencial).
   function renderizarListaEstados() {
     const secao = elementos.secaoEstados;
     if (!secao) {
       return;
     }
 
-    const mostrar = Boolean(estado.regiao) && detalhandoPorEstado();
+    const mostrar = detalhandoPorEstado();
     secao.hidden = !mostrar;
     if (!mostrar) {
       return;
     }
 
     const porEstado = estado.resposta?.por_estado ?? {};
-    const estadosDaRegiao = Object.entries(REGIOES[estado.regiao].estados)
-      .map(([uf, nome]) => ({ uf, nome, valor: porEstado[uf]?.indicador_geral ?? null }))
+    const chavesRegiao = estado.regiao ? [estado.regiao] : Object.keys(REGIOES);
+    const estadosParaExibir = chavesRegiao
+      .flatMap((chave) => Object.entries(REGIOES[chave].estados))
+      .map(([uf, nome]) => ({
+        uf,
+        nome,
+        valor: porEstado[uf]?.indicador_geral ?? null,
+      }))
       // Maior potencial primeiro; estados sem dados vão para o fim.
       .sort((a, b) => (b.valor ?? -1) - (a.valor ?? -1));
 
-    elementos.descEstados.textContent = `Indicador geral de cada estado da região ${REGIOES[estado.regiao].nome}. Clique em um estado para ver os indicadores dele.`;
+    const escopoDesc = estado.regiao
+      ? `região ${REGIOES[estado.regiao].nome}`
+      : 'Norte e Nordeste';
+    elementos.descEstados.textContent = `Indicador geral de cada estado (${escopoDesc}). Clique em um estado para ver os indicadores detalhados dele.`;
 
     elementos.listaEstados.innerHTML = '';
-    estadosDaRegiao.forEach(({ uf, nome, valor }) => {
+    estadosParaExibir.forEach(({ uf, nome, valor }) => {
       const item = document.createElement('li');
       const botao = document.createElement('button');
       botao.type = 'button';
@@ -355,11 +380,29 @@ document.addEventListener('DOMContentLoaded', () => {
     elementos.detalharEstado.addEventListener('change', renderizar);
   }
 
-  elementos.mapa.forEach((caminho) => {
-    caminho.addEventListener('click', () => {
-      escolherRegiao(caminho.id.toLowerCase());
+  if (elementos.mapa) {
+    elementos.mapa.addEventListener('click', (evento) => {
+      const pathUf = evento.target.closest('path[data-uf]');
+      if (pathUf) {
+        const uf = pathUf.dataset.uf;
+        const regiao = regiaoDaUf(uf);
+        if (regiao) {
+          if (detalhandoPorEstado()) {
+            escolherEstado(estado.uf === uf ? '' : uf);
+          } else {
+            escolherRegiao(estado.regiao === regiao ? '' : regiao);
+          }
+          return;
+        }
+      }
+
+      const grupo = evento.target.closest('.regiao-grupo[data-regiao]');
+      if (grupo) {
+        const regiao = grupo.dataset.regiao;
+        escolherRegiao(estado.regiao === regiao ? '' : regiao);
+      }
     });
-  });
+  }
 
   if (elementos.listaEstados) {
     elementos.listaEstados.addEventListener('click', (evento) => {
