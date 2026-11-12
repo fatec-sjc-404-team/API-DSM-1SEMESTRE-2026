@@ -59,7 +59,6 @@ document.addEventListener('DOMContentLoaded', () => {
     regiao: document.getElementById('filtro-regiao'),
     estado: document.getElementById('filtro-estado'),
     detalharEstado: document.getElementById('estado'),
-    atualizar: document.getElementById('btn-atualizar'),
     tituloPotencial: document.getElementById('titulo-potencial'),
     valorPotencial: document.getElementById('valor-potencial'),
     aviso: document.getElementById('aviso-potencial'),
@@ -108,7 +107,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function carregar() {
     estado.buscando = true;
-    elementos.atualizar.disabled = true;
     mostrarAviso('Carregando indicadores...');
 
     try {
@@ -119,7 +117,6 @@ document.addEventListener('DOMContentLoaded', () => {
       mostrarAviso(`Não foi possível carregar os indicadores. ${erro.message}`);
     } finally {
       estado.buscando = false;
-      elementos.atualizar.disabled = false;
       renderizar();
     }
   }
@@ -374,7 +371,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   elementos.regiao.addEventListener('change', () => escolherRegiao(elementos.regiao.value));
   elementos.estado.addEventListener('change', () => escolherEstado(elementos.estado.value));
-  elementos.atualizar.addEventListener('click', carregar);
 
   if (elementos.detalharEstado) {
     elementos.detalharEstado.addEventListener('change', renderizar);

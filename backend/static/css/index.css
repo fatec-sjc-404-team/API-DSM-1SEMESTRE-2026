@@ -62,25 +62,6 @@
   font-weight: 500;
 }
 
-.filters button {
-  margin-left: auto;
-  width: 120px;
-  height: 42px;
-  border: none;
-  border-radius: 8px;
-  background: rgba(44, 85, 36, 0.8);
-  color: #fff;
-  font:
-    600 15px 'Inter',
-    sans-serif;
-  cursor: pointer;
-  transition: 0.25s;
-}
-
-.filters button:hover {
-  background: #283d2b;
-}
-
 .hero {
   display: grid;
   grid-template-columns: 1.8fr 320px;
@@ -389,9 +370,4 @@
   font-size: 16px;
   text-align: right;
   color: #303030;
-}
-
-.filters button:disabled {
-  opacity: 0.6;
-  cursor: wait;
 }
