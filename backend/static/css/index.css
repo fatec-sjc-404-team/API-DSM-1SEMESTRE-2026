@@ -1,15 +1,4 @@
 /* CSS do Lucas */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: 'Inter', sans-serif;
-}
-
 .dashboard {
   width: 100%;
 }
@@ -18,8 +7,7 @@ body {
   background-color: white;
   border: none;
   border-radius: 10px;
-  padding: 10px;
-  padding-bottom: 0;
+  padding: 20px;
   margin-bottom: 20px;
 }
 
@@ -27,7 +15,6 @@ body {
   display: flex;
   align-items: flex-end;
   gap: 40px;
-  margin-bottom: 55px;
 }
 
 /*esse é das REGIOES*/
@@ -75,25 +62,6 @@ body {
   font-weight: 500;
 }
 
-.filters button {
-  margin-left: auto;
-  width: 120px;
-  height: 42px;
-  border: none;
-  border-radius: 8px;
-  background: rgba(44, 85, 36, 0.8);
-  color: #fff;
-  font:
-    600 15px 'Inter',
-    sans-serif;
-  cursor: pointer;
-  transition: 0.25s;
-}
-
-.filters button:hover {
-  background: #283d2b;
-}
-
 .hero {
   display: grid;
   grid-template-columns: 1.8fr 320px;
@@ -106,13 +74,37 @@ body {
   padding-bottom: 10px;
 }
 
+.card-header-linha {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
 .card-title {
   display: flex;
   align-items: center;
   gap: 10px;
   font-size: 18px;
   font-weight: 600;
-  margin-bottom: 22px;
+  margin-bottom: 0;
+}
+
+.btn-limpar-estado {
+  border: 1px solid rgba(44, 85, 36, 0.25);
+  border-radius: 6px;
+  background: #f3f7f1;
+  color: #2c5524;
+  font: 500 13px 'Inter', sans-serif;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-limpar-estado:hover {
+  background: #e2ede0;
+  border-color: rgba(44, 85, 36, 0.45);
 }
 
 .hero-card h1 {
@@ -149,6 +141,96 @@ body {
   text-align: center;
 }
 
+.mapa-container {
+  position: relative;
+  width: 100%;
+  max-width: 250px;
+  margin-bottom: 12px;
+}
+
+.mapa-tooltip {
+  position: absolute;
+  pointer-events: none;
+  background: rgba(28, 38, 29, 0.94);
+  color: #ffffff;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+  white-space: nowrap;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  z-index: 100;
+  transform: translate(-50%, -130%);
+  transition: opacity 0.1s ease;
+}
+
+.mapa-tooltip strong {
+  color: #9cd4a0;
+  font-weight: 700;
+}
+
+.mapa-brasil-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  stroke: #ffffff;
+  stroke-width: 1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.08));
+}
+
+.mapa-brasil-svg .grupo-outras path {
+  fill: #e4e9e4;
+  cursor: default;
+  transition: fill 0.2s ease;
+}
+
+.mapa-brasil-svg .grupo-norte,
+.mapa-brasil-svg .grupo-nordeste {
+  cursor: pointer;
+}
+
+.mapa-brasil-svg .grupo-norte path,
+.mapa-brasil-svg .grupo-nordeste path {
+  fill: #5a8e5f;
+  transition: fill 0.2s ease, opacity 0.2s ease, stroke 0.2s ease, stroke-width 0.2s ease;
+}
+
+.mapa-brasil-svg .grupo-norte:hover path,
+.mapa-brasil-svg .grupo-nordeste:hover path {
+  filter: brightness(0.9);
+}
+
+/* Quando apenas a região Norte está selecionada */
+.mapa-brasil-svg.selecao-norte .grupo-norte path {
+  fill: #2c5524;
+}
+
+.mapa-brasil-svg.selecao-norte .grupo-nordeste path {
+  fill: #a2c2a5;
+  opacity: 0.65;
+}
+
+/* Quando apenas a região Nordeste está selecionada */
+.mapa-brasil-svg.selecao-nordeste .grupo-nordeste path {
+  fill: #2c5524;
+}
+
+.mapa-brasil-svg.selecao-nordeste .grupo-norte path {
+  fill: #a2c2a5;
+  opacity: 0.65;
+}
+
+/* Estado selecionado individualmente */
+.mapa-brasil-svg path.uf-ativa {
+  fill: #1a3815 !important;
+  stroke: #e6b800 !important;
+  stroke-width: 2.5px !important;
+  opacity: 1 !important;
+}
+
 .map-card img {
   width: 170px;
   margin-bottom: 20px;
@@ -179,6 +261,10 @@ body {
 }
 
 /*indicador*/
+
+.indicators {
+  margin-bottom: 70px;
+}
 
 .indicators h2 {
   font-size: 27px;
@@ -247,4 +333,92 @@ body {
   font-size: 14px;
   font-weight: 600;
   color: #406446;
+}
+
+/* Aviso do card de potencial (carregando, erro, sem dados) */
+.hero-card .aviso-potencial {
+  margin: 12px 0 0;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #fff7e0;
+  color: #7a5b00;
+  font-size: 14px;
+}
+
+/* Potencial de crédito por estado (preenchido pelo potencial-credito.js) */
+.estados-section {
+  margin-bottom: 70px;
+  padding: 20px;
+  background-color: white;
+  border-radius: 10px;
+}
+
+.estados-section h2 {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #303030;
+}
+
+.estados-desc {
+  font-size: 14px;
+  color: #777;
+  margin-bottom: 20px;
+}
+
+.estados-lista {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.estado-item {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 220px 1fr 60px;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 12px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.estado-item:hover {
+  background: #f3f7f1;
+}
+
+.estado-item.ativo {
+  background: #eaf3e6;
+  border-color: rgba(44, 85, 36, 0.4);
+}
+
+.estado-nome {
+  font-size: 15px;
+  color: #303030;
+}
+
+.estado-barra {
+  height: 10px;
+  border-radius: 5px;
+  background: #eeeeee;
+  overflow: hidden;
+}
+
+.estado-barra span {
+  display: block;
+  height: 100%;
+  border-radius: 5px;
+  background: rgb(107, 155, 36);
+}
+
+.estado-valor {
+  font-size: 16px;
+  text-align: right;
+  color: #303030;
 }
