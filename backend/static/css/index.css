@@ -262,6 +262,10 @@
 
 /*indicador*/
 
+.indicators {
+  margin-bottom: 70px;
+}
+
 .indicators h2 {
   font-size: 27px;
   font-weight: 700;
