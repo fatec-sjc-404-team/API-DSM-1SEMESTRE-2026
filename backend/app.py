@@ -121,7 +121,7 @@ def api_dados():
 @app.get("/api/indicadores")
 def api_indicadores():
     """Devolve os indicadores calculados só com os dados que atendem aos filtros.
-    Vêm o resultado geral, por região (norte, nordeste) e por estado.
+    Vêm o resultado geral, por região (norte, nordeste), por estado e por mês.
     ---
     tags:
       - Filtros
@@ -148,8 +148,10 @@ def api_indicadores():
     responses:
       200:
         description: >
-          Indicadores de cada grupo. taxa_inadimplencia e pct_* são porcentagens.
+          Indicadores de cada grupo. taxa_inadimplencia e pct_* são porcentagens;
+          indicador_geral é uma nota de 0 a 100 (maior é melhor).
           Grupos sem carteira ativa não aparecem.
+          Regras em docs/pesquisa/calculo-dos-indicadores.md.
         schema:
           type: object
           properties:
@@ -173,12 +175,31 @@ def api_indicadores():
                   type: number
                 pct_mista:
                   type: number
+                pct_credito_caro:
+                  type: number
+                  description: Parte da carteira ativa em rotativo do cartão e cheque especial
+                pct_recuperacao_rapida:
+                  type: number
+                  x-nullable: true
+                  description: >
+                    Parte da carteira vencida no atraso inicial (15 a 90 dias).
+                    null quando não há nada vencido
+                indicador_geral:
+                  type: number
+                  x-nullable: true
+                  example: 75.06
+                  description: Nota de 0 a 100 que junta os indicadores menores
             por_regiao:
               type: object
               description: Mesmos indicadores de "geral", uma chave por região
             por_estado:
               type: object
               description: Mesmos indicadores de "geral", uma chave por UF
+            por_mes:
+              type: object
+              description: >
+                Mesmos indicadores de "geral", uma chave por mês (data_base,
+                ex. "2026-07-31"), em ordem. Usado no gráfico de evolução
       400:
         description: Algum filtro tem valor inválido
         schema:
