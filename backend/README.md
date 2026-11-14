@@ -40,6 +40,20 @@ A API fica disponível em `http://localhost:8000`.
 | GET    | `/hello-world` | Retorna uma mensagem de boas-vindas |
 | GET    | `/api/dados` | Dados do BCB só com as linhas que atendem aos filtros |
 | GET    | `/api/indicadores` | Indicadores calculados só com os dados que atendem aos filtros |
+| GET    | `/api/filtros-salvos` | Lista as composições de filtros salvas no MySQL |
+| POST   | `/api/filtros-salvos` | Salva uma composição nomeada no MySQL |
+| PATCH  | `/api/filtros-salvos/{id}` | Renomeia um filtro salvo |
+| DELETE | `/api/filtros-salvos/{id}` | Exclui um filtro salvo |
+
+O POST recebe `nome`, `regiao`, `estado`, `periodo` e `tipo_divida`. O nome é
+obrigatório e limitado a 100 caracteres. Região, estado e tipo de dívida sem
+seleção são enviados como `null` e salvos como `NULL` (Todos). Prazo e apostas
+não fazem parte da composição persistida. Os dados são gravados em
+`AvoCredit.filtros_salvos`; o GET lê a tabela diretamente, então os registros
+continuam disponíveis depois que a aplicação reinicia.
+A tabela é criada pelo [`database/AvoData.sql`](database/AvoData.sql). Em um
+banco que já existe, executar o script de novo só cria o que falta, porque usa
+`CREATE TABLE IF NOT EXISTS`.
 
 Para testar pelo terminal:
 
@@ -210,8 +224,8 @@ substitui a saída anterior com o mesmo nome.
 
 ## Modelo físico no MySQL
 
-O script [`database/AvoData.sql`](database/AvoData.sql) cria o banco `AvoCredit` e a
-tabela `BCB`, com as 24 colunas do CSV final. Também adiciona uma
+O script [`database/AvoData.sql`](database/AvoData.sql) cria o banco `AvoCredit`,
+as tabelas `BCB` e `filtros_salvos`. Também adiciona uma
 coluna técnica `id` como chave primária, sem precisar que ela exista no CSV.
 Os valores monetários usam `DECIMAL(20, 2)` para manter precisão decimal, e o
 banco/tabela usam `utf8mb4` para armazenar texto.
@@ -224,7 +238,7 @@ Para criar o modelo pelo MySQL Workbench:
 
 1. Abra `backend/database/AvoData.sql`.
 2. Conecte-se ao servidor MySQL e execute o script inteiro.
-3. Atualize a lista de schemas; o banco `AvoCredit` e a tabela `BCB`
+3. Atualize a lista de schemas; o banco `AvoCredit` e as tabelas `BCB` e `filtros_salvos`
    deverão aparecer.
 
 `CREATE TABLE IF NOT EXISTS` não recria uma tabela existente. O `ALTER TABLE`

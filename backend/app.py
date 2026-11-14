@@ -1,8 +1,19 @@
+import os
+from pathlib import Path
+
+import pymysql
 from flasgger import Swagger
 from flask import Flask, jsonify, render_template, request
 
 from dados import DadosIndisponiveis, consultar_dados
 from filtros import ler_filtros
+from filtros_salvos import (
+    excluir_filtro,
+    listar_filtros,
+    renomear_filtro,
+    salvar_filtro,
+    validar_filtro,
+)
 from indicadores import consultar_indicadores
 
 app = Flask(__name__)
@@ -223,6 +234,54 @@ def filtros_salvos():
     return render_template("filtros_salvos.html")
 
 
+@app.get("/api/filtros-salvos")
+def api_listar_filtros_salvos():
+    try:
+        return jsonify(filtros=listar_filtros())
+    except (RuntimeError, pymysql.MySQLError):
+        app.logger.exception("Não foi possível acessar o banco MySQL de filtros.")
+        return jsonify(erro="Não foi possível acessar os filtros salvos."), 503
+
+
+@app.post("/api/filtros-salvos")
+def api_salvar_filtro():
+    try:
+        filtro = validar_filtro(request.get_json(silent=True))
+        filtro_id = salvar_filtro(filtro)
+    except (TypeError, ValueError) as erro:
+        return jsonify(erro=str(erro)), 400
+    except (RuntimeError, pymysql.MySQLError):
+        app.logger.exception("Não foi possível salvar o filtro no banco MySQL.")
+        return jsonify(erro="Não foi possível salvar o filtro."), 503
+    return jsonify(id=filtro_id, mensagem="Filtro salvo com sucesso."), 201
+
+
+@app.patch("/api/filtros-salvos/<int:filtro_id>")
+def api_renomear_filtro(filtro_id):
+    try:
+        if not renomear_filtro(
+            filtro_id, (request.get_json(silent=True) or {}).get("nome")
+        ):
+            return jsonify(erro="Filtro não encontrado."), 404
+    except ValueError as erro:
+        return jsonify(erro=str(erro)), 400
+    except (RuntimeError, pymysql.MySQLError):
+        app.logger.exception("Não foi possível renomear o filtro no banco MySQL.")
+        return jsonify(erro="Não foi possível renomear o filtro."), 503
+    return jsonify(mensagem="Filtro renomeado com sucesso.")
+
+
+@app.delete("/api/filtros-salvos/<int:filtro_id>")
+def api_excluir_filtro(filtro_id):
+    try:
+        if not excluir_filtro(filtro_id):
+            return jsonify(erro="Filtro não encontrado."), 404
+    except (RuntimeError, pymysql.MySQLError):
+        app.logger.exception("Não foi possível excluir o filtro no banco MySQL.")
+        return jsonify(erro="Não foi possível excluir o filtro."), 503
+    return "", 204
+
+
 @app.get("/health")
 def health():
     """Verifica se a API está no ar.
@@ -261,5 +320,21 @@ def hello_world():
     return jsonify(mensagem="Hello, World!")
 
 
+ARQUIVO_ENV = Path(__file__).with_name(".env")
+
+
+def carregar_env(caminho=ARQUIVO_ENV):
+    """Lê o backend/.env (CHAVE=valor) sem sobrescrever variáveis já definidas."""
+    if not caminho.is_file():
+        return
+    for linha in caminho.read_text(encoding="utf-8").splitlines():
+        linha = linha.strip()
+        if not linha or linha.startswith("#") or "=" not in linha:
+            continue
+        chave, valor = linha.split("=", 1)
+        os.environ.setdefault(chave.strip(), valor.strip().strip('"').strip("'"))
+
+
 if __name__ == "__main__":
+    carregar_env()
     app.run(port=8000, debug=True)
