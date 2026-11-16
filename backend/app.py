@@ -7,13 +7,7 @@ from flask import Flask, jsonify, render_template, request
 
 from dados import DadosIndisponiveis, consultar_dados
 from filtros import ler_filtros
-from filtros_salvos import (
-    excluir_filtro,
-    listar_filtros,
-    renomear_filtro,
-    salvar_filtro,
-    validar_filtro,
-)
+from filtros_salvos import listar_filtros, salvar_filtro, validar_filtro
 from indicadores import consultar_indicadores
 
 app = Flask(__name__)
@@ -254,32 +248,6 @@ def api_salvar_filtro():
         app.logger.exception("Não foi possível salvar o filtro no banco MySQL.")
         return jsonify(erro="Não foi possível salvar o filtro."), 503
     return jsonify(id=filtro_id, mensagem="Filtro salvo com sucesso."), 201
-
-
-@app.patch("/api/filtros-salvos/<int:filtro_id>")
-def api_renomear_filtro(filtro_id):
-    try:
-        if not renomear_filtro(
-            filtro_id, (request.get_json(silent=True) or {}).get("nome")
-        ):
-            return jsonify(erro="Filtro não encontrado."), 404
-    except ValueError as erro:
-        return jsonify(erro=str(erro)), 400
-    except (RuntimeError, pymysql.MySQLError):
-        app.logger.exception("Não foi possível renomear o filtro no banco MySQL.")
-        return jsonify(erro="Não foi possível renomear o filtro."), 503
-    return jsonify(mensagem="Filtro renomeado com sucesso.")
-
-
-@app.delete("/api/filtros-salvos/<int:filtro_id>")
-def api_excluir_filtro(filtro_id):
-    try:
-        if not excluir_filtro(filtro_id):
-            return jsonify(erro="Filtro não encontrado."), 404
-    except (RuntimeError, pymysql.MySQLError):
-        app.logger.exception("Não foi possível excluir o filtro no banco MySQL.")
-        return jsonify(erro="Não foi possível excluir o filtro."), 503
-    return "", 204
 
 
 @app.get("/health")

@@ -24,7 +24,39 @@ source .venv/bin/activate      # Linux/macOS
 pip install -r requirements.txt
 ```
 
-### 3. Subir a API
+### 3. Configurar o `.env` local
+
+Os filtros salvos ficam no MySQL, então a API precisa saber como se conectar
+ao banco. Copie o modelo e preencha com os dados do **seu** MySQL:
+
+```bash
+cp .env.example .env           # Linux/macOS
+copy .env.example .env         # Windows
+```
+
+```dotenv
+# usuário e senha do seu MySQL
+DB_USER=root
+DB_PASSWORD=sua_senha
+# servidor e porta do MySQL (no Windows, 127.0.0.1 conecta mais rápido que localhost)
+DB_HOST=127.0.0.1
+DB_PORT=3306
+# banco criado pelo database/AvoData.sql
+DB_NAME=AvoCredit
+```
+
+- O `python app.py` lê o `backend/.env` sozinho; não precisa exportar as variáveis.
+- Comentários só em linha própria (começando com `#`); não escreva comentário
+  depois do valor, senão ele vira parte do valor.
+- O `.env` está no `.gitignore`: **nunca suba sua senha** para o repositório.
+- Antes de testar, rode o [`database/AvoData.sql`](database/AvoData.sql) no
+  MySQL para criar o banco `AvoCredit` e as tabelas `BCB` e `filtros_salvos`.
+- Sem o `DB_USER`, a API não consegue salvar filtros e a tela mostra
+  "Não foi possível acessar os filtros salvos.".
+- `DB_ROOT_PASSWORD` só é usado pelo `docker-compose.yml`; quem roda o MySQL
+  direto no computador pode ignorar.
+
+### 4. Subir a API
 
 ```bash
 python app.py
@@ -42,8 +74,6 @@ A API fica disponível em `http://localhost:8000`.
 | GET    | `/api/indicadores` | Indicadores calculados só com os dados que atendem aos filtros |
 | GET    | `/api/filtros-salvos` | Lista as composições de filtros salvas no MySQL |
 | POST   | `/api/filtros-salvos` | Salva uma composição nomeada no MySQL |
-| PATCH  | `/api/filtros-salvos/{id}` | Renomeia um filtro salvo |
-| DELETE | `/api/filtros-salvos/{id}` | Exclui um filtro salvo |
 
 O POST recebe `nome`, `regiao`, `estado`, `periodo` e `tipo_divida`. O nome é
 obrigatório e limitado a 100 caracteres. Região, estado e tipo de dívida sem

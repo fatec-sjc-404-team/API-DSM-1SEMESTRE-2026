@@ -129,25 +129,6 @@
   border-radius: 2px;
 }
 
-/* Mensagem de erro dos filtros salvos (no lugar do alert do navegador). */
-.filtros-aviso {
-  margin: 0 0 12px;
-  padding: 10px 14px;
-  border: 1px solid #f1b8b8;
-  border-radius: 8px;
-  background: #fdecec;
-  color: #a12626;
-  font-size: 14px;
-}
-
-.filtros-aviso[hidden] {
-  display: none;
-}
-
-.filtro-edicao input[aria-invalid="true"] {
-  border-color: #cb3030;
-}
-
 /* Nome longo sem espaço quebra a linha em vez de invadir a coluna Região. */
 .tabela-filtros-salvos td:first-child {
   max-width: 280px;
@@ -156,6 +137,13 @@
 
 .tabela-filtros-salvos td:last-child {
   white-space: nowrap;
+}
+
+/* Mensagem de tabela vazia/carregando ocupa a linha toda, alinhada à esquerda. */
+.tabela-filtros-salvos td[colspan] {
+  max-width: none;
+  text-align: left;
+  white-space: normal;
 }
 
 .tabela-filtros-salvos td button.material-symbols-outlined {

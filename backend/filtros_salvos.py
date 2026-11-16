@@ -132,38 +132,3 @@ def salvar_filtro(filtro):
         raise
     finally:
         conexao.close()
-
-
-def renomear_filtro(filtro_id, nome):
-    if not isinstance(nome, str) or not nome.strip() or len(nome.strip()) > 100:
-        raise ValueError("O nome deve ter entre 1 e 100 caracteres.")
-    conexao = _conectar()
-    try:
-        with conexao.cursor() as cursor:
-            cursor.execute(
-                "UPDATE filtros_salvos SET nome = %s WHERE id = %s",
-                (nome.strip(), filtro_id),
-            )
-            alterado = cursor.rowcount > 0
-        conexao.commit()
-        return alterado
-    except Exception:
-        conexao.rollback()
-        raise
-    finally:
-        conexao.close()
-
-
-def excluir_filtro(filtro_id):
-    conexao = _conectar()
-    try:
-        with conexao.cursor() as cursor:
-            cursor.execute("DELETE FROM filtros_salvos WHERE id = %s", (filtro_id,))
-            excluido = cursor.rowcount > 0
-        conexao.commit()
-        return excluido
-    except Exception:
-        conexao.rollback()
-        raise
-    finally:
-        conexao.close()
