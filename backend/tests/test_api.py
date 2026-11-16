@@ -252,3 +252,20 @@ def test_salvar_filtro_rejeita_dados_invalidos(cliente, dados) -> None:
 
     assert resposta.status_code == 400
     assert "erro" in resposta.get_json()
+
+
+def test_pagina_inicio_renderiza_mapa_e_elementos_de_indicadores(cliente) -> None:
+    resposta = cliente.get("/")
+    assert resposta.status_code == 200
+    html = resposta.get_data(as_text=True)
+
+    assert 'id="filtro-regiao"' in html
+    assert 'id="filtro-estado"' in html
+    assert 'id="valor-potencial"' in html
+    assert 'id="btn-limpar-estado"' in html
+    assert "mapa-brasil-svg" in html
+    assert 'id="mapa-tooltip"' in html
+    assert 'id="regiao-norte"' in html
+    assert 'id="regiao-nordeste"' in html
+    assert 'id="secao-estados"' in html
+    assert "potencial-credito.js" in html
