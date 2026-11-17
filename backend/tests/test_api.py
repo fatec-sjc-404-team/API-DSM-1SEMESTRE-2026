@@ -1,6 +1,10 @@
+from unittest.mock import MagicMock
+
 import pytest
 
+import app as modulo_app
 import dados
+import filtros_salvos as modulo_filtros_salvos
 from app import app
 
 
@@ -152,6 +156,216 @@ def test_fonte_de_dados_fora_do_ar_devolve_erro_503(
 def test_paginas_do_grupo_continuam_abrindo(cliente) -> None:
     for rota in ("/", "/graficos", "/filtros_salvos", "/health"):
         assert cliente.get(rota).status_code == 200
+
+
+def test_listar_filtros_salvos_consulta_a_persistencia(cliente, monkeypatch) -> None:
+    filtros = [
+        {
+            "id": 7,
+            "nome": "Regiao Norte",
+            "regiao": "norte",
+            "estado": "AM",
+            "periodo": 6,
+            "tipo_divida": "critica",
+            "criado_em": "2026-11-14T12:00:00",
+        }
+    ]
+    monkeypatch.setattr(modulo_app, "listar_filtros", lambda: filtros)
+
+    resposta = cliente.get("/api/filtros-salvos")
+
+    assert resposta.status_code == 200
+    assert resposta.get_json()["filtros"] == filtros
+
+
+def test_salvar_filtro_envia_composicao_nomeada_e_ignora_campos_nao_suportados(
+    cliente, monkeypatch
+) -> None:
+    persistido = {}
+
+    def salvar(filtro):
+        persistido.update(filtro)
+        return 42
+
+    monkeypatch.setattr(modulo_app, "salvar_filtro", salvar)
+    resposta = cliente.post(
+        "/api/filtros-salvos",
+        json={
+            "nome": "  Regiao Norte - Debito Critico  ",
+            "regiao": "norte",
+            "estado": "am",
+            "periodo": 6,
+            "tipo_divida": "critica",
+            "prazo": "90 dias",
+            "apostas": True,
+        },
+    )
+
+    assert resposta.status_code == 201
+    assert resposta.get_json()["id"] == 42
+    assert persistido == {
+        "nome": "Regiao Norte - Debito Critico",
+        "regiao": "norte",
+        "estado": "AM",
+        "periodo": 6,
+        "tipo_divida": "critica",
+    }
+
+
+def test_salvar_filtro_mantem_null_para_todos(cliente, monkeypatch) -> None:
+    persistido = {}
+    monkeypatch.setattr(
+        modulo_app,
+        "salvar_filtro",
+        lambda filtro: persistido.update(filtro) or 43,
+    )
+
+    resposta = cliente.post(
+        "/api/filtros-salvos",
+        json={
+            "nome": "Sem filtros opcionais",
+            "regiao": None,
+            "estado": None,
+            "periodo": 12,
+            "tipo_divida": None,
+        },
+    )
+
+    assert resposta.status_code == 201
+    assert persistido == {
+        "nome": "Sem filtros opcionais",
+        "regiao": None,
+        "estado": None,
+        "periodo": 12,
+        "tipo_divida": None,
+    }
+
+
+@pytest.mark.parametrize(
+    "dados",
+    [
+        {"nome": "", "periodo": 1},
+        {"nome": "x" * 101, "periodo": 1},
+        {"nome": "Sem período"},
+        {"nome": "Período inválido", "periodo": 13},
+    ],
+)
+def test_salvar_filtro_rejeita_dados_invalidos(cliente, dados) -> None:
+    resposta = cliente.post("/api/filtros-salvos", json=dados)
+
+    assert resposta.status_code == 400
+    assert "erro" in resposta.get_json()
+
+
+def test_renomear_filtro_salvo(cliente, monkeypatch) -> None:
+    renomeado = {}
+
+    def renomear(filtro_id, nome):
+        renomeado.update(id=filtro_id, nome=nome)
+        return True
+
+    monkeypatch.setattr(modulo_app, "renomear_filtro", renomear)
+    resposta = cliente.patch(
+        "/api/filtros-salvos/42",
+        json={"nome": "  Meu filtro atualizado  "},
+    )
+
+    assert resposta.status_code == 200
+    assert renomeado == {"id": 42, "nome": "Meu filtro atualizado"}
+
+
+def test_renomear_filtro_salvo_rejeita_nome_invalido(cliente, monkeypatch) -> None:
+    monkeypatch.setattr(
+        modulo_app,
+        "renomear_filtro",
+        lambda *_: pytest.fail("Não deve chamar o banco com um nome inválido."),
+    )
+
+    resposta = cliente.patch("/api/filtros-salvos/42", json={"nome": " "})
+
+    assert resposta.status_code == 400
+    assert "nome" in resposta.get_json()["erro"].lower()
+
+
+def test_renomear_filtro_salvo_inexistente(cliente, monkeypatch) -> None:
+    monkeypatch.setattr(modulo_app, "renomear_filtro", lambda *_: False)
+
+    resposta = cliente.patch(
+        "/api/filtros-salvos/42",
+        json={"nome": "Filtro atualizado"},
+    )
+
+    assert resposta.status_code == 404
+
+
+def test_excluir_filtro_salvo(cliente, monkeypatch) -> None:
+    excluido = {}
+
+    def excluir(filtro_id):
+        excluido["id"] = filtro_id
+        return True
+
+    monkeypatch.setattr(modulo_app, "excluir_filtro", excluir)
+    resposta = cliente.delete("/api/filtros-salvos/42")
+
+    assert resposta.status_code == 200
+    assert excluido == {"id": 42}
+
+
+def test_excluir_filtro_salvo_inexistente(cliente, monkeypatch) -> None:
+    monkeypatch.setattr(modulo_app, "excluir_filtro", lambda *_: False)
+
+    resposta = cliente.delete("/api/filtros-salvos/42")
+
+    assert resposta.status_code == 404
+
+
+def test_renomear_filtro_atualiza_e_confirma_transacao(monkeypatch) -> None:
+    cursor = MagicMock()
+    cursor.__enter__.return_value = cursor
+    cursor.rowcount = 1
+    conexao = MagicMock()
+    conexao.cursor.return_value = cursor
+    monkeypatch.setattr(modulo_filtros_salvos, "_conectar", lambda: conexao)
+
+    assert modulo_filtros_salvos.renomear_filtro(42, "Novo nome")
+
+    cursor.execute.assert_called_once_with(
+        "UPDATE filtros_salvos SET nome = %s WHERE id = %s",
+        ("Novo nome", 42),
+    )
+    conexao.commit.assert_called_once()
+
+
+def test_renomear_filtro_existente_com_mesmo_nome_nao_vira_404(monkeypatch) -> None:
+    cursor = MagicMock()
+    cursor.__enter__.return_value = cursor
+    cursor.rowcount = 0
+    cursor.fetchone.return_value = {"id": 42}
+    conexao = MagicMock()
+    conexao.cursor.return_value = cursor
+    monkeypatch.setattr(modulo_filtros_salvos, "_conectar", lambda: conexao)
+
+    assert modulo_filtros_salvos.renomear_filtro(42, "Mesmo nome")
+    assert cursor.execute.call_count == 2
+    conexao.commit.assert_called_once()
+
+
+def test_excluir_filtro_remove_e_confirma_transacao(monkeypatch) -> None:
+    cursor = MagicMock()
+    cursor.__enter__.return_value = cursor
+    cursor.rowcount = 1
+    conexao = MagicMock()
+    conexao.cursor.return_value = cursor
+    monkeypatch.setattr(modulo_filtros_salvos, "_conectar", lambda: conexao)
+
+    assert modulo_filtros_salvos.excluir_filtro(42)
+
+    cursor.execute.assert_called_once_with(
+        "DELETE FROM filtros_salvos WHERE id = %s",
+        (42,),
+    )
+    conexao.commit.assert_called_once()
 
 
 def test_pagina_inicio_renderiza_mapa_e_elementos_de_indicadores(cliente) -> None:

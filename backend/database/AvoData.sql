@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS BCB (
 
     PRIMARY KEY (id),
 
-    --Impede que numeros negativos sejam registrados
+    -- Impede que numeros negativos sejam registrados
     CONSTRAINT chk_bcb_valores_nao_negativos CHECK (
         numero_de_operacoes >= 0
         AND a_vencer_ate_90_dias >= 0
@@ -72,4 +72,26 @@ CREATE TABLE IF NOT EXISTS BCB (
   -- Uso comparações que não diferenciam letras maiúsculas e minúsculas.
   COLLATE=utf8mb4_unicode_ci;
 
+-- US06 (FC404-107) - Salvar filtro
+-- Guarda as composições de filtros nomeadas pelo usuário.
+-- NULL em regiao/estado/tipo_divida significa "Todos".
+-- Prazo e apostas ficam fora do escopo desta tarefa e não são armazenados.
+CREATE TABLE IF NOT EXISTS filtros_salvos (
+    id BIGINT NOT NULL AUTO_INCREMENT,
+    nome VARCHAR(100) NOT NULL,
+    regiao VARCHAR(10) NULL,
+    estado CHAR(2) NULL,
+    periodo TINYINT NOT NULL,
+    tipo_divida VARCHAR(10) NULL,
+    criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
+    PRIMARY KEY (id),
+    CONSTRAINT chk_filtros_salvos_nome CHECK (CHAR_LENGTH(TRIM(nome)) BETWEEN 1 AND 100),
+    CONSTRAINT chk_filtros_salvos_periodo CHECK (periodo BETWEEN 1 AND 12),
+    CONSTRAINT chk_filtros_salvos_regiao CHECK (
+        regiao IS NULL OR regiao IN ('norte', 'nordeste')
+    ),
+    CONSTRAINT chk_filtros_salvos_tipo_divida CHECK (
+        tipo_divida IS NULL OR tipo_divida IN ('saudavel', 'critica', 'mista')
+    )
+) ENGINE=InnoDB DEFAULT CHARACTER SET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

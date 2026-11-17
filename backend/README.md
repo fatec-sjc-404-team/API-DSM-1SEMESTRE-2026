@@ -24,7 +24,39 @@ source .venv/bin/activate      # Linux/macOS
 pip install -r requirements.txt
 ```
 
-### 3. Subir a API
+### 3. Configurar o `.env` local
+
+Os filtros salvos ficam no MySQL, então a API precisa saber como se conectar
+ao banco. Copie o modelo e preencha com os dados do **seu** MySQL:
+
+```bash
+cp .env.example .env           # Linux/macOS
+copy .env.example .env         # Windows
+```
+
+```dotenv
+# usuário e senha do seu MySQL
+DB_USER=root
+DB_PASSWORD=sua_senha
+# servidor e porta do MySQL (no Windows, 127.0.0.1 conecta mais rápido que localhost)
+DB_HOST=127.0.0.1
+DB_PORT=3306
+# banco criado pelo database/AvoData.sql
+DB_NAME=AvoCredit
+```
+
+- O `python app.py` lê o `backend/.env` sozinho; não precisa exportar as variáveis.
+- Comentários só em linha própria (começando com `#`); não escreva comentário
+  depois do valor, senão ele vira parte do valor.
+- O `.env` está no `.gitignore`: **nunca suba sua senha** para o repositório.
+- Antes de testar, rode o [`database/AvoData.sql`](database/AvoData.sql) no
+  MySQL para criar o banco `AvoCredit` e as tabelas `BCB` e `filtros_salvos`.
+- Sem o `DB_USER`, a API não consegue salvar filtros e a tela mostra
+  "Não foi possível acessar os filtros salvos.".
+- `DB_ROOT_PASSWORD` só é usado pelo `docker-compose.yml`; quem roda o MySQL
+  direto no computador pode ignorar.
+
+### 4. Subir a API
 
 ```bash
 python app.py
@@ -40,6 +72,22 @@ A API fica disponível em `http://localhost:8000`.
 | GET    | `/hello-world` | Retorna uma mensagem de boas-vindas |
 | GET    | `/api/dados` | Dados do BCB só com as linhas que atendem aos filtros |
 | GET    | `/api/indicadores` | Indicadores calculados só com os dados que atendem aos filtros |
+| GET    | `/api/filtros-salvos` | Lista as composições de filtros salvas no MySQL |
+| POST   | `/api/filtros-salvos` | Salva uma composição nomeada no MySQL |
+| PATCH  | `/api/filtros-salvos/{id}` | Renomeia um filtro salvo |
+| DELETE | `/api/filtros-salvos/{id}` | Exclui um filtro salvo |
+
+O POST recebe `nome`, `regiao`, `estado`, `periodo` e `tipo_divida`. O nome é
+obrigatório e limitado a 100 caracteres. Região, estado e tipo de dívida sem
+seleção são enviados como `null` e salvos como `NULL` (Todos). Prazo e apostas
+não fazem parte da composição persistida. Os dados são gravados em
+`AvoCredit.filtros_salvos`; o GET lê a tabela diretamente, então os registros
+continuam disponíveis depois que a aplicação reinicia.
+O PATCH recebe o novo `nome`; o DELETE remove o filtro pelo identificador.
+Ambos retornam `404` quando o filtro não existe.
+A tabela é criada pelo [`database/AvoData.sql`](database/AvoData.sql). Em um
+banco que já existe, executar o script de novo só cria o que falta, porque usa
+`CREATE TABLE IF NOT EXISTS`.
 
 Para testar pelo terminal:
 
@@ -97,6 +145,10 @@ DB_USER=root DB_PASSWORD=sua_senha python app.py
 Os valores são somados antes de dividir, então regiões e estados com carteira maior pesam mais. Grupos sem carteira ativa não aparecem. Se houver filtro de `tipoDivida`, os `pct_*` valem só para o que sobrou do filtro. As duas respostas trazem os `filtros` usados e a `ultima_data_base` dos dados.
 
 Os indicadores da US01 que ainda não existem (recuperação rápida, crédito caro e apostas) devem usar `dados_filtrados(filtros)` em `dados.py`, que já devolve a tabela filtrada.
+
+### Relatório em PDF
+
+`/api/relatorio.pdf` aceita os mesmos filtros e baixa um PDF (`relatorio.py`, gerado com o Matplotlib) com três páginas: filtros aplicados e indicadores gerais, potencial de crédito por estado e evolução mensal dos indicadores. Se nenhum dado atender aos filtros, o PDF traz só a página com o aviso. Filtro inválido devolve `400` e fonte de dados fora do ar devolve `503`, como nas outras rotas. Na tela de Gráficos, o botão "Gerar relatório PDF" usa os filtros que estão no formulário.
 
 ### Tipo de dívida
 
@@ -210,8 +262,8 @@ substitui a saída anterior com o mesmo nome.
 
 ## Modelo físico no MySQL
 
-O script [`database/AvoData.sql`](database/AvoData.sql) cria o banco `AvoCredit` e a
-tabela `BCB`, com as 24 colunas do CSV final. Também adiciona uma
+O script [`database/AvoData.sql`](database/AvoData.sql) cria o banco `AvoCredit`,
+as tabelas `BCB` e `filtros_salvos`. Também adiciona uma
 coluna técnica `id` como chave primária, sem precisar que ela exista no CSV.
 Os valores monetários usam `DECIMAL(20, 2)` para manter precisão decimal, e o
 banco/tabela usam `utf8mb4` para armazenar texto.
@@ -224,7 +276,7 @@ Para criar o modelo pelo MySQL Workbench:
 
 1. Abra `backend/database/AvoData.sql`.
 2. Conecte-se ao servidor MySQL e execute o script inteiro.
-3. Atualize a lista de schemas; o banco `AvoCredit` e a tabela `BCB`
+3. Atualize a lista de schemas; o banco `AvoCredit` e as tabelas `BCB` e `filtros_salvos`
    deverão aparecer.
 
 `CREATE TABLE IF NOT EXISTS` não recria uma tabela existente. O `ALTER TABLE`

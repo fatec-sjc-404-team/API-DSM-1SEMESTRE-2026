@@ -130,6 +130,31 @@
   border-radius: 2px;
 }
 
+/* Nome longo sem espaço quebra a linha em vez de invadir a coluna Região. */
+.tabela-filtros-salvos td:first-child {
+  max-width: 280px;
+  overflow-wrap: anywhere;
+}
+
+.tabela-filtros-salvos td:last-child {
+  white-space: nowrap;
+}
+
+/* Mensagem de tabela vazia/carregando ocupa a linha toda, alinhada à esquerda. */
+.tabela-filtros-salvos td[colspan] {
+  max-width: none;
+  text-align: left;
+  white-space: normal;
+}
+
+.tabela-filtros-salvos td button.material-symbols-outlined {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
 .filtro-edicao {
   display: flex;
   align-items: center;
@@ -266,41 +291,4 @@
 
 .base-aviso .material-symbols-outlined {
   color: #69b578;
-}
-
-/* Container de rolagem para tabelas no mobile */
-.tabela-responsiva-wrapper {
-  width: 100%;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  margin-bottom: 12px;
-}
-
-/* Responsividade Mobile */
-@media (max-width: 768px) {
-  .main-card {
-    padding: 14px;
-    margin-bottom: 16px;
-  }
-
-  .filtros-header {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
-  }
-
-  .button-filter {
-    width: 100%;
-    justify-content: center;
-    padding: 10px;
-  }
-
-  .filtro-modal-dialogo {
-    width: min(440px, 92vw);
-    padding: 24px 18px;
-  }
-
-  .filtro-modal-acoes button {
-    padding: 10px 16px;
-  }
 }

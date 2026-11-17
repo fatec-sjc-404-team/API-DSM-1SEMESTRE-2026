@@ -1,9 +1,22 @@
+import os
+from pathlib import Path
+
+import pymysql
 from flasgger import Swagger
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, Response, jsonify, render_template, request
 
 from dados import DadosIndisponiveis, consultar_dados
 from filtros import ler_filtros
+from filtros_salvos import (
+    excluir_filtro,
+    listar_filtros,
+    renomear_filtro,
+    salvar_filtro,
+    validar_filtro,
+    validar_nome_filtro,
+)
 from indicadores import consultar_indicadores
+from relatorio import gerar_relatorio_pdf
 
 app = Flask(__name__)
 
@@ -218,9 +231,119 @@ def api_indicadores():
     return _consultar(consultar_indicadores)
 
 
+@app.get("/api/relatorio.pdf")
+def api_relatorio_pdf():
+    """Baixa um relatório em PDF com os indicadores e gráficos dos filtros aplicados.
+    ---
+    tags:
+      - Relatório
+    produces:
+      - application/pdf
+    parameters:
+      - name: regiao
+        in: query
+        type: string
+        enum: [todos, norte, nordeste]
+        description: Região dos dados
+      - name: estado
+        in: query
+        type: string
+        description: Sigla da UF (ex. BA). Precisa pertencer à região escolhida
+      - name: periodo
+        in: query
+        type: string
+        description: Últimos meses, de 1_mes até 12_meses
+        example: 6_meses
+      - name: tipoDivida
+        in: query
+        type: string
+        enum: [todos, saudavel, critica, mista]
+        description: Tipo de dívida
+    responses:
+      200:
+        description: Arquivo PDF do relatório
+      400:
+        description: Algum filtro tem valor inválido
+      503:
+        description: A fonte dos dados (MySQL ou CSV) não está disponível
+    """
+    try:
+        filtros = ler_filtros(request.args)
+    except ValueError as erro:
+        return jsonify(erro=str(erro)), 400
+
+    try:
+        indicadores = consultar_indicadores(filtros)
+    except DadosIndisponiveis as erro:
+        return jsonify(erro=str(erro)), 503
+
+    return Response(
+        gerar_relatorio_pdf(indicadores),
+        mimetype="application/pdf",
+        headers={
+            "Content-Disposition": 'attachment; filename="relatorio-potencial-credito.pdf"'
+        },
+    )
+
+
 @app.get("/filtros_salvos")
 def filtros_salvos():
     return render_template("filtros_salvos.html")
+
+
+@app.get("/api/filtros-salvos")
+def api_listar_filtros_salvos():
+    try:
+        return jsonify(filtros=listar_filtros())
+    except (RuntimeError, pymysql.MySQLError):
+        app.logger.exception("Não foi possível acessar o banco MySQL de filtros.")
+        return jsonify(erro="Não foi possível acessar os filtros salvos."), 503
+
+
+@app.post("/api/filtros-salvos")
+def api_salvar_filtro():
+    try:
+        filtro = validar_filtro(request.get_json(silent=True))
+        filtro_id = salvar_filtro(filtro)
+    except (TypeError, ValueError) as erro:
+        return jsonify(erro=str(erro)), 400
+    except (RuntimeError, pymysql.MySQLError):
+        app.logger.exception("Não foi possível salvar o filtro no banco MySQL.")
+        return jsonify(erro="Não foi possível salvar o filtro."), 503
+    return jsonify(id=filtro_id, mensagem="Filtro salvo com sucesso."), 201
+
+
+@app.patch("/api/filtros-salvos/<int:filtro_id>")
+def api_renomear_filtro(filtro_id):
+    dados = request.get_json(silent=True)
+    if not isinstance(dados, dict):
+        return jsonify(erro="Envie o nome do filtro em formato JSON."), 400
+
+    try:
+        nome = validar_nome_filtro(dados.get("nome"))
+        alterado = renomear_filtro(filtro_id, nome)
+    except ValueError as erro:
+        return jsonify(erro=str(erro)), 400
+    except (RuntimeError, pymysql.MySQLError):
+        app.logger.exception("Não foi possível renomear o filtro no banco MySQL.")
+        return jsonify(erro="Não foi possível renomear o filtro."), 503
+
+    if not alterado:
+        return jsonify(erro="Filtro não encontrado."), 404
+    return jsonify(mensagem="Filtro renomeado com sucesso.")
+
+
+@app.delete("/api/filtros-salvos/<int:filtro_id>")
+def api_excluir_filtro(filtro_id):
+    try:
+        excluido = excluir_filtro(filtro_id)
+    except (RuntimeError, pymysql.MySQLError):
+        app.logger.exception("Não foi possível excluir o filtro no banco MySQL.")
+        return jsonify(erro="Não foi possível excluir o filtro."), 503
+
+    if not excluido:
+        return jsonify(erro="Filtro não encontrado."), 404
+    return jsonify(mensagem="Filtro excluído com sucesso.")
 
 
 @app.get("/health")
@@ -261,5 +384,21 @@ def hello_world():
     return jsonify(mensagem="Hello, World!")
 
 
+ARQUIVO_ENV = Path(__file__).with_name(".env")
+
+
+def carregar_env(caminho=ARQUIVO_ENV):
+    """Lê o backend/.env (CHAVE=valor) sem sobrescrever variáveis já definidas."""
+    if not caminho.is_file():
+        return
+    for linha in caminho.read_text(encoding="utf-8").splitlines():
+        linha = linha.strip()
+        if not linha or linha.startswith("#") or "=" not in linha:
+            continue
+        chave, valor = linha.split("=", 1)
+        os.environ.setdefault(chave.strip(), valor.strip().strip('"').strip("'"))
+
+
 if __name__ == "__main__":
+    carregar_env()
     app.run(port=8000, debug=True)

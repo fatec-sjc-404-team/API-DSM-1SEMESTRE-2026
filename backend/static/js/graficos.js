@@ -41,6 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const VERDE = '#2e7d32';
   const URL_INDICADORES = '/api/indicadores';
+  const URL_RELATORIO = '/api/relatorio.pdf';
 
   // Filtros que a API entende (mesmos names do formulário).
   // O "prazo" ainda não existe na API, então não vai.
@@ -265,6 +266,14 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   window.aplicarFiltrosGraficos = aplicarFiltros;
 
+  // Baixa o PDF com os mesmos filtros que estão no formulário agora (FC404-231).
+  const botaoRelatorio = document.getElementById('butao-relatorio');
+  if (botaoRelatorio) {
+    botaoRelatorio.addEventListener('click', () => {
+      window.location.href = `${URL_RELATORIO}?${montarParametros()}`;
+    });
+  }
+
   const inputSalvar = document.getElementById('input-salvar-filtro');
   const botaoSalvar = document.getElementById('butao-salvar-filtro');
   if (inputSalvar) {
@@ -276,7 +285,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   if (botaoSalvar && formulario && inputSalvar) {
-    botaoSalvar.addEventListener('click', () => {
+    botaoSalvar.addEventListener('click', async () => {
       const nome = inputSalvar.value.trim();
       if (!nome) {
         window.alert('Informe um nome para salvar o filtro.');
@@ -284,36 +293,25 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      const obterValor = (nomeCampo) => formulario.elements[nomeCampo].value;
-      const obterRotulo = (nomeCampo) => {
-        const campo = formulario.elements[nomeCampo];
-        return campo.options[campo.selectedIndex].textContent.trim();
-      };
-      const data = new Date();
-      const criadoEm = new Intl.DateTimeFormat('pt-BR', {
-        dateStyle: 'short',
-        timeStyle: 'short',
-      }).format(data);
-      const filtro = {
-        nome,
-        regiao: obterRotulo('regiao'),
-        estado: obterValor('estado') || 'Todos',
-        periodo: obterRotulo('periodo'),
-        tipoDivida: obterRotulo('tipoDivida'),
-        apostas: 'Todos',
-        criadoEm,
-      };
-
       try {
-        const armazenados = localStorage.getItem('avocredit:filtrosSalvos');
-        const estado = armazenados
-          ? JSON.parse(armazenados)
-          : { inicializado: false, filtros: [] };
-        if (!Array.isArray(estado.filtros)) {
-          throw new Error('Os filtros salvos neste navegador estão em um formato inválido.');
+        const resposta = await fetch('/api/filtros-salvos', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            nome,
+            regiao: formulario.elements.regiao.value === 'todos'
+              ? null : formulario.elements.regiao.value,
+            estado: formulario.elements.estado.value || null,
+            periodo: Number.parseInt(formulario.elements.periodo.value, 10),
+            tipo_divida: formulario.elements.tipoDivida.value === 'todos'
+              ? null : formulario.elements.tipoDivida.value,
+          }),
+        });
+        const corpo = await resposta.json();
+        if (!resposta.ok) {
+          throw new Error(corpo.erro || 'Erro ao salvar o filtro.');
         }
-        estado.filtros.push(filtro);
-        localStorage.setItem('avocredit:filtrosSalvos', JSON.stringify(estado));
+        inputSalvar.value = '';
         window.alert('Filtro salvo com sucesso.');
       } catch (erro) {
         window.alert(`Não foi possível salvar o filtro: ${erro.message}`);
