@@ -40,6 +40,7 @@ A API fica disponível em `http://localhost:8000`.
 | GET    | `/hello-world` | Retorna uma mensagem de boas-vindas |
 | GET    | `/api/dados` | Dados do BCB só com as linhas que atendem aos filtros |
 | GET    | `/api/indicadores` | Indicadores calculados só com os dados que atendem aos filtros |
+| GET    | `/api/relatorio.pdf` | Relatório em PDF com os indicadores e gráficos dos filtros aplicados |
 
 Para testar pelo terminal:
 
@@ -97,6 +98,10 @@ DB_USER=root DB_PASSWORD=sua_senha python app.py
 Os valores são somados antes de dividir, então regiões e estados com carteira maior pesam mais. Grupos sem carteira ativa não aparecem. Se houver filtro de `tipoDivida`, os `pct_*` valem só para o que sobrou do filtro. As duas respostas trazem os `filtros` usados e a `ultima_data_base` dos dados.
 
 Os indicadores da US01 que ainda não existem (recuperação rápida, crédito caro e apostas) devem usar `dados_filtrados(filtros)` em `dados.py`, que já devolve a tabela filtrada.
+
+### Relatório em PDF
+
+`/api/relatorio.pdf` aceita os mesmos filtros e baixa um PDF (`relatorio.py`, gerado com o Matplotlib) com três páginas: filtros aplicados e indicadores gerais, potencial de crédito por estado e evolução mensal dos indicadores. Se nenhum dado atender aos filtros, o PDF traz só a página com o aviso. Filtro inválido devolve `400` e fonte de dados fora do ar devolve `503`, como nas outras rotas. Na tela de Gráficos, o botão "Gerar relatório PDF" usa os filtros que estão no formulário.
 
 ### Tipo de dívida
 
