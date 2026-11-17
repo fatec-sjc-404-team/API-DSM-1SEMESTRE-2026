@@ -7,7 +7,14 @@ from flask import Flask, jsonify, render_template, request
 
 from dados import DadosIndisponiveis, consultar_dados
 from filtros import ler_filtros
-from filtros_salvos import listar_filtros, salvar_filtro, validar_filtro
+from filtros_salvos import (
+    excluir_filtro,
+    listar_filtros,
+    renomear_filtro,
+    salvar_filtro,
+    validar_filtro,
+    validar_nome_filtro,
+)
 from indicadores import consultar_indicadores
 
 app = Flask(__name__)
@@ -248,6 +255,39 @@ def api_salvar_filtro():
         app.logger.exception("Não foi possível salvar o filtro no banco MySQL.")
         return jsonify(erro="Não foi possível salvar o filtro."), 503
     return jsonify(id=filtro_id, mensagem="Filtro salvo com sucesso."), 201
+
+
+@app.patch("/api/filtros-salvos/<int:filtro_id>")
+def api_renomear_filtro(filtro_id):
+    dados = request.get_json(silent=True)
+    if not isinstance(dados, dict):
+        return jsonify(erro="Envie o nome do filtro em formato JSON."), 400
+
+    try:
+        nome = validar_nome_filtro(dados.get("nome"))
+        alterado = renomear_filtro(filtro_id, nome)
+    except ValueError as erro:
+        return jsonify(erro=str(erro)), 400
+    except (RuntimeError, pymysql.MySQLError):
+        app.logger.exception("Não foi possível renomear o filtro no banco MySQL.")
+        return jsonify(erro="Não foi possível renomear o filtro."), 503
+
+    if not alterado:
+        return jsonify(erro="Filtro não encontrado."), 404
+    return jsonify(mensagem="Filtro renomeado com sucesso.")
+
+
+@app.delete("/api/filtros-salvos/<int:filtro_id>")
+def api_excluir_filtro(filtro_id):
+    try:
+        excluido = excluir_filtro(filtro_id)
+    except (RuntimeError, pymysql.MySQLError):
+        app.logger.exception("Não foi possível excluir o filtro no banco MySQL.")
+        return jsonify(erro="Não foi possível excluir o filtro."), 503
+
+    if not excluido:
+        return jsonify(erro="Filtro não encontrado."), 404
+    return jsonify(mensagem="Filtro excluído com sucesso.")
 
 
 @app.get("/health")
