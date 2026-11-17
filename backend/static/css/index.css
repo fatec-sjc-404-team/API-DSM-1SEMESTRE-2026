@@ -9,6 +9,7 @@
   border-radius: 10px;
   padding: 20px;
   margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .filters {
@@ -72,6 +73,7 @@
   border-radius: 10px;
   padding: 10px;
   padding-bottom: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .card-header-linha {
@@ -321,7 +323,7 @@
   border: 1px solid #e2e8e2;
   border-radius: 15px;
   padding: 28px;
-  box-shadow: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   display: flex;
   flex-direction: column;
   transition: 0.2s ease;
@@ -331,7 +333,7 @@
 .indicator-card:hover {
   transform: translateY(-3px);
   border-color: #bcd6be;
-  box-shadow: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
 }
 
 .indicator-card h3 {
@@ -390,6 +392,7 @@
   background-color: white;
   border-radius: 12px;
   border: 1px solid #e8ede8;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .estados-header {
