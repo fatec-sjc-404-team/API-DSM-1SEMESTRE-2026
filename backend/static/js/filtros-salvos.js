@@ -9,6 +9,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const botaoNovo = document.querySelector('.button-filter');
   const regioes = { norte: 'Norte', nordeste: 'Nordeste' };
   const tipos = { saudavel: 'Saudável', critica: 'Crítica', mista: 'Mista' };
+  const UFS_POR_REGIAO = {
+    norte: ['AC', 'AM', 'AP', 'PA', 'RO', 'RR', 'TO'],
+    nordeste: ['AL', 'BA', 'CE', 'MA', 'PB', 'PE', 'PI', 'RN', 'SE'],
+  };
   const modalExclusao = document.getElementById('modal-excluir-filtro');
   const botaoCancelarExclusao = document.getElementById('cancelar-exclusao');
   const botaoConfirmarExclusao = document.getElementById('confirmar-exclusao');
@@ -58,9 +62,29 @@ document.addEventListener('DOMContentLoaded', () => {
     return botao;
   }
 
+  function criarSelect(rotulo, opcoes, valorAtual) {
+    const select = document.createElement('select');
+    select.setAttribute('aria-label', rotulo);
+    opcoes.forEach(([valor, texto]) => select.add(new Option(texto, valor)));
+    select.value = valorAtual ?? '';
+    return select;
+  }
+
+  // Estados que podem ser escolhidos para a região (todos, se a região for "Todos").
+  function opcoesDeEstado(regiao) {
+    const ufs = regiao
+      ? UFS_POR_REGIAO[regiao]
+      : [...UFS_POR_REGIAO.norte, ...UFS_POR_REGIAO.nordeste];
+    return [['', 'Todos'], ...ufs.map((uf) => [uf, uf])];
+  }
+
+  // Transforma a linha em formulário: nome, região, estado, período e tipo de dívida.
+  // Enter salva, Esc cancela. Só uma linha fica em edição por vez.
   function iniciarEdicao(filtro, celulaNome) {
-    const grupoEdicao = document.createElement('div');
-    grupoEdicao.className = 'filtro-edicao';
+    renderizar(filtrosSalvos);
+    const linha = [...corpo.rows].find((tr) => tr.dataset.id === String(filtro.id))
+      || celulaNome.parentElement;
+    linha.classList.add('filtro-em-edicao');
 
     const inputNome = document.createElement('input');
     inputNome.type = 'text';
@@ -68,9 +92,44 @@ document.addEventListener('DOMContentLoaded', () => {
     inputNome.value = filtro.nome;
     inputNome.setAttribute('aria-label', 'Nome do filtro');
 
-    const botaoOk = document.createElement('button');
-    botaoOk.type = 'button';
-    botaoOk.textContent = 'OK';
+    const selectRegiao = criarSelect(
+      'Região',
+      [['', 'Todos'], ['norte', 'Norte'], ['nordeste', 'Nordeste']],
+      filtro.regiao,
+    );
+    const selectEstado = criarSelect('Estado', opcoesDeEstado(filtro.regiao), filtro.estado);
+    const selectPeriodo = criarSelect(
+      'Período',
+      Array.from({ length: 12 }, (_, i) => [String(i + 1), descreverPeriodo(i + 1)]),
+      String(filtro.periodo),
+    );
+    const selectTipo = criarSelect(
+      'Tipo de dívida',
+      [['', 'Todos'], ...Object.entries(tipos)],
+      filtro.tipo_divida,
+    );
+
+    // Ao trocar a região, mostra só os estados dela (e limpa o estado se não pertencer).
+    selectRegiao.addEventListener('change', () => {
+      const anterior = selectEstado.value;
+      selectEstado.replaceChildren();
+      opcoesDeEstado(selectRegiao.value).forEach(([valor, texto]) => {
+        selectEstado.add(new Option(texto, valor));
+      });
+      selectEstado.value = [...selectEstado.options].some((o) => o.value === anterior)
+        ? anterior
+        : '';
+    });
+
+    const botaoSalvar = document.createElement('button');
+    botaoSalvar.type = 'button';
+    botaoSalvar.className = 'filtro-edicao-salvar';
+    botaoSalvar.textContent = 'Salvar';
+
+    const botaoCancelar = document.createElement('button');
+    botaoCancelar.type = 'button';
+    botaoCancelar.className = 'filtro-edicao-cancelar';
+    botaoCancelar.textContent = 'Cancelar';
 
     function cancelarEdicao() {
       renderizar(filtrosSalvos);
@@ -84,25 +143,36 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
+      const atualizado = {
+        nome,
+        regiao: selectRegiao.value || null,
+        estado: selectEstado.value || null,
+        periodo: Number(selectPeriodo.value),
+        tipo_divida: selectTipo.value || null,
+      };
+
+      botaoSalvar.disabled = true;
       try {
         await requisitar(`${URL_API}/${filtro.id}`, {
-          method: 'PATCH',
+          method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ nome }),
+          body: JSON.stringify(atualizado),
         });
         filtrosSalvos = filtrosSalvos.map((item) =>
-          item.id === filtro.id ? { ...item, nome } : item,
+          item.id === filtro.id ? { ...item, ...atualizado } : item,
         );
         renderizar(filtrosSalvos);
       } catch (erro) {
-        window.alert(`Não foi possível renomear o filtro: ${erro.message}`);
+        botaoSalvar.disabled = false;
+        window.alert(`Não foi possível atualizar o filtro: ${erro.message}`);
         inputNome.focus();
       }
     }
 
-    botaoOk.addEventListener('click', salvarEdicao);
-    inputNome.addEventListener('keydown', (evento) => {
-      if (evento.key === 'Enter') {
+    botaoSalvar.addEventListener('click', salvarEdicao);
+    botaoCancelar.addEventListener('click', cancelarEdicao);
+    linha.addEventListener('keydown', (evento) => {
+      if (evento.key === 'Enter' && evento.target.tagName !== 'BUTTON') {
         evento.preventDefault();
         salvarEdicao();
       } else if (evento.key === 'Escape') {
@@ -110,8 +180,15 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    grupoEdicao.append(inputNome, botaoOk);
-    celulaNome.replaceChildren(grupoEdicao);
+    const grupoEdicao = document.createElement('div');
+    grupoEdicao.className = 'filtro-edicao';
+    grupoEdicao.append(inputNome);
+    linha.cells[0].replaceChildren(grupoEdicao);
+    linha.cells[1].replaceChildren(selectRegiao);
+    linha.cells[2].replaceChildren(selectEstado);
+    linha.cells[3].replaceChildren(selectPeriodo);
+    linha.cells[4].replaceChildren(selectTipo);
+    linha.cells[7].replaceChildren(botaoSalvar, botaoCancelar);
     inputNome.focus();
     inputNome.select();
   }
@@ -167,6 +244,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     filtros.forEach((filtro) => {
       const linha = corpo.insertRow();
+      linha.dataset.id = filtro.id;
       const valores = [
         filtro.nome,
         regioes[filtro.regiao] || 'Todos',
