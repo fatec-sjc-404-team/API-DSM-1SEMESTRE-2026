@@ -181,3 +181,5 @@ def test_elementos_responsivos_e_menu_expansivo_presentes(cliente) -> None:
     assert 'id="sidebar-backdrop"' in html
     assert 'id="btn-toggle-indicators"' in html
     assert 'id="cards-indicadores"' in html
+    assert 'id="btn-toggle-estados"' in html
+    assert 'id="conteudo-estados"' in html

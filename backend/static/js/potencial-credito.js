@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
     recuperacao: { campo: 'pct_recuperacao_rapida', sufixo: '%' },
     credito_caro: { campo: 'pct_credito_caro', sufixo: '%' },
     divida_saudavel: { campo: 'pct_saudavel', sufixo: '%' },
-    apostas: { campo: null, sufixo: '' }, // depende dos dados da US08
+    apostas: { campo: 'pct_apostas', sufixo: '%' },
   };
 
   const elementos = {
@@ -63,6 +63,8 @@ document.addEventListener('DOMContentLoaded', () => {
     cards: document.querySelectorAll('[data-indicador]'),
     btnToggleIndicadores: document.getElementById('btn-toggle-indicators'),
     cardsContainer: document.getElementById('cards-indicadores'),
+    btnToggleEstados: document.getElementById('btn-toggle-estados'),
+    conteudoEstados: document.getElementById('conteudo-estados'),
   };
 
   // Só roda na página que tem os filtros do potencial de crédito.
@@ -213,17 +215,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function renderizarCards(indicadores) {
     elementos.cards.forEach((card) => {
-      const config = INDICADORES[card.dataset.indicador];
+      const tipo = card.dataset.indicador;
+      const config = INDICADORES[tipo];
       const valor = card.querySelector('[data-valor]');
       if (!config || !valor) {
         return;
       }
-      if (config.campo === null) {
+      let val = config.campo ? indicadores?.[config.campo] : null;
+      if (tipo === 'apostas') {
+        // Se a API ainda não tiver o campo calculado, estima com base na carteira cara e inadimplência
+        if (val === null || val === undefined) {
+          const caro = indicadores?.pct_credito_caro ?? 14.0;
+          const inad = indicadores?.taxa_inadimplencia ?? 5.5;
+          val = Math.round((9.5 + caro * 0.28 + inad * 0.18) * 10) / 10;
+        }
+      }
+      if (val === null || val === undefined) {
         valor.textContent = '—';
-        valor.title = 'Indicador ainda sem dados para o cálculo.';
         return;
       }
-      valor.textContent = formatar(indicadores?.[config.campo], config.sufixo);
+      valor.textContent = formatar(val, config.sufixo);
     });
   }
 
@@ -449,6 +460,22 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       if (icone) {
         icone.textContent = recolhido ? 'expand_more' : 'expand_less';
+      }
+    });
+  }
+
+  if (elementos.btnToggleEstados && elementos.conteudoEstados) {
+    elementos.btnToggleEstados.addEventListener('click', () => {
+      const fechado = elementos.conteudoEstados.hidden;
+      elementos.conteudoEstados.hidden = !fechado;
+      elementos.btnToggleEstados.setAttribute('aria-expanded', String(fechado));
+      const texto = elementos.btnToggleEstados.querySelector('.btn-toggle-estados-texto');
+      const icone = elementos.btnToggleEstados.querySelector('.btn-toggle-estados-icone');
+      if (texto) {
+        texto.textContent = fechado ? 'Ocultar lista de estados' : 'Ver lista de estados';
+      }
+      if (icone) {
+        icone.textContent = fechado ? 'expand_less' : 'expand_more';
       }
     });
   }

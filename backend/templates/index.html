@@ -105,9 +105,24 @@
   </section>
   <!-- Potencial de crédito de cada estado da região escolhida (preenchido pelo potencial-credito.js) -->
   <section class="estados-section" id="secao-estados" hidden>
-    <h2>Potencial de crédito por estado</h2>
-    <p class="estados-desc" id="estados-desc"></p>
-    <ul class="estados-lista" id="lista-estados"></ul>
+    <div class="estados-header">
+      <div class="estados-header-texto">
+        <h2>Potencial de crédito por estado</h2>
+        <p class="estados-desc" id="estados-desc"></p>
+      </div>
+      <button type="button"
+              class="btn-toggle-estados"
+              id="btn-toggle-estados"
+              aria-expanded="false"
+              aria-controls="conteudo-estados"
+              title="Expandir ou recolher lista de estados">
+        <span class="btn-toggle-estados-texto">Ver lista de estados</span>
+        <span class="material-symbols-outlined btn-toggle-estados-icone">expand_more</span>
+      </button>
+    </div>
+    <div class="estados-conteudo" id="conteudo-estados" hidden>
+      <ul class="estados-lista" id="lista-estados"></ul>
+    </div>
   </section>
 </main>
 {% endblock %}

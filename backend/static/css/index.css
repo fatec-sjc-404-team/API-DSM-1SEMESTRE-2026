@@ -318,19 +318,20 @@
 
 .indicator-card {
   background: #fff;
-  border: 2px solid #f1f1f1;
+  border: 1px solid #e2e8e2;
   border-radius: 15px;
   padding: 28px;
-  box-shadow: 0 7px 23px rgba(32, 32, 32, 0.8);
+  box-shadow: none;
   display: flex;
   flex-direction: column;
-  transition: 0.25s;
+  transition: 0.2s ease;
   min-height: 420px;
 }
 
 .indicator-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 2px 5px rgba(32, 32, 32, 0.8);
+  transform: translateY(-3px);
+  border-color: #bcd6be;
+  box-shadow: none;
 }
 
 .indicator-card h3 {
@@ -385,22 +386,64 @@
 /* Potencial de crédito por estado (preenchido pelo potencial-credito.js) */
 .estados-section {
   margin-bottom: 70px;
-  padding: 20px;
+  padding: 20px 24px;
   background-color: white;
-  border-radius: 10px;
+  border-radius: 12px;
+  border: 1px solid #e8ede8;
 }
 
-.estados-section h2 {
+.estados-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.estados-header-texto h2 {
   font-size: 22px;
   font-weight: 700;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   color: #303030;
 }
 
-.estados-desc {
+.estados-header-texto .estados-desc {
   font-size: 14px;
   color: #777;
-  margin-bottom: 20px;
+  margin-bottom: 0;
+}
+
+.btn-toggle-estados {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 18px;
+  background: #f3f7f1;
+  border: 1px solid rgba(44, 85, 36, 0.25);
+  border-radius: 8px;
+  color: #2c5524;
+  font: 500 14px 'Inter', sans-serif;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.btn-toggle-estados:hover {
+  background: #e2ede0;
+  border-color: rgba(44, 85, 36, 0.45);
+}
+
+.btn-toggle-estados-icone {
+  font-size: 20px;
+}
+
+.estados-conteudo {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #f0f3f0;
+}
+
+.estados-conteudo[hidden] {
+  display: none;
 }
 
 .estados-lista {
@@ -572,6 +615,18 @@
   .estados-section {
     padding: 16px;
     margin-bottom: 35px;
+  }
+
+  .estados-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .btn-toggle-estados {
+    width: 100%;
+    justify-content: center;
+    padding: 10px;
   }
 
   .estado-item {
