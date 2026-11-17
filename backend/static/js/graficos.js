@@ -41,6 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const VERDE = '#2e7d32';
   const URL_INDICADORES = '/api/indicadores';
+  const URL_RELATORIO = '/api/relatorio.pdf';
 
   // Filtros que a API entende (mesmos names do formulário).
   // O "prazo" ainda não existe na API, então não vai.
@@ -264,6 +265,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
   window.aplicarFiltrosGraficos = aplicarFiltros;
+
+  // Baixa o PDF com os mesmos filtros que estão no formulário agora (FC404-231).
+  const botaoRelatorio = document.getElementById('butao-relatorio');
+  if (botaoRelatorio) {
+    botaoRelatorio.addEventListener('click', () => {
+      window.location.href = `${URL_RELATORIO}?${montarParametros()}`;
+    });
+  }
 
   const inputSalvar = document.getElementById('input-salvar-filtro');
   const botaoSalvar = document.getElementById('butao-salvar-filtro');

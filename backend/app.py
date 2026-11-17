@@ -1,9 +1,10 @@
 from flasgger import Swagger
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, Response, jsonify, render_template, request
 
 from dados import DadosIndisponiveis, consultar_dados
 from filtros import ler_filtros
 from indicadores import consultar_indicadores
+from relatorio import gerar_relatorio_pdf
 
 app = Flask(__name__)
 
@@ -216,6 +217,61 @@ def api_indicadores():
               type: string
     """
     return _consultar(consultar_indicadores)
+
+
+@app.get("/api/relatorio.pdf")
+def api_relatorio_pdf():
+    """Baixa um relatório em PDF com os indicadores e gráficos dos filtros aplicados.
+    ---
+    tags:
+      - Relatório
+    produces:
+      - application/pdf
+    parameters:
+      - name: regiao
+        in: query
+        type: string
+        enum: [todos, norte, nordeste]
+        description: Região dos dados
+      - name: estado
+        in: query
+        type: string
+        description: Sigla da UF (ex. BA). Precisa pertencer à região escolhida
+      - name: periodo
+        in: query
+        type: string
+        description: Últimos meses, de 1_mes até 12_meses
+        example: 6_meses
+      - name: tipoDivida
+        in: query
+        type: string
+        enum: [todos, saudavel, critica, mista]
+        description: Tipo de dívida
+    responses:
+      200:
+        description: Arquivo PDF do relatório
+      400:
+        description: Algum filtro tem valor inválido
+      503:
+        description: A fonte dos dados (MySQL ou CSV) não está disponível
+    """
+    try:
+        filtros = ler_filtros(request.args)
+    except ValueError as erro:
+        return jsonify(erro=str(erro)), 400
+
+    try:
+        indicadores = consultar_indicadores(filtros)
+    except DadosIndisponiveis as erro:
+        return jsonify(erro=str(erro)), 503
+
+    return Response(
+        gerar_relatorio_pdf(indicadores),
+        mimetype="application/pdf",
+        headers={
+            "Content-Disposition": 'attachment; filename="relatorio-potencial-credito.pdf"'
+        },
+    )
 
 
 @app.get("/filtros_salvos")
