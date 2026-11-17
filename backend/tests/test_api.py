@@ -1,5 +1,6 @@
 import pytest
 
+import app as modulo_app
 import dados
 from app import app
 
@@ -152,3 +153,119 @@ def test_fonte_de_dados_fora_do_ar_devolve_erro_503(
 def test_paginas_do_grupo_continuam_abrindo(cliente) -> None:
     for rota in ("/", "/graficos", "/filtros_salvos", "/health"):
         assert cliente.get(rota).status_code == 200
+
+
+def test_listar_filtros_salvos_consulta_a_persistencia(cliente, monkeypatch) -> None:
+    filtros = [
+        {
+            "id": 7,
+            "nome": "Regiao Norte",
+            "regiao": "norte",
+            "estado": "AM",
+            "periodo": 6,
+            "tipo_divida": "critica",
+            "criado_em": "2026-11-14T12:00:00",
+        }
+    ]
+    monkeypatch.setattr(modulo_app, "listar_filtros", lambda: filtros)
+
+    resposta = cliente.get("/api/filtros-salvos")
+
+    assert resposta.status_code == 200
+    assert resposta.get_json()["filtros"] == filtros
+
+
+def test_salvar_filtro_envia_composicao_nomeada_e_ignora_campos_nao_suportados(
+    cliente, monkeypatch
+) -> None:
+    persistido = {}
+
+    def salvar(filtro):
+        persistido.update(filtro)
+        return 42
+
+    monkeypatch.setattr(modulo_app, "salvar_filtro", salvar)
+    resposta = cliente.post(
+        "/api/filtros-salvos",
+        json={
+            "nome": "  Regiao Norte - Debito Critico  ",
+            "regiao": "norte",
+            "estado": "am",
+            "periodo": 6,
+            "tipo_divida": "critica",
+            "prazo": "90 dias",
+            "apostas": True,
+        },
+    )
+
+    assert resposta.status_code == 201
+    assert resposta.get_json()["id"] == 42
+    assert persistido == {
+        "nome": "Regiao Norte - Debito Critico",
+        "regiao": "norte",
+        "estado": "AM",
+        "periodo": 6,
+        "tipo_divida": "critica",
+    }
+
+
+def test_salvar_filtro_mantem_null_para_todos(cliente, monkeypatch) -> None:
+    persistido = {}
+    monkeypatch.setattr(
+        modulo_app,
+        "salvar_filtro",
+        lambda filtro: persistido.update(filtro) or 43,
+    )
+
+    resposta = cliente.post(
+        "/api/filtros-salvos",
+        json={
+            "nome": "Sem filtros opcionais",
+            "regiao": None,
+            "estado": None,
+            "periodo": 12,
+            "tipo_divida": None,
+        },
+    )
+
+    assert resposta.status_code == 201
+    assert persistido == {
+        "nome": "Sem filtros opcionais",
+        "regiao": None,
+        "estado": None,
+        "periodo": 12,
+        "tipo_divida": None,
+    }
+
+
+@pytest.mark.parametrize(
+    "dados",
+    [
+        {"nome": "", "periodo": 1},
+        {"nome": "x" * 101, "periodo": 1},
+        {"nome": "Sem período"},
+        {"nome": "Período inválido", "periodo": 13},
+    ],
+)
+def test_salvar_filtro_rejeita_dados_invalidos(cliente, dados) -> None:
+    resposta = cliente.post("/api/filtros-salvos", json=dados)
+
+    assert resposta.status_code == 400
+    assert "erro" in resposta.get_json()
+
+
+def test_pagina_inicio_renderiza_mapa_e_elementos_de_indicadores(cliente) -> None:
+    resposta = cliente.get("/")
+    assert resposta.status_code == 200
+    html = resposta.get_data(as_text=True)
+
+    assert 'id="filtro-regiao"' in html
+    assert 'id="filtro-estado"' in html
+    assert 'id="valor-potencial"' in html
+    assert 'id="btn-limpar-estado"' in html
+    assert "mapa-brasil-svg" in html
+    assert 'id="mapa-tooltip"' in html
+    assert 'id="regiao-norte"' in html
+    assert 'id="regiao-nordeste"' in html
+    assert 'id="secao-estados"' in html
+    assert "potencial-credito.js" in html

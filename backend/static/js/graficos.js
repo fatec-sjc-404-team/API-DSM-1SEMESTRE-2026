@@ -276,7 +276,11 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   if (botaoSalvar && formulario && inputSalvar) {
+<<<<<<< HEAD
     botaoSalvar.addEventListener('click', () => {
+=======
+    botaoSalvar.addEventListener('click', async () => {
+>>>>>>> 060e2e05b7ff7eaf2cfbcb4f6d50fe96aaec4e96
       const nome = inputSalvar.value.trim();
       if (!nome) {
         window.alert('Informe um nome para salvar o filtro.');
@@ -284,6 +288,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
+<<<<<<< HEAD
       const obterValor = (nomeCampo) => formulario.elements[nomeCampo].value;
       const obterRotulo = (nomeCampo) => {
         const campo = formulario.elements[nomeCampo];
@@ -314,6 +319,27 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         estado.filtros.push(filtro);
         localStorage.setItem('avocredit:filtrosSalvos', JSON.stringify(estado));
+=======
+      try {
+        const resposta = await fetch('/api/filtros-salvos', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            nome,
+            regiao: formulario.elements.regiao.value === 'todos'
+              ? null : formulario.elements.regiao.value,
+            estado: formulario.elements.estado.value || null,
+            periodo: Number.parseInt(formulario.elements.periodo.value, 10),
+            tipo_divida: formulario.elements.tipoDivida.value === 'todos'
+              ? null : formulario.elements.tipoDivida.value,
+          }),
+        });
+        const corpo = await resposta.json();
+        if (!resposta.ok) {
+          throw new Error(corpo.erro || 'Erro ao salvar o filtro.');
+        }
+        inputSalvar.value = '';
+>>>>>>> 060e2e05b7ff7eaf2cfbcb4f6d50fe96aaec4e96
         window.alert('Filtro salvo com sucesso.');
       } catch (erro) {
         window.alert(`Não foi possível salvar o filtro: ${erro.message}`);
@@ -327,6 +353,20 @@ document.addEventListener('DOMContentLoaded', () => {
       aplicarFiltros();
     });
 
+<<<<<<< HEAD
+=======
+    // FC404-154: atualiza os gráficos automaticamente ao trocar qualquer filtro.
+    formulario.addEventListener('change', (evento) => {
+      const campo = evento.target;
+      if (!campo || !campo.name) {
+        return;
+      }
+      if (campo === seletorLinha) {
+        return; // o select da linha já redesenha sozinho, sem buscar de novo
+      }
+      aplicarFiltros();
+    });
+>>>>>>> 060e2e05b7ff7eaf2cfbcb4f6d50fe96aaec4e96
   }
 
   if (seletorLinha) {
