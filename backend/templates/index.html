@@ -61,9 +61,19 @@
     </aside>
   </section>
   <!-- Indicadores -->
-  <section class="indicators">
-    <h2>Indicadores que compõem o potencial de crédito</h2>
-    <div class="cards">
+  <section class="indicators" id="secao-indicadores">
+    <div class="indicators-header">
+      <h2>Indicadores que compõem o potencial de crédito</h2>
+      <button type="button"
+              class="btn-toggle-indicators"
+              id="btn-toggle-indicators"
+              aria-expanded="true"
+              aria-controls="cards-indicadores">
+        <span class="btn-toggle-texto">Ocultar indicadores</span>
+        <span class="material-symbols-outlined btn-toggle-icone">expand_less</span>
+      </button>
+    </div>
+    <div class="cards" id="cards-indicadores">
       <article class="indicator-card" data-indicador="recuperacao">
         <h3>Inadimplência de Recuperação Rápida</h3>
         <strong data-valor>—</strong>
@@ -85,19 +95,28 @@
         <p>Ex: dívida imobiliária de longo prazo é saudável; dívida de consumo é crítica.</p>
         <small>Quanto maior, melhor.</small>
       </article>
-      <article class="indicator-card" data-indicador="apostas">
-        <h3>Endividamento por Apostas / Bets</h3>
-        <strong data-valor>—</strong>
-        <p>Comprometimento de renda com apostas.</p>
-        <small>Quanto menor, melhor.</small>
-      </article>
     </div>
   </section>
   <!-- Potencial de crédito de cada estado da região escolhida (preenchido pelo potencial-credito.js) -->
   <section class="estados-section" id="secao-estados" hidden>
-    <h2>Potencial de crédito por estado</h2>
-    <p class="estados-desc" id="estados-desc"></p>
-    <ul class="estados-lista" id="lista-estados"></ul>
+    <div class="estados-header">
+      <div class="estados-header-texto">
+        <h2>Potencial de crédito por estado</h2>
+        <p class="estados-desc" id="estados-desc"></p>
+      </div>
+      <button type="button"
+              class="btn-toggle-estados"
+              id="btn-toggle-estados"
+              aria-expanded="false"
+              aria-controls="conteudo-estados"
+              title="Expandir ou recolher lista de estados">
+        <span class="btn-toggle-estados-texto">Ver lista de estados</span>
+        <span class="material-symbols-outlined btn-toggle-estados-icone">expand_more</span>
+      </button>
+    </div>
+    <div class="estados-conteudo" id="conteudo-estados" hidden>
+      <ul class="estados-lista" id="lista-estados"></ul>
+    </div>
   </section>
 </main>
 {% endblock %}

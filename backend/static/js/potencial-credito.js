@@ -38,7 +38,6 @@ document.addEventListener('DOMContentLoaded', () => {
     recuperacao: { campo: 'pct_recuperacao_rapida', sufixo: '%' },
     credito_caro: { campo: 'pct_credito_caro', sufixo: '%' },
     divida_saudavel: { campo: 'pct_saudavel', sufixo: '%' },
-    apostas: { campo: null, sufixo: '' }, // depende dos dados da US08
   };
 
   const elementos = {
@@ -61,6 +60,10 @@ document.addEventListener('DOMContentLoaded', () => {
     descEstados: document.getElementById('estados-desc'),
     listaEstados: document.getElementById('lista-estados'),
     cards: document.querySelectorAll('[data-indicador]'),
+    btnToggleIndicadores: document.getElementById('btn-toggle-indicators'),
+    cardsContainer: document.getElementById('cards-indicadores'),
+    btnToggleEstados: document.getElementById('btn-toggle-estados'),
+    conteudoEstados: document.getElementById('conteudo-estados'),
   };
 
   // Só roda na página que tem os filtros do potencial de crédito.
@@ -211,17 +214,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function renderizarCards(indicadores) {
     elementos.cards.forEach((card) => {
-      const config = INDICADORES[card.dataset.indicador];
+      const tipo = card.dataset.indicador;
+      const config = INDICADORES[tipo];
       const valor = card.querySelector('[data-valor]');
       if (!config || !valor) {
         return;
       }
-      if (config.campo === null) {
+      const val = config.campo ? indicadores?.[config.campo] : null;
+      if (val === null || val === undefined) {
         valor.textContent = '—';
-        valor.title = 'Indicador ainda sem dados para o cálculo.';
         return;
       }
-      valor.textContent = formatar(indicadores?.[config.campo], config.sufixo);
+      valor.textContent = formatar(val, config.sufixo);
     });
   }
 
@@ -432,6 +436,37 @@ document.addEventListener('DOMContentLoaded', () => {
       const botao = evento.target.closest('.estado-item');
       if (botao) {
         escolherEstado(botao.dataset.uf === estado.uf ? '' : botao.dataset.uf);
+      }
+    });
+  }
+
+  if (elementos.btnToggleIndicadores && elementos.cardsContainer) {
+    elementos.btnToggleIndicadores.addEventListener('click', () => {
+      const recolhido = elementos.cardsContainer.classList.toggle('recolhido');
+      elementos.btnToggleIndicadores.setAttribute('aria-expanded', String(!recolhido));
+      const texto = elementos.btnToggleIndicadores.querySelector('.btn-toggle-texto');
+      const icone = elementos.btnToggleIndicadores.querySelector('.btn-toggle-icone');
+      if (texto) {
+        texto.textContent = recolhido ? 'Ver indicadores' : 'Ocultar indicadores';
+      }
+      if (icone) {
+        icone.textContent = recolhido ? 'expand_more' : 'expand_less';
+      }
+    });
+  }
+
+  if (elementos.btnToggleEstados && elementos.conteudoEstados) {
+    elementos.btnToggleEstados.addEventListener('click', () => {
+      const fechado = elementos.conteudoEstados.hidden;
+      elementos.conteudoEstados.hidden = !fechado;
+      elementos.btnToggleEstados.setAttribute('aria-expanded', String(fechado));
+      const texto = elementos.btnToggleEstados.querySelector('.btn-toggle-estados-texto');
+      const icone = elementos.btnToggleEstados.querySelector('.btn-toggle-estados-icone');
+      if (texto) {
+        texto.textContent = fechado ? 'Ocultar lista de estados' : 'Ver lista de estados';
+      }
+      if (icone) {
+        icone.textContent = fechado ? 'expand_less' : 'expand_more';
       }
     });
   }

@@ -383,3 +383,17 @@ def test_pagina_inicio_renderiza_mapa_e_elementos_de_indicadores(cliente) -> Non
     assert 'id="regiao-nordeste"' in html
     assert 'id="secao-estados"' in html
     assert "potencial-credito.js" in html
+
+
+def test_elementos_responsivos_e_menu_expansivo_presentes(cliente) -> None:
+    resposta = cliente.get("/")
+    assert resposta.status_code == 200
+    html = resposta.get_data(as_text=True)
+
+    assert "mobile-nav-bar" in html
+    assert 'id="btn-menu-mobile"' in html
+    assert 'id="sidebar-backdrop"' in html
+    assert 'id="btn-toggle-indicators"' in html
+    assert 'id="cards-indicadores"' in html
+    assert 'id="btn-toggle-estados"' in html
+    assert 'id="conteudo-estados"' in html

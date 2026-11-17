@@ -22,7 +22,8 @@
         </button>
       </div>
     </div>
-    <table class="tabela-filtros-salvos">
+    <div class="tabela-responsiva-wrapper">
+      <table class="tabela-filtros-salvos">
       <thead>
         <tr>
           <th>Nome do filtro</th>
@@ -39,6 +40,7 @@
         <tr><td colspan="8">Carregando filtros salvos...</td></tr>
       </tbody>
     </table>
+    </div>
     <div class="filtro-modal" id="modal-excluir-filtro" hidden>
       <div class="filtro-modal-fundo" data-fechar-modal></div>
       <section class="filtro-modal-dialogo"
@@ -74,24 +76,26 @@
         Atualização automática semanal
       </div>
     </div>
-    <table class="tabela-base-dados">
-      <thead>
-        <tr>
-          <th>Fonte</th>
-          <th>Descrição</th>
-          <th>Status</th>
-          <th>Última atualização</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="base-fonte">BCB</td>
-          <td>Dados de crédito, inadimplência e operações financeiras.</td>
-          <td><span class="base-status atualizado">Atualizado</span></td>
-          <td>04/09/2025 03:12</td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="tabela-responsiva-wrapper">
+      <table class="tabela-base-dados">
+        <thead>
+          <tr>
+            <th>Fonte</th>
+            <th>Descrição</th>
+            <th>Status</th>
+            <th>Última atualização</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="base-fonte">BCB</td>
+            <td>Dados de crédito, inadimplência e operações financeiras.</td>
+            <td><span class="base-status atualizado">Atualizado</span></td>
+            <td>04/09/2025 03:12</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
     <p class="base-aviso">
       <span class="material-symbols-outlined" aria-hidden="true">info</span>
       A base de dados é atualizada automaticamente toda semana. Caso alguma fonte esteja indisponível, o sistema continua utilizando os dados disponíveis da semana anterior.

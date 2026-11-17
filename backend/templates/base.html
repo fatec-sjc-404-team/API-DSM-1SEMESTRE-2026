@@ -15,7 +15,19 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </head>
   <body>
-    <div style="display: flex;">
+    <header class="mobile-nav-bar">
+      <div class="mobile-brand">
+        <img src="{{ url_for('static', filename='images/avocredit-logo.png') }}"
+             alt="avocredit"
+             style="width: 32px">
+        <span class="mobile-brand-title">AvoCredit</span>
+      </div>
+      <button type="button" class="btn-menu-mobile" id="btn-menu-mobile" aria-label="Abrir menu de navegação">
+        <span class="material-symbols-outlined" id="icone-menu-mobile">menu</span>
+      </button>
+    </header>
+    <div class="sidebar-backdrop" id="sidebar-backdrop" hidden></div>
+    <div class="app-layout">
       <aside class="sidebar">
         <div style="display: flex; margin: 20px; align-items: center; gap: 10px;">
           <img src="{{ url_for('static', filename='images/avocredit-logo.png') }}"
@@ -70,41 +82,29 @@
           </p>
         </footer>
       </aside>
-      <div style="display: flex;
-                  flex-direction: column;
-                  flex: 1;
-                  overflow-x: hidden">
+      <div class="content-container">
         <header>
           <div class="top-header">
-            <div style="justify-content: center;">
-              <h2 style="margin-bottom: 5px;
-                         margin-left: 20px;
-                         margin-top: 20px">{% block header_title %}Texto do Header{% endblock %}</h2>
-              <p style="margin-top: 5px;
-                        margin-left: 20px;
-                        color: rgb(159, 151, 151)">{% block header_desc %}Descrição do header{% endblock %}</p>
+            <div class="header-titulos">
+              <h2>{% block header_title %}Texto do Header{% endblock %}</h2>
+              <p>{% block header_desc %}Descrição do header{% endblock %}</p>
             </div>
-            <div style="display: flex;
-                        align-items: center;
-                        gap: 20px;
-                        margin-right: 0">
-              <div style="display: flex; align-items: center; gap: 15px;">
+            <div class="header-info">
+              <div class="header-info-item">
                 <img src="{{ url_for('static', filename=('images/Date_range_duotone.svg')) }}"
                      alt="calendar">
-                <div style="display: block;">
-                  <h4 style="margin-bottom: 5px;
-                             opacity: 0.4;
-                             margin-top: 20px">Última atualização:</h4>
-                  <p style="margin-top: 5px;"><b>16/10/2026</b></p>
+                <div>
+                  <h4>Última atualização:</h4>
+                  <p><b>16/10/2026</b></p>
                 </div>
               </div>
               <hr class="divisor">
-              <div style="display: flex; align-items: center; gap: 15px;">
+              <div class="header-info-item">
                 <img src="{{ url_for('static', filename=('images/User_duotone.svg')) }}"
                      alt="user">
-                <div style="display: block;">
-                  <h4 style="margin-bottom: 5px; margin-top: 20px;"><b>Analista de crédito:</b></h4>
-                  <p style="margin-top: 5px; opacity: 0.4;">Uso interno</p>
+                <div>
+                  <h4><b>Analista de crédito:</b></h4>
+                  <p>Uso interno</p>
                 </div>
               </div>
             </div>
@@ -115,6 +115,36 @@
         </main>
       </div>
     </div>
+        <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const btnMenu = document.getElementById("btn-menu-mobile");
+        const sidebar = document.querySelector(".sidebar");
+        const backdrop = document.getElementById("sidebar-backdrop");
+        const icone = document.getElementById("icone-menu-mobile");
+
+        if (btnMenu && sidebar && backdrop) {
+          const alternarMenu = () => {
+            const aberta = sidebar.classList.toggle("aberta");
+            backdrop.hidden = !aberta;
+            if (icone) {
+              icone.textContent = aberta ? "close" : "menu";
+            }
+            btnMenu.setAttribute("aria-expanded", String(aberta));
+          };
+
+          btnMenu.addEventListener("click", alternarMenu);
+          backdrop.addEventListener("click", alternarMenu);
+
+          document.querySelectorAll(".sidebar-item").forEach((link) => {
+            link.addEventListener("click", () => {
+              if (sidebar.classList.contains("aberta")) {
+                alternarMenu();
+              }
+            });
+          });
+        }
+      });
+    </script>
     {% block scripts %}{% endblock %}
   </body>
 </html>
