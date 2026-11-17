@@ -146,6 +146,10 @@ Os valores são somados antes de dividir, então regiões e estados com carteira
 
 Os indicadores da US01 que ainda não existem (recuperação rápida, crédito caro e apostas) devem usar `dados_filtrados(filtros)` em `dados.py`, que já devolve a tabela filtrada.
 
+### Relatório em PDF
+
+`/api/relatorio.pdf` aceita os mesmos filtros e baixa um PDF (`relatorio.py`, gerado com o Matplotlib) com três páginas: filtros aplicados e indicadores gerais, potencial de crédito por estado e evolução mensal dos indicadores. Se nenhum dado atender aos filtros, o PDF traz só a página com o aviso. Filtro inválido devolve `400` e fonte de dados fora do ar devolve `503`, como nas outras rotas. Na tela de Gráficos, o botão "Gerar relatório PDF" usa os filtros que estão no formulário.
+
 ### Tipo de dívida
 
 A coluna `tipo_divida` não existe no CSV: `dados.py` calcula a partir da modalidade e da submodalidade (função `classificar_tipo_divida`), seguindo a regra de [`docs/pesquisa/regras-de-indicador.md`](../docs/pesquisa/regras-de-indicador.md):

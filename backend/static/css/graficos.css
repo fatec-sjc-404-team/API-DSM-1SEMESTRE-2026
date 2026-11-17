@@ -201,7 +201,8 @@
   font-size: 18px;
 }
 
-#butao-salvar-filtro {
+#butao-salvar-filtro,
+#butao-relatorio {
   background-color: #5cb85c;
   color: #ffffff;
   padding: 8px 18px;
@@ -217,10 +218,16 @@
   transition: background-color 0.2s;
 }
 
-#butao-salvar-filtro:hover {
+#butao-salvar-filtro:hover,
+#butao-relatorio:hover {
   background-color: #4cae4c;
 }
 
-#butao-salvar-filtro .material-symbols-outlined {
+#butao-salvar-filtro .material-symbols-outlined,
+#butao-relatorio .material-symbols-outlined {
   font-size: 18px;
+}
+
+#butao-relatorio {
+  margin-left: auto;
 }
