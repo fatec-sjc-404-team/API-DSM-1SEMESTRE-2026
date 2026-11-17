@@ -129,6 +129,31 @@
   border-radius: 2px;
 }
 
+/* Nome longo sem espaço quebra a linha em vez de invadir a coluna Região. */
+.tabela-filtros-salvos td:first-child {
+  max-width: 280px;
+  overflow-wrap: anywhere;
+}
+
+.tabela-filtros-salvos td:last-child {
+  white-space: nowrap;
+}
+
+/* Mensagem de tabela vazia/carregando ocupa a linha toda, alinhada à esquerda. */
+.tabela-filtros-salvos td[colspan] {
+  max-width: none;
+  text-align: left;
+  white-space: normal;
+}
+
+.tabela-filtros-salvos td button.material-symbols-outlined {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
 .filtro-edicao {
   display: flex;
   align-items: center;
