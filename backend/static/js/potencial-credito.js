@@ -61,6 +61,8 @@ document.addEventListener('DOMContentLoaded', () => {
     descEstados: document.getElementById('estados-desc'),
     listaEstados: document.getElementById('lista-estados'),
     cards: document.querySelectorAll('[data-indicador]'),
+    btnToggleIndicadores: document.getElementById('btn-toggle-indicators'),
+    cardsContainer: document.getElementById('cards-indicadores'),
   };
 
   // Só roda na página que tem os filtros do potencial de crédito.
@@ -432,6 +434,21 @@ document.addEventListener('DOMContentLoaded', () => {
       const botao = evento.target.closest('.estado-item');
       if (botao) {
         escolherEstado(botao.dataset.uf === estado.uf ? '' : botao.dataset.uf);
+      }
+    });
+  }
+
+  if (elementos.btnToggleIndicadores && elementos.cardsContainer) {
+    elementos.btnToggleIndicadores.addEventListener('click', () => {
+      const recolhido = elementos.cardsContainer.classList.toggle('recolhido');
+      elementos.btnToggleIndicadores.setAttribute('aria-expanded', String(!recolhido));
+      const texto = elementos.btnToggleIndicadores.querySelector('.btn-toggle-texto');
+      const icone = elementos.btnToggleIndicadores.querySelector('.btn-toggle-icone');
+      if (texto) {
+        texto.textContent = recolhido ? 'Ver indicadores' : 'Ocultar indicadores';
+      }
+      if (icone) {
+        icone.textContent = recolhido ? 'expand_more' : 'expand_less';
       }
     });
   }

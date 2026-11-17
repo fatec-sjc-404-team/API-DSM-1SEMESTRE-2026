@@ -61,9 +61,19 @@
     </aside>
   </section>
   <!-- Indicadores -->
-  <section class="indicators">
-    <h2>Indicadores que compõem o potencial de crédito</h2>
-    <div class="cards">
+  <section class="indicators" id="secao-indicadores">
+    <div class="indicators-header">
+      <h2>Indicadores que compõem o potencial de crédito</h2>
+      <button type="button"
+              class="btn-toggle-indicators"
+              id="btn-toggle-indicators"
+              aria-expanded="true"
+              aria-controls="cards-indicadores">
+        <span class="btn-toggle-texto">Ocultar indicadores</span>
+        <span class="material-symbols-outlined btn-toggle-icone">expand_less</span>
+      </button>
+    </div>
+    <div class="cards" id="cards-indicadores">
       <article class="indicator-card" data-indicador="recuperacao">
         <h3>Inadimplência de Recuperação Rápida</h3>
         <strong data-valor>—</strong>

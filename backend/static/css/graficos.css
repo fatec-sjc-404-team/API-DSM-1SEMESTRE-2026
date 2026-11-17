@@ -224,3 +224,80 @@
 #butao-salvar-filtro .material-symbols-outlined {
   font-size: 18px;
 }
+
+/* Responsividade Mobile (celulares e tablets pequenos) */
+@media (max-width: 768px) {
+  .painel-filtros {
+    padding: 14px;
+    margin-bottom: 16px;
+  }
+
+  .linha-filtros {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .filtro-campo {
+    width: 100%;
+  }
+
+  .filtro-campo select {
+    width: 100%;
+    height: 42px;
+    font-size: 14px;
+  }
+
+  .filtro-acao-principal {
+    width: 100%;
+  }
+
+  #butao-aplicar {
+    width: 100%;
+    justify-content: center;
+    padding: 12px;
+  }
+
+  .linha-salvar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .linha-salvar input {
+    width: 100%;
+    height: 42px;
+    font-size: 14px;
+  }
+
+  #butao-salvar-filtro {
+    width: 100%;
+    justify-content: center;
+    padding: 12px;
+  }
+
+  .pg-graficos .g-card {
+    padding: 12px;
+    margin-bottom: 14px;
+  }
+
+  .pg-graficos .g-hd {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .pg-graficos .g-box {
+    height: 250px;
+  }
+
+  .pg-graficos select {
+    width: 100%;
+  }
+
+  .pg-graficos .g-rodape {
+    flex-direction: column;
+    gap: 4px;
+    font-size: 11px;
+  }
+}
