@@ -29,7 +29,7 @@ Trata-se de um framework de código aberto, desenvolvido em Python, que se desti
 >
 > Permite testar modelos, ajustar hiperparâmetros e visualizar previsões em tempo real.
 >
-> Protótipos rápidos de ideias de ML/IA.
+> Protótipos rápidos de ideias de ciência de dados e machine learning.
 >
 > Demos e provas de conceito.
 
