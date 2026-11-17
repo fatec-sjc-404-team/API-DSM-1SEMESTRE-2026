@@ -38,7 +38,6 @@ document.addEventListener('DOMContentLoaded', () => {
     recuperacao: { campo: 'pct_recuperacao_rapida', sufixo: '%' },
     credito_caro: { campo: 'pct_credito_caro', sufixo: '%' },
     divida_saudavel: { campo: 'pct_saudavel', sufixo: '%' },
-    apostas: { campo: 'pct_apostas', sufixo: '%' },
   };
 
   const elementos = {
@@ -221,15 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!config || !valor) {
         return;
       }
-      let val = config.campo ? indicadores?.[config.campo] : null;
-      if (tipo === 'apostas') {
-        // Se a API ainda não tiver o campo calculado, estima com base na carteira cara e inadimplência
-        if (val === null || val === undefined) {
-          const caro = indicadores?.pct_credito_caro ?? 14.0;
-          const inad = indicadores?.taxa_inadimplencia ?? 5.5;
-          val = Math.round((9.5 + caro * 0.28 + inad * 0.18) * 10) / 10;
-        }
-      }
+      const val = config.campo ? indicadores?.[config.campo] : null;
       if (val === null || val === undefined) {
         valor.textContent = '—';
         return;
