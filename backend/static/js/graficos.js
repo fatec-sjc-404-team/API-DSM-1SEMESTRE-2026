@@ -276,11 +276,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   if (botaoSalvar && formulario && inputSalvar) {
-<<<<<<< HEAD
-    botaoSalvar.addEventListener('click', () => {
-=======
     botaoSalvar.addEventListener('click', async () => {
->>>>>>> 060e2e05b7ff7eaf2cfbcb4f6d50fe96aaec4e96
       const nome = inputSalvar.value.trim();
       if (!nome) {
         window.alert('Informe um nome para salvar o filtro.');
@@ -288,38 +284,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-<<<<<<< HEAD
-      const obterValor = (nomeCampo) => formulario.elements[nomeCampo].value;
-      const obterRotulo = (nomeCampo) => {
-        const campo = formulario.elements[nomeCampo];
-        return campo.options[campo.selectedIndex].textContent.trim();
-      };
-      const data = new Date();
-      const criadoEm = new Intl.DateTimeFormat('pt-BR', {
-        dateStyle: 'short',
-        timeStyle: 'short',
-      }).format(data);
-      const filtro = {
-        nome,
-        regiao: obterRotulo('regiao'),
-        estado: obterValor('estado') || 'Todos',
-        periodo: obterRotulo('periodo'),
-        tipoDivida: obterRotulo('tipoDivida'),
-        apostas: 'Todos',
-        criadoEm,
-      };
-
-      try {
-        const armazenados = localStorage.getItem('avocredit:filtrosSalvos');
-        const estado = armazenados
-          ? JSON.parse(armazenados)
-          : { inicializado: false, filtros: [] };
-        if (!Array.isArray(estado.filtros)) {
-          throw new Error('Os filtros salvos neste navegador estão em um formato inválido.');
-        }
-        estado.filtros.push(filtro);
-        localStorage.setItem('avocredit:filtrosSalvos', JSON.stringify(estado));
-=======
       try {
         const resposta = await fetch('/api/filtros-salvos', {
           method: 'POST',
@@ -339,7 +303,6 @@ document.addEventListener('DOMContentLoaded', () => {
           throw new Error(corpo.erro || 'Erro ao salvar o filtro.');
         }
         inputSalvar.value = '';
->>>>>>> 060e2e05b7ff7eaf2cfbcb4f6d50fe96aaec4e96
         window.alert('Filtro salvo com sucesso.');
       } catch (erro) {
         window.alert(`Não foi possível salvar o filtro: ${erro.message}`);
@@ -353,8 +316,6 @@ document.addEventListener('DOMContentLoaded', () => {
       aplicarFiltros();
     });
 
-<<<<<<< HEAD
-=======
     // FC404-154: atualiza os gráficos automaticamente ao trocar qualquer filtro.
     formulario.addEventListener('change', (evento) => {
       const campo = evento.target;
@@ -366,7 +327,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       aplicarFiltros();
     });
->>>>>>> 060e2e05b7ff7eaf2cfbcb4f6d50fe96aaec4e96
   }
 
   if (seletorLinha) {
