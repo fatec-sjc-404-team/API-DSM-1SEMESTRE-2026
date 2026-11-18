@@ -397,3 +397,23 @@ def test_elementos_responsivos_e_menu_expansivo_presentes(cliente) -> None:
     assert 'id="cards-indicadores"' in html
     assert 'id="btn-toggle-estados"' in html
     assert 'id="conteudo-estados"' in html
+
+
+def test_layout_remove_perfil_e_fontes_que_nao_sao_bcb(cliente) -> None:
+    html = cliente.get("/").get_data(as_text=True)
+
+    assert "Analista de crédito" not in html
+    assert "User_duotone.svg" not in html
+    assert "BCB" in html
+    for fonte in ("IBGE", "BACEN", "SPA", "Data Senado"):
+        assert fonte not in html
+
+
+def test_cards_home_e_tabela_de_filtros_nao_exibem_apostas(cliente) -> None:
+    html_inicio = cliente.get("/").get_data(as_text=True)
+    html_filtros = cliente.get("/filtros_salvos").get_data(as_text=True)
+
+    assert html_inicio.count('class="indicator-card"') == 3
+    assert "Apostas / Bets" not in html_inicio
+    assert "Apostas / Bets" not in html_filtros
+    assert '<td colspan="7">Carregando filtros salvos...</td>' in html_filtros
