@@ -62,7 +62,28 @@ DB_NAME=AvoCredit
 python app.py
 ```
 
-A API fica disponível em `http://localhost:8000`.
+A API fica disponível em `http://localhost:8000`. O modo debug do Flask só liga
+com `FLASK_DEBUG=1 python app.py`; ele nunca deve ficar ligado fora da sua
+máquina.
+
+### Subir tudo com Docker
+
+Com o `.env` preenchido (incluindo `DB_ROOT_PASSWORD`), na pasta `backend/`:
+
+```bash
+docker compose up -d --build
+```
+
+| Serviço | O que faz |
+| ------- | --------- |
+| `db` | MySQL 8.4; na primeira vez roda o `database/AvoData.sql` |
+| `app` | API e páginas com `gunicorn` na porta 8000 |
+| `atualizacao` | atualização semanal dos dados (veja [Atualização semanal](#atualização-semanal)) |
+
+Na primeira subida o banco começa vazio. O serviço `atualizacao` percebe que
+nunca rodou, baixa o ano atual do BCB, trata e importa os dados; até terminar,
+as rotas de dados respondem `503`. Acompanhe com
+`docker compose logs -f atualizacao`.
 
 ## Endpoints
 
@@ -76,6 +97,12 @@ A API fica disponível em `http://localhost:8000`.
 | POST   | `/api/filtros-salvos` | Salva uma composição nomeada no MySQL |
 | PATCH  | `/api/filtros-salvos/{id}` | Renomeia um filtro salvo |
 | DELETE | `/api/filtros-salvos/{id}` | Exclui um filtro salvo |
+| GET    | `/api/relatorio.pdf` | Baixa o relatório em PDF dos filtros |
+
+Erros das rotas `/api/` sempre voltam em JSON (`{"erro": "..."}`), inclusive
+`404`, `405` e `500`. O corpo das requisições é limitado a 16 KB (`413` se
+passar). Filtro repetido na URL (ex.: `?regiao=norte&regiao=nordeste`) devolve
+`400`.
 
 O POST recebe `nome`, `regiao`, `estado`, `periodo` e `tipo_divida`. O nome é
 obrigatório e limitado a 100 caracteres. Região, estado e tipo de dívida sem
@@ -116,7 +143,7 @@ Os filtros (`filtros.py`) chegam como parâmetros na URL de `/api/dados` e `/api
 
 ### De onde vêm os dados
 
-`dados.py` lê a tabela `BCB` e soma por mês, UF e tipo de dívida. Se a variável `DB_USER` estiver definida, lê do MySQL; senão, lê o CSV `Tratamento_Dados/saida/scrdata_norte_nordeste_pessoa_fisica_baixa_renda.csv`. O resultado fica 5 minutos na memória, então depois de reimportar o CSV espere esse tempo ou reinicie a API.
+`dados.py` lê a tabela `BCB` e soma por mês, UF e tipo de dívida. Se a variável `DB_USER` estiver definida, lê do MySQL; senão, lê o CSV `Tratamento_Dados/saida/scrdata_norte_nordeste_pessoa_fisica_baixa_renda.csv`. O resultado fica 5 minutos na memória. Quando a fonte é o CSV, trocar o arquivo já faz a API ler de novo; no MySQL, os dados novos aparecem em até 5 minutos. Se a fonte cair depois que os dados já foram lidos, a API continua respondendo com eles e tenta de novo no próximo intervalo. Linhas sem data, com UF fora do Norte/Nordeste ou com valor negativo/inválido não entram nas somas (mesma regra do importador). O detalhe dos erros da fonte fica só no log do servidor; o `503` devolve uma mensagem genérica.
 
 | Variável      | Padrão      | Descrição                  |
 | ------------- | ----------- | -------------------------- |
@@ -296,7 +323,41 @@ execute:
 python database/Importar_csv.py
 ```
 
-O script solicita o usuário e a senha do MySQL no terminal. A carga substitui
+O script solicita o usuário e a senha do MySQL no terminal. Se `DB_USER`
+estiver definido, usa `DB_USER`, `DB_PASSWORD`, `DB_HOST`, `DB_PORT` e `DB_NAME`
+sem perguntar nada (é assim que a atualização semanal e o Docker rodam).
+Valores vazios, `NA` ou negativos viram `NULL`; linhas sem data válida ou
+incompletas são puladas e contadas no final. A carga substitui
 os registros existentes em `BCB` pelos dados do CSV dentro de uma única
 transação; se ocorrer um erro, a transação é revertida e os dados anteriores
 são preservados.
+
+## Atualização semanal
+
+`Tratamento_Dados/atualizacao_semanal.py` faz o caminho todo:
+
+1. baixa o ZIP do ano atual do BCB (`coleta_bcb.py --ano`); em janeiro, se o
+   BCB ainda não publicou o ano, baixa o anterior;
+2. roda `Estados`, `Tipo_Pessoa`, `Renda` e `Validar_Resultado`;
+3. com `DB_USER` definido, importa o CSV final no MySQL.
+
+Roda na segunda-feira, uma vez por dia no máximo. Se nunca rodou, ou se a
+última atualização foi há 7 dias ou mais (falha, servidor desligado), roda na
+hora. Antes de começar guarda uma cópia do CSV final; se qualquer passo falhar,
+volta a cópia e o site continua com os dados da semana anterior. Quando tudo
+dá certo, grava a data em `Tratamento_Dados/saida/ultima_atualizacao.txt`, que
+aparece em "Última atualização" no cabeçalho e na tabela "Base de Dados" de
+Filtros Salvos (fica "Desatualizado" se passar de 8 dias).
+
+```bash
+python -m Tratamento_Dados.atualizacao_semanal           # só roda se for a hora
+python -m Tratamento_Dados.atualizacao_semanal --forcar  # roda agora
+```
+
+Sai com código `1` quando alguma fonte falha. No Docker, o serviço
+`atualizacao` roda o comando a cada 6 horas; fora do Docker, agende com o cron
+(ou o Agendador de Tarefas do Windows), por exemplo todo dia às 3h:
+
+```cron
+0 3 * * * cd /caminho/backend && .venv/bin/python -m Tratamento_Dados.atualizacao_semanal
+```
