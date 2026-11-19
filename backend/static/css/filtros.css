@@ -80,7 +80,11 @@
   min-width: 900px;
 }
 
-.tabela-filtros-salvos thead tr,
+.tabela-filtros-salvos thead tr {
+  color: #868da0;
+  border-bottom: none;
+}
+
 .tabela-base-dados thead tr {
   color: #868da0;
   border-bottom: 1px solid #e9edf2;

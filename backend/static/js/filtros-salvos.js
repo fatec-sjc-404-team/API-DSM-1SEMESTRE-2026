@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function exibirMensagem(mensagem) {
     corpo.replaceChildren();
     const celula = corpo.insertRow().insertCell();
-    celula.colSpan = 8;
+    celula.colSpan = 7;
     celula.textContent = mensagem;
   }
 
@@ -251,7 +251,6 @@ document.addEventListener('DOMContentLoaded', () => {
         filtro.estado || 'Todos',
         descreverPeriodo(filtro.periodo),
         tipos[filtro.tipo_divida] || 'Todos',
-        'Todos',
         formatarCriacao(filtro.criado_em),
       ];
       valores.forEach((valor) => { linha.insertCell().textContent = valor; });
