@@ -1,3 +1,4 @@
+import argparse  # ler o --ano quando roda sem ninguém digitando
 import shutil  # copiar dados de um arquivo para outro (usado na extração)
 import zipfile  # abrir e ler arquivos .zip
 from pathlib import Path  # trabalhar com caminhos de pastas/arquivos
@@ -17,6 +18,12 @@ TAMANHO_BLOCO = 1024 * 1024
 
 # Tempo máximo de espera, em segundos: (para conectar, para receber dados).
 TIMEOUT = (10, 120)
+
+# Códigos de saída do programa. A atualização semanal usa o 2 para saber que
+# o BCB ainda não publicou o ano (comum em janeiro) e tentar o ano anterior.
+SAIDA_OK = 0
+SAIDA_ERRO = 1
+SAIDA_ANO_SEM_ARQUIVO = 2
 
 
 def validar_ano(ano: int | str) -> str:
@@ -124,25 +131,35 @@ def extrair_csvs(arquivo_zip: Path, pasta_destino: Path = PASTA_ENTRADA) -> list
     return sorted(extraidos)
 
 
-def main() -> None:
-    """Pergunta o ano, baixa o ZIP, extrai os CSVs e mostra o resultado."""
-    ano = input("Digite o ano que deseja baixar (ex: 2026): ")
+def main(argumentos: list[str] | None = None) -> int:
+    """Baixa o ZIP do ano, extrai os CSVs e devolve o código de saída.
+
+    O ano vem do --ano; sem ele, é perguntado no terminal.
+    """
+    parser = argparse.ArgumentParser(description="Baixa os CSVs do SCR.data (BCB)")
+    parser.add_argument("--ano", help="ano dos dados, ex.: 2026")
+    ano = parser.parse_args(argumentos).ano
+    if ano is None:
+        ano = input("Digite o ano que deseja baixar (ex: 2026): ")
 
     # try/except: tenta executar e, se algo der errado, mostra uma mensagem
     try:
         print(f"Baixando {montar_url(ano)} ...")
         arquivo_zip = baixar_zip(ano)
         csvs = extrair_csvs(arquivo_zip)
-    except (ValueError, FileNotFoundError, zipfile.BadZipFile) as erro:
+    except FileNotFoundError as erro:
+        # O BCB não tem esse ano.
+        print(f"Erro: {erro}")
+        return SAIDA_ANO_SEM_ARQUIVO
+    except (ValueError, zipfile.BadZipFile) as erro:
         # ValueError: ano inválido, ou ZIP sem CSVs.
-        # FileNotFoundError: o BCB não tem esse ano.
         # BadZipFile: o arquivo baixado não é um ZIP válido.
         print(f"Erro: {erro}")
-        return
+        return SAIDA_ERRO
     except requests.RequestException as erro:
         # Qualquer problema de rede: sem internet, timeout, erro do site...
         print(f"Erro de conexão ao baixar: {erro}")
-        return
+        return SAIDA_ERRO
 
     arquivo_zip.unlink()
 
@@ -150,7 +167,10 @@ def main() -> None:
     print(f"{len(csvs)} CSVs salvos em {PASTA_ENTRADA}:")
     for csv in csvs:
         print(f"  - {csv.name} ({csv.stat().st_size / 1_048_576:.1f} MB)")
+    return SAIDA_OK
 
 
 if __name__ == "__main__":
-    main()
+    # Sai com o código de erro para quem chamou (ex.: a atualização semanal)
+    # saber que a coleta falhou.
+    raise SystemExit(main())
