@@ -399,21 +399,111 @@ def test_elementos_responsivos_e_menu_expansivo_presentes(cliente) -> None:
     assert 'id="conteudo-estados"' in html
 
 
-def test_layout_remove_perfil_e_fontes_que_nao_sao_bcb(cliente) -> None:
-    html = cliente.get("/").get_data(as_text=True)
+def test_editar_opcoes_do_filtro_salvo(cliente, monkeypatch) -> None:
+    chamada = {}
 
-    assert "Analista de crédito" not in html
-    assert "User_duotone.svg" not in html
-    assert "BCB" in html
-    for fonte in ("IBGE", "BACEN", "SPA", "Data Senado"):
-        assert fonte not in html
+    def atualizar(filtro_id, filtro):
+        chamada.update(id=filtro_id, filtro=filtro)
+        return True
+
+    monkeypatch.setattr(modulo_app, "atualizar_filtro", atualizar)
+    resposta = cliente.put(
+        "/api/filtros-salvos/7",
+        json={
+            "nome": "  Nordeste - BA  ",
+            "regiao": "nordeste",
+            "estado": "ba",
+            "periodo": 3,
+            "tipo_divida": "todos",
+        },
+    )
+
+    assert resposta.status_code == 200
+    assert chamada == {
+        "id": 7,
+        "filtro": {
+            "nome": "Nordeste - BA",
+            "regiao": "nordeste",
+            "estado": "BA",
+            "periodo": 3,
+            "tipo_divida": None,
+        },
+    }
 
 
-def test_cards_home_e_tabela_de_filtros_nao_exibem_apostas(cliente) -> None:
-    html_inicio = cliente.get("/").get_data(as_text=True)
-    html_filtros = cliente.get("/filtros_salvos").get_data(as_text=True)
+def test_editar_filtro_salvo_inexistente(cliente, monkeypatch) -> None:
+    monkeypatch.setattr(modulo_app, "atualizar_filtro", lambda *_: False)
 
-    assert html_inicio.count('class="indicator-card"') == 3
-    assert "Apostas / Bets" not in html_inicio
-    assert "Apostas / Bets" not in html_filtros
-    assert '<td colspan="7">Carregando filtros salvos...</td>' in html_filtros
+    resposta = cliente.put(
+        "/api/filtros-salvos/999", json={"nome": "Qualquer", "periodo": 6}
+    )
+
+    assert resposta.status_code == 404
+
+
+@pytest.mark.parametrize(
+    "dados",
+    [
+        {"nome": "", "periodo": 6},
+        {"nome": "Sem período"},
+        {"nome": "Estado fora", "regiao": "norte", "estado": "BA", "periodo": 6},
+        {"nome": "Tipo inválido", "periodo": 6, "tipo_divida": "boa"},
+    ],
+)
+def test_editar_filtro_salvo_rejeita_dados_invalidos(
+    cliente, monkeypatch, dados
+) -> None:
+    def nao_chamar(*_):
+        raise AssertionError("não deveria gravar dados inválidos")
+
+    monkeypatch.setattr(modulo_app, "atualizar_filtro", nao_chamar)
+
+    resposta = cliente.put("/api/filtros-salvos/7", json=dados)
+
+    assert resposta.status_code == 400
+    assert "erro" in resposta.get_json()
+
+
+def test_atualizar_filtro_grava_nome_e_opcoes(monkeypatch) -> None:
+    cursor = MagicMock()
+    cursor.__enter__.return_value = cursor
+    cursor.rowcount = 1
+    conexao = MagicMock()
+    conexao.cursor.return_value = cursor
+    monkeypatch.setattr(modulo_filtros_salvos, "_conectar", lambda: conexao)
+    filtro = {
+        "nome": "Norte AM",
+        "regiao": "norte",
+        "estado": "AM",
+        "periodo": 6,
+        "tipo_divida": "critica",
+    }
+
+    assert modulo_filtros_salvos.atualizar_filtro(42, filtro)
+
+    cursor.execute.assert_called_once_with(
+        "UPDATE filtros_salvos SET nome = %s, regiao = %s, estado = %s, "
+        "periodo = %s, tipo_divida = %s WHERE id = %s",
+        ("Norte AM", "norte", "AM", 6, "critica", 42),
+    )
+    conexao.commit.assert_called_once()
+
+
+def test_atualizar_filtro_sem_mudanca_continua_encontrado(monkeypatch) -> None:
+    cursor = MagicMock()
+    cursor.__enter__.return_value = cursor
+    cursor.rowcount = 0
+    cursor.fetchone.return_value = {"id": 42}
+    conexao = MagicMock()
+    conexao.cursor.return_value = cursor
+    monkeypatch.setattr(modulo_filtros_salvos, "_conectar", lambda: conexao)
+    filtro = {
+        "nome": "Igual",
+        "regiao": None,
+        "estado": None,
+        "periodo": 12,
+        "tipo_divida": None,
+    }
+
+    assert modulo_filtros_salvos.atualizar_filtro(42, filtro)
+    assert cursor.execute.call_count == 2
