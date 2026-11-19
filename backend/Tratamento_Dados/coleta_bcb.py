@@ -1,5 +1,6 @@
 import shutil  # copiar dados de um arquivo para outro (usado na extração)
 import zipfile  # abrir e ler arquivos .zip
+from datetime import datetime
 from pathlib import Path  # trabalhar com caminhos de pastas/arquivos
 
 import requests  # fazer a requisição HTTP para baixar o arquivo
@@ -122,6 +123,17 @@ def extrair_csvs(arquivo_zip: Path, pasta_destino: Path = PASTA_ENTRADA) -> list
 
     # Devolve a lista em ordem de mes
     return sorted(extraidos)
+
+
+def ler_ultima_atualizacao() -> str | None:
+    """Retorna a data da última coleta (dd/mm/aaaa) ou None se não houver CSVs."""
+    csvs = list(PASTA_ENTRADA.glob("*.csv"))
+    if not csvs:
+        return None
+
+    # st_mtime = momento da última modificação do nosso arquivo CSV.
+    mais_recente = max(csv.stat().st_mtime for csv in csvs)
+    return datetime.fromtimestamp(mais_recente).strftime("%d/%m/%Y")
 
 
 def main() -> None:
