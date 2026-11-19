@@ -11,7 +11,8 @@ app = Flask(__name__)
 # Gera a documentação Swagger a partir das docstrings das rotas (acessível em /apidocs)
 Swagger(app)
 
-#Envia a data da última coleta para todos os templates (que estamos usando no base.html)
+
+# Envia a data da última coleta para todos os templates (que estamos usando no base.html)
 @app.context_processor
 def injetar_ultima_atualizacao():
     return {"ultima_atualizacao": ler_ultima_atualizacao()}
