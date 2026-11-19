@@ -17,9 +17,9 @@
   <body>
     <header class="mobile-nav-bar">
       <div class="mobile-brand">
-        <img src="{{ url_for('static', filename='images/avocredit-logo.png') }}"
+        <img src="{{ url_for('static', filename='images/avocredit-logo-icon.png') }}"
              alt="avocredit"
-             style="width: 32px">
+             style="width: 25px; height: 36px; object-fit: contain">
         <span class="mobile-brand-title">AvoCredit</span>
       </div>
       <button type="button" class="btn-menu-mobile" id="btn-menu-mobile" aria-label="Abrir menu de navegação">
@@ -30,9 +30,9 @@
     <div class="app-layout">
       <aside class="sidebar">
         <div style="display: flex; margin: 20px; align-items: center; gap: 10px;">
-          <img src="{{ url_for('static', filename='images/avocredit-logo.png') }}"
+          <img src="{{ url_for('static', filename='images/avocredit-logo-icon.png') }}"
                alt="avocredit"
-               style="width: 40px">
+               style="width: 30px; height: 43px; object-fit: contain">
           <div>
             <h3 style="color: rgb(107, 155, 36);">AvoCredit</h3>
             <p style="color: rgb(59, 59, 59); font-size: small;">Potencial de Crédito</p>
@@ -75,11 +75,7 @@
           <p style="color: green;">Norte e Nordeste</p>
           <br>
           <p>Fontes e dados:</p>
-          <p>
-            BCB | IBGE | BACEN | SPA
-            <br>
-            | Data Senado
-          </p>
+          <p>BCB</p>
         </footer>
       </aside>
       <div class="content-container">
@@ -96,15 +92,6 @@
                 <div>
                   <h4>Última atualização:</h4>
                   <p><b>{{ ultima_atualizacao.strftime('%d/%m/%Y') if ultima_atualizacao else '—' }}</b></p>
-                </div>
-              </div>
-              <hr class="divisor">
-              <div class="header-info-item">
-                <img src="{{ url_for('static', filename=('images/User_duotone.svg')) }}"
-                     alt="user">
-                <div>
-                  <h4><b>Analista de crédito:</b></h4>
-                  <p>Uso interno</p>
                 </div>
               </div>
             </div>

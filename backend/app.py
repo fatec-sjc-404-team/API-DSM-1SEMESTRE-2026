@@ -12,6 +12,7 @@ from werkzeug.exceptions import HTTPException
 from dados import DadosIndisponiveis, consultar_dados, geracao_dos_dados
 from filtros import ler_filtros
 from filtros_salvos import (
+    atualizar_filtro,
     excluir_filtro,
     listar_filtros,
     renomear_filtro,
@@ -539,6 +540,23 @@ def api_renomear_filtro(filtro_id):
     if not alterado:
         return jsonify(erro="Filtro não encontrado."), 404
     return jsonify(mensagem="Filtro renomeado com sucesso.")
+
+
+@app.put("/api/filtros-salvos/<int:filtro_id>")
+def api_atualizar_filtro(filtro_id):
+    """Edita nome e opções de um filtro salvo (mesmas regras do salvar)."""
+    try:
+        filtro = validar_filtro(request.get_json(silent=True))
+        alterado = atualizar_filtro(filtro_id, filtro)
+    except (TypeError, ValueError) as erro:
+        return jsonify(erro=str(erro)), 400
+    except (RuntimeError, pymysql.MySQLError):
+        app.logger.exception("Não foi possível atualizar o filtro no banco MySQL.")
+        return jsonify(erro="Não foi possível atualizar o filtro."), 503
+
+    if not alterado:
+        return jsonify(erro="Filtro não encontrado."), 404
+    return jsonify(mensagem="Filtro atualizado com sucesso.")
 
 
 @app.delete("/api/filtros-salvos/<int:filtro_id>")

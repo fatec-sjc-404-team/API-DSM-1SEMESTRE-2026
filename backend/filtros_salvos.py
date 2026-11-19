@@ -177,6 +177,43 @@ def renomear_filtro(filtro_id, nome):
         conexao.close()
 
 
+def atualizar_filtro(filtro_id, filtro):
+    """Troca nome e opções (região, estado, período, tipo) de um filtro salvo.
+
+    Devolve False se o id não existir.
+    """
+    conexao = _conectar()
+    try:
+        with conexao.cursor() as cursor:
+            cursor.execute(
+                "UPDATE filtros_salvos SET nome = %s, regiao = %s, estado = %s, "
+                "periodo = %s, tipo_divida = %s WHERE id = %s",
+                (
+                    filtro["nome"],
+                    filtro["regiao"],
+                    filtro["estado"],
+                    filtro["periodo"],
+                    filtro["tipo_divida"],
+                    filtro_id,
+                ),
+            )
+            alterado = cursor.rowcount > 0
+            # Sem nenhuma mudança o MySQL devolve 0 linhas: confere se o id existe.
+            if not alterado:
+                cursor.execute(
+                    "SELECT id FROM filtros_salvos WHERE id = %s",
+                    (filtro_id,),
+                )
+                alterado = cursor.fetchone() is not None
+        conexao.commit()
+        return alterado
+    except Exception:
+        conexao.rollback()
+        raise
+    finally:
+        conexao.close()
+
+
 def excluir_filtro(filtro_id):
     conexao = _conectar()
     try:

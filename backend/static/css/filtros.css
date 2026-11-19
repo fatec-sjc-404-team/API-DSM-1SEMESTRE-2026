@@ -80,7 +80,11 @@
   min-width: 900px;
 }
 
-.tabela-filtros-salvos thead tr,
+.tabela-filtros-salvos thead tr {
+  color: #868da0;
+  border-bottom: none;
+}
+
 .tabela-base-dados thead tr {
   color: #868da0;
   border-bottom: 1px solid #e9edf2;
@@ -183,6 +187,43 @@
   color: #fff;
   font: inherit;
   cursor: pointer;
+}
+
+/* Linha em edição: selects de região, estado, período e tipo + Salvar/Cancelar. */
+.filtro-em-edicao select {
+  box-sizing: border-box;
+  max-width: 150px;
+  padding: 7px 8px;
+  border: 1px solid #dfe3eb;
+  border-radius: 6px;
+  background: #fff;
+  color: #14213d;
+  font: inherit;
+}
+
+.filtro-em-edicao td:last-child button {
+  margin-left: 6px;
+  padding: 7px 12px;
+  border-radius: 6px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.filtro-edicao-salvar {
+  border: 0;
+  background: #2d7d32;
+  color: #fff;
+}
+
+.filtro-edicao-salvar:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.filtro-edicao-cancelar {
+  border: 1px solid #dfe3eb;
+  background: #fff;
+  color: #526071;
 }
 
 .filtro-modal[hidden] {
