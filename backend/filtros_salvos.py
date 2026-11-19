@@ -2,6 +2,7 @@
 
 import os
 import re
+import unicodedata
 
 import pymysql
 from pymysql.cursors import DictCursor
@@ -11,6 +12,10 @@ from filtros import UFS_NORDESTE, UFS_NORTE
 REGIOES = {"norte", "nordeste"}
 ESTADOS = UFS_NORTE | UFS_NORDESTE
 TIPOS_DIVIDA = {"saudavel", "critica", "mista"}
+
+# Sem limite de espera, uma consulta presa trava a requisição para sempre.
+TIMEOUT_CONEXAO = 5
+TIMEOUT_LEITURA = 30
 
 
 def _conectar():
@@ -26,12 +31,18 @@ def _conectar():
         charset="utf8mb4",
         cursorclass=DictCursor,
         autocommit=False,
+        connect_timeout=TIMEOUT_CONEXAO,
+        read_timeout=TIMEOUT_LEITURA,
+        write_timeout=TIMEOUT_LEITURA,
     )
 
 
 def validar_nome_filtro(nome):
     if not isinstance(nome, str) or not nome.strip() or len(nome.strip()) > 100:
         raise ValueError("O nome deve ter entre 1 e 100 caracteres.")
+    # Caracteres de controle (\x00, quebra de linha...) quebram a tabela e o banco.
+    if any(unicodedata.category(caractere) == "Cc" for caractere in nome.strip()):
+        raise ValueError("O nome tem caracteres inválidos.")
     return nome.strip()
 
 
@@ -66,15 +77,19 @@ def validar_filtro(dados):
             raise ValueError("O estado não pertence à região Nordeste.")
 
     periodo_bruto = dados.get("periodo")
+    # [0-9] e não \d: \d aceita dígitos de outros alfabetos, como "٣".
     if isinstance(periodo_bruto, bool) or not re.fullmatch(
-        r"\d{1,2}", str(periodo_bruto or "")
+        r"[0-9]{1,2}", str(periodo_bruto or "")
     ):
         raise ValueError("Período deve ser um número de 1 a 12 meses.")
     periodo = int(periodo_bruto)
     if not 1 <= periodo <= 12:
         raise ValueError("Período deve ser um número de 1 a 12 meses.")
 
-    tipo_divida = dados.get("tipo_divida", dados.get("tipoDivida"))
+    # Aceita os dois nomes; um "tipo_divida": null não esconde o tipoDivida.
+    tipo_divida = dados.get("tipo_divida")
+    if tipo_divida is None:
+        tipo_divida = dados.get("tipoDivida")
     if tipo_divida is not None:
         if not isinstance(tipo_divida, str):
             raise ValueError("Tipo de dívida inválido.")

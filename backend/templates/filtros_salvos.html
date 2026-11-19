@@ -31,13 +31,12 @@
           <th>Estado(s)</th>
           <th>Período</th>
           <th>Tipo de dívida</th>
-          <th>Apostas / Bets</th>
           <th>Criado em</th>
           <th>Ações</th>
         </tr>
       </thead>
       <tbody>
-        <tr><td colspan="8">Carregando filtros salvos...</td></tr>
+        <tr><td colspan="7">Carregando filtros salvos...</td></tr>
       </tbody>
     </table>
     </div>
@@ -90,8 +89,14 @@
           <tr>
             <td class="base-fonte">BCB</td>
             <td>Dados de crédito, inadimplência e operações financeiras.</td>
-            <td><span class="base-status atualizado">Atualizado</span></td>
-            <td>04/09/2025 03:12</td>
+            <td>
+              {% if dados_desatualizados %}
+                <span class="base-status em-atualizacao">Desatualizado</span>
+              {% else %}
+                <span class="base-status atualizado">Atualizado</span>
+              {% endif %}
+            </td>
+            <td>{{ ultima_atualizacao.strftime('%d/%m/%Y %H:%M') if ultima_atualizacao else '—' }}</td>
           </tr>
         </tbody>
       </table>

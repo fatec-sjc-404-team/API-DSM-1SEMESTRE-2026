@@ -215,3 +215,155 @@ def test_consultar_dados_traz_filtros_total_e_linhas(fonte_falsa) -> None:
             "carteira_inadimplencia": 44.0,
         }
     ]
+
+
+def escrever_csv(caminho: Path, linhas: list[str]) -> Path:
+    cabecalho = (
+        "data_base;uf;modalidade;submodalidade;carteira_ativa;carteira_inadimplencia;"
+        "vencido_de_15_ate_90_dias;vencido_acima_de_90_dias"
+    )
+    caminho.write_text("\n".join([cabecalho, *linhas]) + "\n", encoding="utf-8")
+    return caminho
+
+
+def test_csv_ignora_negativos_e_valores_invalidos_como_o_mysql(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    csv = escrever_csv(
+        tmp_path / "dados.csv",
+        [
+            "2026-07-31;BA;Empréstimos;Cheque especial;1000,00;100,00;10,00;100,00",
+            "2026-07-31;BA;Empréstimos;Cheque especial;-500,00;NA;;-1,00",
+        ],
+    )
+    monkeypatch.delenv("DB_USER", raising=False)
+    monkeypatch.setattr(dados, "ARQUIVO_CSV", csv)
+    dados.limpar_cache()
+
+    tabela = carregar_bcb()
+
+    assert tabela.loc[0, "carteira_ativa"] == pytest.approx(1000.0)
+    assert tabela.loc[0, "carteira_inadimplencia"] == pytest.approx(100.0)
+    assert tabela.loc[0, "vencido_acima_de_90_dias"] == pytest.approx(100.0)
+    dados.limpar_cache()
+
+
+def test_linha_sem_modalidade_entra_como_mista_e_nao_some(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    csv = escrever_csv(
+        tmp_path / "dados.csv",
+        ["2026-07-31;BA;;;300,00;30,00;3,00;30,00"],
+    )
+    monkeypatch.delenv("DB_USER", raising=False)
+    monkeypatch.setattr(dados, "ARQUIVO_CSV", csv)
+    dados.limpar_cache()
+
+    tabela = carregar_bcb()
+
+    assert tabela["tipo_divida"].tolist() == ["mista"]
+    assert tabela["carteira_ativa"].tolist() == [300.0]
+    dados.limpar_cache()
+
+
+def test_uf_fora_do_norte_nordeste_e_data_invalida_nao_entram(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    bruto = pd.DataFrame(
+        {
+            "data_base": ["2026-07-31", "2026-07-31", "não é data", "2026-07-31"],
+            "uf": ["BA", "SP", "BA", None],
+            "modalidade": ["Empréstimos"] * 4,
+            "submodalidade": ["Cheque especial"] * 4,
+            "carteira_ativa": [100.0, 999.0, 999.0, 999.0],
+            "carteira_inadimplencia": [10.0, 1.0, 1.0, 1.0],
+            "vencido_de_15_ate_90_dias": [1.0, 1.0, 1.0, 1.0],
+            "vencido_acima_de_90_dias": [10.0, 1.0, 1.0, 1.0],
+        }
+    )
+    monkeypatch.setattr(dados, "_ler_fonte", lambda: bruto)
+    dados.limpar_cache()
+
+    tabela = carregar_bcb()
+
+    assert tabela["uf"].tolist() == ["BA"]
+    assert tabela["carteira_ativa"].tolist() == [100.0]
+    dados.limpar_cache()
+
+
+@pytest.mark.parametrize(
+    "conteudo",
+    ["", "so;uma;coluna\n1;2;3\n", "data_base;uf\n\x00\xff\n"],
+)
+def test_csv_vazio_ou_quebrado_avisa_que_os_dados_estao_indisponiveis(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path, conteudo: str
+) -> None:
+    csv = tmp_path / "dados.csv"
+    csv.write_text(conteudo, encoding="latin-1")
+    monkeypatch.delenv("DB_USER", raising=False)
+    monkeypatch.setattr(dados, "ARQUIVO_CSV", csv)
+    dados.limpar_cache()
+
+    with pytest.raises(DadosIndisponiveis):
+        carregar_bcb()
+
+
+def test_fonte_fora_do_ar_continua_com_os_dados_ja_carregados(
+    monkeypatch: pytest.MonkeyPatch, fonte_falsa
+) -> None:
+    carregar_bcb()
+    tempo = [0.0]
+    monkeypatch.setattr(dados.time, "monotonic", lambda: tempo[0])
+    dados._cache = (0.0, dados._cache[1], dados._cache[2])
+
+    def falhar():
+        raise DadosIndisponiveis("MySQL fora do ar")
+
+    monkeypatch.setattr(dados, "_ler_fonte", falhar)
+    tempo[0] = dados.SEGUNDOS_DE_CACHE + 1
+
+    tabela = carregar_bcb()
+
+    assert not tabela.empty
+
+
+def test_cache_le_de_novo_quando_o_csv_muda(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    import os
+
+    csv = escrever_csv(
+        tmp_path / "dados.csv",
+        ["2026-07-31;BA;Empréstimos;Cheque especial;100,00;10,00;1,00;10,00"],
+    )
+    monkeypatch.delenv("DB_USER", raising=False)
+    monkeypatch.setattr(dados, "ARQUIVO_CSV", csv)
+    dados.limpar_cache()
+    assert carregar_bcb()["carteira_ativa"].tolist() == [100.0]
+
+    escrever_csv(
+        csv, ["2026-07-31;BA;Empréstimos;Cheque especial;200,00;10,00;1,00;10,00"]
+    )
+    os.utime(csv, ns=(1, 1))  # garante outra data de modificação
+
+    assert carregar_bcb()["carteira_ativa"].tolist() == [200.0]
+    dados.limpar_cache()
+
+
+def test_conexao_com_o_mysql_tem_timeout(monkeypatch: pytest.MonkeyPatch) -> None:
+    import pymysql
+
+    argumentos = {}
+
+    def conectar(**kwargs):
+        argumentos.update(kwargs)
+        raise pymysql.OperationalError(2003, "fora do ar")
+
+    monkeypatch.setenv("DB_USER", "app")
+    monkeypatch.setattr(pymysql, "connect", conectar)
+    dados.limpar_cache()
+
+    with pytest.raises(DadosIndisponiveis):
+        carregar_bcb()
+    assert argumentos["read_timeout"] > 0
+    assert argumentos["connect_timeout"] > 0

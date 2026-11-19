@@ -1,5 +1,6 @@
 from unittest.mock import MagicMock
 
+import pandas as pd
 import pytest
 
 import app as modulo_app
@@ -149,7 +150,7 @@ def test_fonte_de_dados_fora_do_ar_devolve_erro_503(
     resposta = cliente.get(rota)
 
     assert resposta.status_code == 503
-    assert resposta.get_json()["erro"] == "MySQL fora do ar"
+    assert resposta.get_json()["erro"] == modulo_app.MENSAGEM_SEM_DADOS
     dados.limpar_cache()
 
 
@@ -397,3 +398,148 @@ def test_elementos_responsivos_e_menu_expansivo_presentes(cliente) -> None:
     assert 'id="cards-indicadores"' in html
     assert 'id="btn-toggle-estados"' in html
     assert 'id="conteudo-estados"' in html
+
+
+def test_erro_503_nao_mostra_detalhes_do_servidor(cliente, monkeypatch) -> None:
+    def falhar():
+        raise dados.DadosIndisponiveis("CSV em /app/Tratamento_Dados/saida não existe")
+
+    monkeypatch.setattr(dados, "_ler_fonte", falhar)
+    dados.limpar_cache()
+
+    resposta = cliente.get("/api/indicadores")
+
+    assert resposta.status_code == 503
+    assert "/app" not in resposta.get_json()["erro"]
+    dados.limpar_cache()
+
+
+def test_fonte_sem_linhas_validas_devolve_503_e_nao_500(cliente, monkeypatch) -> None:
+    vazia = pd.DataFrame(
+        columns=[
+            "data_base",
+            "uf",
+            "modalidade",
+            "submodalidade",
+            *dados.COLUNAS_VALORES,
+        ]
+    )
+    monkeypatch.setattr(dados, "_ler_fonte", lambda: vazia.copy())
+    dados.limpar_cache()
+
+    for rota in ("/api/dados", "/api/indicadores", "/api/relatorio.pdf"):
+        resposta = cliente.get(rota)
+        assert resposta.status_code == 503
+        assert resposta.is_json
+    dados.limpar_cache()
+
+
+def test_erro_inesperado_na_api_volta_em_json(cliente, monkeypatch) -> None:
+    def quebrar(filtros):
+        raise KeyError("coluna")
+
+    monkeypatch.setattr(modulo_app, "consultar_indicadores", quebrar)
+
+    resposta = cliente.get("/api/indicadores")
+
+    assert resposta.status_code == 500
+    assert resposta.get_json() == {"erro": "Erro interno no servidor."}
+
+
+def test_rota_inexistente_da_api_volta_em_json(cliente) -> None:
+    resposta = cliente.get("/api/nao-existe")
+
+    assert resposta.status_code == 404
+    assert "erro" in resposta.get_json()
+
+
+def test_corpo_grande_demais_e_recusado(cliente) -> None:
+    resposta = cliente.post(
+        "/api/filtros-salvos",
+        data="x" * (modulo_app.app.config["MAX_CONTENT_LENGTH"] + 1),
+        content_type="application/json",
+    )
+
+    assert resposta.status_code == 413
+    assert "erro" in resposta.get_json()
+
+
+def test_respostas_tem_cabecalhos_de_seguranca(cliente) -> None:
+    resposta = cliente.get("/health")
+
+    assert resposta.headers["X-Content-Type-Options"] == "nosniff"
+    assert resposta.headers["X-Frame-Options"] == "DENY"
+
+
+@pytest.mark.parametrize(
+    "consulta",
+    [
+        "regiao=norte&regiao=nordeste",
+        "periodo=%D9%A3_meses",  # dígito árabe
+    ],
+)
+def test_filtro_repetido_ou_com_digito_estranho_devolve_400(
+    cliente, fonte_falsa, consulta: str
+) -> None:
+    resposta = cliente.get(f"/api/indicadores?{consulta}")
+
+    assert resposta.status_code == 400
+
+
+@pytest.mark.parametrize(
+    "corpo",
+    [
+        {"nome": "Norte\x00", "periodo": 6},
+        {"nome": "Norte", "periodo": "٣"},
+    ],
+)
+def test_salvar_filtro_rejeita_caractere_de_controle_e_digito_estranho(
+    cliente, corpo
+) -> None:
+    resposta = cliente.post("/api/filtros-salvos", json=corpo)
+
+    assert resposta.status_code == 400
+
+
+def test_tipo_divida_null_nao_esconde_o_tipo_divida_em_camel_case() -> None:
+    filtro = modulo_filtros_salvos.validar_filtro(
+        {"nome": "x", "periodo": 3, "tipo_divida": None, "tipoDivida": "critica"}
+    )
+
+    assert filtro["tipo_divida"] == "critica"
+
+
+def test_conexao_dos_filtros_salvos_tem_timeout(monkeypatch) -> None:
+    argumentos = {}
+    monkeypatch.setenv("DB_USER", "app")
+    monkeypatch.setattr(
+        modulo_filtros_salvos.pymysql,
+        "connect",
+        lambda **kwargs: argumentos.update(kwargs),
+    )
+
+    modulo_filtros_salvos._conectar()
+
+    assert argumentos["read_timeout"] > 0
+    assert argumentos["connect_timeout"] > 0
+
+
+def test_cabecalho_mostra_a_ultima_atualizacao(cliente, monkeypatch, tmp_path) -> None:
+    from datetime import datetime
+
+    monkeypatch.setattr(
+        modulo_app, "ler_ultima_atualizacao", lambda: datetime(2026, 11, 16, 3, 12)
+    )
+    assert "16/11/2026" in cliente.get("/graficos").get_data(as_text=True)
+
+    monkeypatch.setattr(modulo_app, "ler_ultima_atualizacao", lambda: None)
+    pagina = cliente.get("/filtros_salvos").get_data(as_text=True)
+    assert "16/10/2026" not in pagina
+    assert "Desatualizado" in pagina
+
+
+def test_swagger_documenta_os_filtros_salvos(cliente) -> None:
+    especificacao = cliente.get("/apispec_1.json").get_json()
+
+    assert "/api/filtros-salvos" in especificacao["paths"]
+    assert "/api/filtros-salvos/{filtro_id}" in especificacao["paths"]

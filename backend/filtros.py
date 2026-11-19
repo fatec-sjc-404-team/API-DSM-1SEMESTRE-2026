@@ -12,7 +12,8 @@ UFS_POR_REGIAO = {"norte": UFS_NORTE, "nordeste": UFS_NORDESTE}
 TIPOS_DIVIDA = frozenset({"saudavel", "critica", "mista"})
 
 # O formulário manda o período como "1_mes", "2_meses", ... "12_meses".
-PADRAO_PERIODO = re.compile(r"^(\d{1,2})_mes(?:es)?$")
+# re.ASCII: sem ele \d aceita dígitos de outros alfabetos, como "٣".
+PADRAO_PERIODO = re.compile(r"^(\d{1,2})_mes(?:es)?$", re.ASCII)
 MAXIMO_MESES = 12
 
 
@@ -30,8 +31,13 @@ def ler_filtros(parametros: Mapping[str, str]) -> Filtros:
     """Lê e valida os filtros vindos da URL (regiao, estado, periodo, tipoDivida).
 
     Valor vazio ou "todos" conta como filtro não usado. Levanta ValueError se
-    algum valor for inválido.
+    algum valor for inválido ou se o mesmo filtro vier mais de uma vez.
     """
+    if hasattr(parametros, "getlist"):
+        for nome in ("regiao", "estado", "periodo", "tipoDivida"):
+            if len(parametros.getlist(nome)) > 1:
+                raise ValueError(f"O filtro '{nome}' foi enviado mais de uma vez.")
+
     regiao = _valor(parametros, "regiao")
     estado = _valor(parametros, "estado")
     periodo = _valor(parametros, "periodo")
@@ -52,7 +58,7 @@ def ler_filtros(parametros: Mapping[str, str]) -> Filtros:
 
     meses = None
     if periodo is not None:
-        correspondencia = PADRAO_PERIODO.match(periodo.lower())
+        correspondencia = PADRAO_PERIODO.fullmatch(periodo.lower())
         if correspondencia is None or not 1 <= int(correspondencia[1]) <= MAXIMO_MESES:
             raise ValueError(
                 f"Período inválido: '{periodo}'. Use de 1_mes até {MAXIMO_MESES}_meses."
