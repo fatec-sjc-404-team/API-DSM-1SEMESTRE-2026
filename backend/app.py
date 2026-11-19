@@ -4,11 +4,18 @@ from flask import Flask, jsonify, render_template, request
 from dados import DadosIndisponiveis, consultar_dados
 from filtros import ler_filtros
 from indicadores import consultar_indicadores
+from Tratamento_Dados.coleta_bcb import ler_ultima_atualizacao
 
 app = Flask(__name__)
 
 # Gera a documentação Swagger a partir das docstrings das rotas (acessível em /apidocs)
 Swagger(app)
+
+
+# Envia a data da última coleta para todos os templates (que estamos usando no base.html)
+@app.context_processor
+def injetar_ultima_atualizacao():
+    return {"ultima_atualizacao": ler_ultima_atualizacao()}
 
 
 @app.get("/")
