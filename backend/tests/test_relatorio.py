@@ -2,6 +2,7 @@ import re
 
 import pytest
 
+import app as modulo_app
 import dados
 from app import app
 from relatorio import descrever_filtros, gerar_relatorio_pdf
@@ -65,7 +66,7 @@ def test_relatorio_com_fonte_fora_do_ar_devolve_erro_503(
     resposta = cliente.get("/api/relatorio.pdf")
 
     assert resposta.status_code == 503
-    assert resposta.get_json()["erro"] == "MySQL fora do ar"
+    assert resposta.get_json()["erro"] == modulo_app.MENSAGEM_SEM_DADOS
     dados.limpar_cache()
 
 
@@ -111,3 +112,26 @@ def test_descrever_filtros_com_todos_os_filtros() -> None:
         "Período: últimos 6 meses",
         "Tipo de dívida: Crítica",
     ]
+
+
+def test_relatorio_reaproveita_o_pdf_enquanto_os_dados_nao_mudam(
+    cliente, fonte_falsa, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    geracoes = []
+
+    def gerar_contando(indicadores):
+        geracoes.append(1)
+        return b"%PDF-1.4 teste"
+
+    monkeypatch.setattr(modulo_app, "gerar_relatorio_pdf", gerar_contando)
+    modulo_app._pdfs.clear()
+
+    cliente.get("/api/relatorio.pdf?regiao=norte")
+    cliente.get("/api/relatorio.pdf?regiao=norte")
+    assert len(geracoes) == 1
+
+    # dados novos na fonte: gera de novo
+    dados.limpar_cache()
+    cliente.get("/api/relatorio.pdf?regiao=norte")
+    assert len(geracoes) == 2
+    modulo_app._pdfs.clear()

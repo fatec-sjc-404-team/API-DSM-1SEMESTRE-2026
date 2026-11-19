@@ -91,7 +91,7 @@
                      alt="calendar">
                 <div>
                   <h4>Última atualização:</h4>
-                  <p><b>16/10/2026</b></p>
+                  <p><b>{{ ultima_atualizacao.strftime('%d/%m/%Y') if ultima_atualizacao else '—' }}</b></p>
                 </div>
               </div>
             </div>

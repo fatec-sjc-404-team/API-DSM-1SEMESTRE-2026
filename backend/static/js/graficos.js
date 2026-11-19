@@ -232,6 +232,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // Em erro, tira os dados antigos para não parecer que são dos filtros novos.
+  function limparGraficos() {
+    [graficoBarras, graficoLinha].forEach((grafico) => {
+      if (grafico) {
+        grafico.data.labels = [];
+        grafico.data.datasets[0].data = [];
+        grafico.update();
+      }
+    });
+    ultimaResposta = null;
+  }
+
   function desenhar(resposta) {
     desenharBarras(resposta);
     desenharLinha(resposta);
@@ -249,7 +261,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const pedido = ++ultimoPedido;
     try {
       const resposta = await fetch(`${URL_INDICADORES}?${montarParametros()}`);
-      const corpo = await resposta.json();
+      const corpo = await resposta.json().catch(() => ({}));
       if (pedido !== ultimoPedido) {
         return;
       }
@@ -260,6 +272,7 @@ document.addEventListener('DOMContentLoaded', () => {
       desenhar(corpo);
     } catch (erro) {
       if (pedido === ultimoPedido) {
+        limparGraficos();
         mostrarAviso(`Não foi possível carregar os gráficos: ${erro.message}`);
       }
     }
@@ -267,10 +280,30 @@ document.addEventListener('DOMContentLoaded', () => {
   window.aplicarFiltrosGraficos = aplicarFiltros;
 
   // Baixa o PDF com os mesmos filtros que estão no formulário agora (FC404-231).
+  // Usa fetch para, em erro, mostrar o aviso em vez de abrir o JSON da API.
   const botaoRelatorio = document.getElementById('butao-relatorio');
   if (botaoRelatorio) {
-    botaoRelatorio.addEventListener('click', () => {
-      window.location.href = `${URL_RELATORIO}?${montarParametros()}`;
+    botaoRelatorio.addEventListener('click', async () => {
+      botaoRelatorio.disabled = true;
+      try {
+        const resposta = await fetch(`${URL_RELATORIO}?${montarParametros()}`);
+        if (!resposta.ok) {
+          const corpo = await resposta.json().catch(() => ({}));
+          throw new Error(corpo.erro || `erro ${resposta.status}`);
+        }
+        const url = URL.createObjectURL(await resposta.blob());
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'relatorio-potencial-credito.pdf';
+        document.body.append(link);
+        link.click();
+        link.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      } catch (erro) {
+        mostrarAviso(`Não foi possível gerar o relatório: ${erro.message}`);
+      } finally {
+        botaoRelatorio.disabled = false;
+      }
     });
   }
 

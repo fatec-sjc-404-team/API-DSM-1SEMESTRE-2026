@@ -1,11 +1,15 @@
+import logging
 import os
+import threading
 import time
 from dataclasses import asdict
 from pathlib import Path
 
 import pandas as pd
 
-from filtros import Filtros, aplicar_filtros
+from filtros import UFS_NORDESTE, UFS_NORTE, Filtros, aplicar_filtros
+
+logger = logging.getLogger(__name__)
 
 ARQUIVO_CSV = (
     Path(__file__).parent
@@ -34,6 +38,14 @@ COLUNAS_RESPOSTA = [
 
 # Quanto tempo a tabela fica guardada na memória antes de ler a fonte de novo.
 SEGUNDOS_DE_CACHE = 300
+
+# Limites de espera do MySQL, em segundos: sem eles uma consulta presa trava a
+# requisição (e o worker) para sempre.
+TIMEOUT_CONEXAO = 5
+TIMEOUT_LEITURA = 60
+
+COLUNAS_TEXTO = ["data_base", "uf", "modalidade", "submodalidade"]
+UFS_NORTE_NORDESTE = UFS_NORTE | UFS_NORDESTE
 
 # Tipo de dívida, seguindo a regra de docs/pesquisa/regras-de-indicador.md:
 # crítica = consumo imediato com juros altos (rotativo do cartão, cheque especial),
@@ -76,7 +88,12 @@ SUBMODALIDADES_CREDITO_CARO = frozenset(
     }
 )
 
-_cache: tuple[float, pd.DataFrame] | None = None
+# (lido_em, versão da fonte, tabela). A trava evita que várias requisições
+# leiam a fonte ao mesmo tempo quando o cache vence.
+_cache: tuple[float, object, pd.DataFrame] | None = None
+_trava = threading.Lock()
+# Muda a cada leitura nova da fonte; o PDF usa para saber se pode reaproveitar.
+_geracao = 0
 
 
 class DadosIndisponiveis(Exception):
@@ -110,18 +127,47 @@ def carregar_bcb() -> pd.DataFrame:
     vencido_de_15_ate_90_dias, vencido_acima_de_90_dias e carteira_credito_caro
     (parte da carteira ativa que é crédito caro, veja eh_credito_caro).
     Lê do MySQL se DB_USER estiver definido; senão, do CSV do tratamento de dados.
+    Se a fonte falhar e já houver dados em memória, continua com eles e tenta
+    ler de novo só no próximo intervalo do cache.
     """
-    global _cache
+    global _cache, _geracao
 
-    agora = time.monotonic()
-    if _cache is None or agora - _cache[0] > SEGUNDOS_DE_CACHE:
-        _cache = (agora, _resumir(_ler_fonte()))
-    return _cache[1]
+    with _trava:
+        agora = time.monotonic()
+        versao = _versao_da_fonte()
+        if (
+            _cache is not None
+            and agora - _cache[0] <= SEGUNDOS_DE_CACHE
+            and _cache[1] == versao
+        ):
+            return _cache[2]
+
+        try:
+            tabela = _resumir(_ler_fonte())
+        except DadosIndisponiveis:
+            if _cache is None:
+                raise
+            logger.warning(
+                "Fonte de dados indisponível; usando os dados já carregados.",
+                exc_info=True,
+            )
+            _cache = (agora, _cache[1], _cache[2])
+            return _cache[2]
+
+        _cache = (agora, versao, tabela)
+        _geracao += 1
+        return tabela
 
 
 def limpar_cache() -> None:
     global _cache
-    _cache = None
+    with _trava:
+        _cache = None
+
+
+def geracao_dos_dados() -> int:
+    """Número que muda sempre que a tabela em memória é lida de novo da fonte."""
+    return _geracao
 
 
 def ultima_data_base() -> pd.Timestamp:
@@ -158,8 +204,23 @@ def consultar_dados(filtros: Filtros) -> dict:
 def _ler_fonte() -> pd.DataFrame:
     """Lê as colunas necessárias, já somadas por mês, UF, modalidade e submodalidade."""
     if os.environ.get("DB_USER"):
+        logger.debug("Lendo os dados do MySQL.")
         return _ler_mysql()
+    logger.info("DB_USER não definido: lendo os dados do CSV %s.", ARQUIVO_CSV.name)
     return _ler_csv()
+
+
+def _versao_da_fonte() -> object:
+    """Data de modificação do CSV, para o cache notar quando ele é trocado.
+
+    No MySQL não há como saber sem consultar; vale só o tempo do cache.
+    """
+    if os.environ.get("DB_USER"):
+        return None
+    try:
+        return ARQUIVO_CSV.stat().st_mtime_ns
+    except OSError:
+        return None
 
 
 def _ler_mysql() -> pd.DataFrame:
@@ -173,6 +234,9 @@ def _ler_mysql() -> pd.DataFrame:
             password=os.environ.get("DB_PASSWORD", ""),
             database=os.environ.get("DB_NAME", "AvoCredit"),
             charset="utf8mb4",
+            connect_timeout=TIMEOUT_CONEXAO,
+            read_timeout=TIMEOUT_LEITURA,
+            write_timeout=TIMEOUT_LEITURA,
         )
     except pymysql.MySQLError as erro:
         raise DadosIndisponiveis(
@@ -192,8 +256,7 @@ def _ler_mysql() -> pd.DataFrame:
     finally:
         conexao.close()
 
-    colunas = ["data_base", "uf", "modalidade", "submodalidade", *COLUNAS_VALORES]
-    return pd.DataFrame(linhas, columns=colunas)
+    return pd.DataFrame(linhas, columns=[*COLUNAS_TEXTO, *COLUNAS_VALORES])
 
 
 def _ler_csv() -> pd.DataFrame:
@@ -203,9 +266,29 @@ def _ler_csv() -> pd.DataFrame:
             f"ou gere o CSV em {ARQUIVO_CSV}."
         )
 
-    colunas = ["data_base", "uf", "modalidade", "submodalidade", *COLUNAS_VALORES]
-    dados = pd.read_csv(ARQUIVO_CSV, sep=";", decimal=",", usecols=colunas)
-    return dados.groupby(colunas[:4], as_index=False)[COLUNAS_VALORES].sum()
+    try:
+        dados = pd.read_csv(
+            ARQUIVO_CSV,
+            sep=";",
+            decimal=",",
+            usecols=[*COLUNAS_TEXTO, *COLUNAS_VALORES],
+            dtype={coluna: "string" for coluna in COLUNAS_TEXTO},
+        )
+    except (OSError, UnicodeDecodeError, ValueError) as erro:
+        # ValueError cobre CSV vazio, mal formado ou sem as colunas esperadas
+        raise DadosIndisponiveis(f"Não foi possível ler o CSV: {erro}") from erro
+
+    # Mesma regra do importador do MySQL: valor negativo ou inválido vira nulo
+    # e não entra na soma.
+    for coluna in COLUNAS_VALORES:
+        valores = pd.to_numeric(dados[coluna], errors="coerce")
+        dados[coluna] = valores.where(valores >= 0)
+    dados[["modalidade", "submodalidade"]] = dados[
+        ["modalidade", "submodalidade"]
+    ].fillna("")
+    return dados.groupby(COLUNAS_TEXTO, as_index=False, dropna=False)[
+        COLUNAS_VALORES
+    ].sum()
 
 
 def _resumir(dados: pd.DataFrame) -> pd.DataFrame:
@@ -215,9 +298,24 @@ def _resumir(dados: pd.DataFrame) -> pd.DataFrame:
     porque depois de agrupar por tipo de dívida a submodalidade se perde.
     """
     dados = dados.copy()
-    dados["data_base"] = pd.to_datetime(dados["data_base"])
+    dados["data_base"] = pd.to_datetime(dados["data_base"], errors="coerce")
     dados["uf"] = dados["uf"].astype("string").str.strip().str.upper()
-    dados[COLUNAS_VALORES] = dados[COLUNAS_VALORES].astype(float)
+    # Linha sem data ou com UF fora do Norte/Nordeste não entra nos totais.
+    validas = dados["data_base"].notna() & dados["uf"].isin(UFS_NORTE_NORDESTE)
+    if not validas.all():
+        logger.warning(
+            "%d linhas sem data ou com UF inválida ignoradas.", (~validas).sum()
+        )
+    dados = dados.loc[validas.fillna(False)]
+    if dados.empty:
+        raise DadosIndisponiveis("A fonte de dados não tem linhas válidas.")
+
+    dados[COLUNAS_VALORES] = (
+        dados[COLUNAS_VALORES].apply(pd.to_numeric, errors="coerce").astype(float)
+    )
+    dados[["modalidade", "submodalidade"]] = dados[
+        ["modalidade", "submodalidade"]
+    ].fillna("")
     dados["tipo_divida"] = [
         classificar_tipo_divida(modalidade, submodalidade)
         for modalidade, submodalidade in zip(

@@ -295,8 +295,27 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
     document.addEventListener('keydown', (evento) => {
-      if (evento.key === 'Escape' && !modalExclusao.hidden) {
+      if (modalExclusao.hidden) {
+        return;
+      }
+      if (evento.key === 'Escape') {
         fecharModalExclusao();
+        return;
+      }
+      // Tab fica preso dentro do modal enquanto ele está aberto.
+      if (evento.key === 'Tab') {
+        const focaveis = Array.from(modalExclusao.querySelectorAll('button'));
+        const primeiro = focaveis[0];
+        const ultimo = focaveis[focaveis.length - 1];
+        const dentro = modalExclusao.contains(document.activeElement);
+        if (evento.shiftKey && (!dentro || document.activeElement === primeiro
+          || document.activeElement === modalExclusao.querySelector('.filtro-modal-dialogo'))) {
+          evento.preventDefault();
+          ultimo.focus();
+        } else if (!evento.shiftKey && (!dentro || document.activeElement === ultimo)) {
+          evento.preventDefault();
+          primeiro.focus();
+        }
       }
     });
   }

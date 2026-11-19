@@ -152,6 +152,9 @@
 }
 
 .tabela-filtros-salvos td button.material-symbols-outlined {
+  /* área de toque de pelo menos 32px, mesmo com o ícone pequeno */
+  min-width: 32px;
+  min-height: 32px;
   padding: 0;
   border: 0;
   background: transparent;

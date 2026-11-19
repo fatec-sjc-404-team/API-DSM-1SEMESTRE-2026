@@ -13,8 +13,8 @@
         <div class="filtro-campo">
           <label for="filtro-regiao">Região</label>
           <select id="filtro-regiao" name="regiao">
-            <option value="todos">Todos</option>
-            <option value="norte" selected>Norte</option>
+            <option value="todos" selected>Todos</option>
+            <option value="norte">Norte</option>
             <option value="nordeste">Nordeste</option>
           </select>
         </div>
@@ -120,7 +120,8 @@
         <span class="g-sub">● Potencial de crédito (0 a 100)</span>
       </div>
       <div class="g-box">
-        <canvas id="barras"></canvas>
+        <canvas id="barras" role="img"
+                aria-label="Gráfico de barras com o potencial de crédito de cada estado"></canvas>
       </div>
     </div>
     <div class="g-card g-card-linha">
@@ -140,7 +141,8 @@
         </select>
       </div>
       <div class="g-box">
-        <canvas id="linha"></canvas>
+        <canvas id="linha" role="img"
+                aria-label="Gráfico de linha com a evolução mensal do indicador selecionado"></canvas>
       </div>
     </div>
     <div class="g-rodape"><span>Os gráficos são atualizados automaticamente de acordo com os filtros aplicados.</span><span id="data-atualizacao">Dados atualizados em —</span></div>

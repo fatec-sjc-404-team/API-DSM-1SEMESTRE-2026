@@ -149,7 +149,7 @@ def test_fonte_de_dados_fora_do_ar_devolve_erro_503(
     resposta = cliente.get(rota)
 
     assert resposta.status_code == 503
-    assert resposta.get_json()["erro"] == "MySQL fora do ar"
+    assert resposta.get_json()["erro"] == modulo_app.MENSAGEM_SEM_DADOS
     dados.limpar_cache()
 
 

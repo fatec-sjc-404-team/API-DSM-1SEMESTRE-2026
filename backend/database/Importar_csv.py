@@ -1,8 +1,9 @@
 import csv
 import getpass
+import os
 import re
 from datetime import date
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 from pathlib import Path
 
 BATCH_SIZE = 500
@@ -13,6 +14,8 @@ ARQUIVO_CSV = (
     / "scrdata_norte_nordeste_pessoa_fisica_baixa_renda.csv"
 )
 PREFIXOS_DECIMAIS = ("a_vencer_", "carteira_", "vencido_", "ativo_")
+# Como o pandas e o BCB escrevem valor ausente no CSV.
+VALORES_AUSENTES = frozenset({"", "na", "nan", "<na>", "null", "none"})
 
 
 def converter_linha(
@@ -30,16 +33,34 @@ def converter_linha(
         valor = valor.strip()
         if coluna == "data_base":
             valores.append(date.fromisoformat(valor))
-        elif coluna == "numero_de_operacoes":
-            numero = int(valor)
-            valores.append(None if numero < 0 else numero)
-        elif coluna in colunas_decimais:
-            numero = Decimal(valor.replace(",", "."))
-            valores.append(None if numero < 0 else numero)
+        elif coluna == "numero_de_operacoes" or coluna in colunas_decimais:
+            valores.append(
+                _converter_numero(valor, inteiro=coluna not in colunas_decimais)
+            )
         else:
             valores.append(valor)
 
     return tuple(valores)
+
+
+def _converter_numero(valor: str, inteiro: bool) -> Decimal | int | None:
+    """Número do CSV ou None se estiver vazio, for inválido ou negativo.
+
+    Negativo vira None (o banco não aceita) e o dados.py faz o mesmo ao ler o
+    CSV, então os totais batem nas duas fontes.
+    """
+    if valor.casefold() in VALORES_AUSENTES:
+        return None
+    try:
+        numero = Decimal(valor.replace(",", "."))
+    except InvalidOperation:
+        return None
+    if not numero.is_finite() or numero < 0:
+        return None
+    if inteiro:
+        # Coluna com algum vazio sai do pandas como "12,0"
+        return int(numero) if numero == numero.to_integral_value() else None
+    return numero
 
 
 def importar_csv(conexao, arquivo_csv: Path = ARQUIVO_CSV) -> int:
@@ -62,6 +83,7 @@ def importar_csv(conexao, arquivo_csv: Path = ARQUIVO_CSV) -> int:
             coluna for coluna in colunas if coluna.startswith(PREFIXOS_DECIMAIS)
         }
         total = 0
+        ignoradas = 0
         lote = []
 
         try:
@@ -69,7 +91,14 @@ def importar_csv(conexao, arquivo_csv: Path = ARQUIVO_CSV) -> int:
                 cursor.execute("DELETE FROM BCB")
 
                 for linha in leitor:
-                    lote.append(converter_linha(linha, colunas, colunas_decimais))
+                    # Linha sem data válida ou incompleta é pulada em vez de
+                    # derrubar a importação inteira.
+                    try:
+                        lote.append(converter_linha(linha, colunas, colunas_decimais))
+                    except ValueError as erro:
+                        ignoradas += 1
+                        print(f"Linha {leitor.line_num} ignorada: {erro}")
+                        continue
 
                     if len(lote) == BATCH_SIZE:
                         cursor.executemany(comando, lote)
@@ -86,19 +115,27 @@ def importar_csv(conexao, arquivo_csv: Path = ARQUIVO_CSV) -> int:
             conexao.rollback()
             raise
 
+    if ignoradas:
+        print(f"{ignoradas:,} linhas ignoradas por dados inválidos.")
     return total
 
 
 def main() -> None:
     import pymysql
 
-    usuario = input("Usuário do MySQL: ")
-    senha = getpass.getpass("Senha do MySQL: ")
+    # Com DB_USER definido (Docker e atualização semanal) não pergunta nada.
+    usuario = os.environ.get("DB_USER")
+    if usuario:
+        senha = os.environ.get("DB_PASSWORD", "")
+    else:
+        usuario = input("Usuário do MySQL: ")
+        senha = getpass.getpass("Senha do MySQL: ")
     conexao = pymysql.connect(
-        host="localhost",
+        host=os.environ.get("DB_HOST", "localhost"),
+        port=int(os.environ.get("DB_PORT", "3306")),
         user=usuario,
         password=senha,
-        database="AvoCredit",
+        database=os.environ.get("DB_NAME", "AvoCredit"),
         charset="utf8mb4",
         autocommit=False,
     )

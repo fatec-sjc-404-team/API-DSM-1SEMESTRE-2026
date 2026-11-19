@@ -165,8 +165,18 @@
   width: 280px;
 }
 
+.filtro-campo select:focus-visible,
+.linha-salvar input:focus-visible,
+.pg-graficos select:focus-visible,
+.linha-salvar button:focus-visible,
+#butao-aplicar:focus-visible {
+  outline: 2px solid #2d6a4f;
+  outline-offset: 2px;
+}
+
 .linha-salvar {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 12px;
   padding-top: 12px;
@@ -232,4 +242,24 @@
 
 #butao-relatorio {
   margin-left: auto;
+}
+
+#butao-relatorio:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+/* Celular: campo e botões ocupam a linha toda em vez de sair da tela. */
+@media (max-width: 640px) {
+  .linha-salvar input,
+  #butao-salvar-filtro,
+  #butao-relatorio {
+    flex: 1 1 100%;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  #butao-relatorio {
+    margin-left: 0;
+  }
 }

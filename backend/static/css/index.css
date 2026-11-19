@@ -234,6 +234,13 @@
   opacity: 1 !important;
 }
 
+/* Foco do teclado no mapa */
+.mapa-brasil-svg path[tabindex]:focus-visible {
+  outline: none;
+  stroke: #2d6a4f !important;
+  stroke-width: 3px !important;
+}
+
 .map-card img {
   width: 170px;
   margin-bottom: 20px;
