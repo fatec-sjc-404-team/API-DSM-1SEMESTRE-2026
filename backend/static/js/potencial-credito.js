@@ -378,6 +378,22 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   if (elementos.mapa) {
+    // Estados do Norte/Nordeste também funcionam pelo teclado (Tab + Enter).
+    elementos.estadosMapa.forEach((path) => {
+      if (!regiaoDaUf(path.dataset.uf)) {
+        return;
+      }
+      path.setAttribute('tabindex', '0');
+      path.setAttribute('role', 'button');
+      path.setAttribute('aria-label', path.dataset.nome || path.dataset.uf);
+      path.addEventListener('keydown', (evento) => {
+        if (evento.key === 'Enter' || evento.key === ' ') {
+          evento.preventDefault();
+          path.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        }
+      });
+    });
+
     elementos.mapa.addEventListener('click', (evento) => {
       const pathUf = evento.target.closest('path[data-uf]');
       if (pathUf) {

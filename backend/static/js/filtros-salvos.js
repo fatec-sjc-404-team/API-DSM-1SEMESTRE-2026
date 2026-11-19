@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function exibirMensagem(mensagem) {
     corpo.replaceChildren();
     const celula = corpo.insertRow().insertCell();
-    celula.colSpan = 8;
+    celula.colSpan = tabela.tHead.rows[0].cells.length;
     celula.textContent = mensagem;
   }
 
@@ -173,7 +173,6 @@ document.addEventListener('DOMContentLoaded', () => {
         filtro.estado || 'Todos',
         descreverPeriodo(filtro.periodo),
         tipos[filtro.tipo_divida] || 'Todos',
-        'Todos',
         formatarCriacao(filtro.criado_em),
       ];
       valores.forEach((valor) => { linha.insertCell().textContent = valor; });
@@ -218,8 +217,27 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
     document.addEventListener('keydown', (evento) => {
-      if (evento.key === 'Escape' && !modalExclusao.hidden) {
+      if (modalExclusao.hidden) {
+        return;
+      }
+      if (evento.key === 'Escape') {
         fecharModalExclusao();
+        return;
+      }
+      // Tab fica preso dentro do modal enquanto ele está aberto.
+      if (evento.key === 'Tab') {
+        const focaveis = Array.from(modalExclusao.querySelectorAll('button'));
+        const primeiro = focaveis[0];
+        const ultimo = focaveis[focaveis.length - 1];
+        const dentro = modalExclusao.contains(document.activeElement);
+        if (evento.shiftKey && (!dentro || document.activeElement === primeiro
+          || document.activeElement === modalExclusao.querySelector('.filtro-modal-dialogo'))) {
+          evento.preventDefault();
+          ultimo.focus();
+        } else if (!evento.shiftKey && (!dentro || document.activeElement === ultimo)) {
+          evento.preventDefault();
+          primeiro.focus();
+        }
       }
     });
   }
