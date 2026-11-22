@@ -33,10 +33,12 @@ def converter_linha(
         valor = valor.strip()
         if coluna == "data_base":
             valores.append(date.fromisoformat(valor))
-        elif coluna == "numero_de_operacoes" or coluna in colunas_decimais:
-            valores.append(
-                _converter_numero(valor, inteiro=coluna not in colunas_decimais)
-            )
+        elif coluna == "numero_de_operacoes":
+            numero = int(valor)
+            valores.append(None if numero < 0 else numero)
+        elif coluna in colunas_decimais:
+            numero = Decimal(valor.replace(",", "."))
+            valores.append(None if numero < 0 else numero)
         else:
             valores.append(valor)
 

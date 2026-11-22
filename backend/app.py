@@ -21,11 +21,7 @@ from filtros_salvos import (
     validar_nome_filtro,
 )
 from indicadores import consultar_indicadores
-from relatorio import gerar_relatorio_pdf
-from Tratamento_Dados.atualizacao_semanal import (
-    DIAS_ENTRE_ATUALIZACOES,
-    ler_ultima_atualizacao,
-)
+from Tratamento_Dados.coleta_bcb import ler_ultima_atualizacao
 
 app = Flask(__name__)
 # Os JSONs da API são pequenos (filtro salvo); corpo maior que isso é recusado
@@ -95,6 +91,12 @@ def _sem_dados(erro):
     # O detalhe (caminho do CSV, erro do MySQL) fica só no log do servidor
     app.logger.error("Fonte de dados indisponível: %s", erro)
     return jsonify(erro=MENSAGEM_SEM_DADOS), 503
+
+
+# Envia a data da última coleta para todos os templates (que estamos usando no base.html)
+@app.context_processor
+def injetar_ultima_atualizacao():
+    return {"ultima_atualizacao": ler_ultima_atualizacao()}
 
 
 @app.get("/")

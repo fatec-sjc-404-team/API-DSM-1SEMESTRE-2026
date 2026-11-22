@@ -75,32 +75,24 @@
         Atualização automática semanal
       </div>
     </div>
-    <div class="tabela-responsiva-wrapper">
-      <table class="tabela-base-dados">
-        <thead>
-          <tr>
-            <th>Fonte</th>
-            <th>Descrição</th>
-            <th>Status</th>
-            <th>Última atualização</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="base-fonte">BCB</td>
-            <td>Dados de crédito, inadimplência e operações financeiras.</td>
-            <td>
-              {% if dados_desatualizados %}
-                <span class="base-status em-atualizacao">Desatualizado</span>
-              {% else %}
-                <span class="base-status atualizado">Atualizado</span>
-              {% endif %}
-            </td>
-            <td>{{ ultima_atualizacao.strftime('%d/%m/%Y %H:%M') if ultima_atualizacao else '—' }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <table class="tabela-base-dados">
+      <thead>
+        <tr>
+          <th>Fonte</th>
+          <th>Descrição</th>
+          <th>Status</th>
+          <th>Última atualização</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="base-fonte">BCB</td>
+          <td>Dados de crédito, inadimplência e operações financeiras.</td>
+          <td><span class="base-status atualizado">Atualizado</span></td>
+          <td>{{ ultima_atualizacao or "Data não disponível" }}</td>
+        </tr>
+      </tbody>
+    </table>
     <p class="base-aviso">
       <span class="material-symbols-outlined" aria-hidden="true">info</span>
       A base de dados é atualizada automaticamente toda semana. Caso alguma fonte esteja indisponível, o sistema continua utilizando os dados disponíveis da semana anterior.
