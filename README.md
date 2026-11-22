@@ -22,19 +22,19 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/status-Sprint%203%20em%20andamento-yellow" alt="Status do Projeto">
+  <img src="https://img.shields.io/badge/status-Sprint%203%20conclu%C3%ADda-brightgreen" alt="Status do Projeto">
   <img src="https://img.shields.io/badge/semestre-1º%202026-blue" alt="Semestre">
   <img src="https://img.shields.io/badge/FATEC-SJC-red" alt="FATEC SJC">
 </p>
 
-> **Status do Projeto:** Sprint 3 em andamento ⏳
+> **Status do Projeto:** Sprint 3 concluída ✅
+>
+> **Aplicação:** [Acessar o AvoCredit](https://api-dsm-1-semestre-2026.vercel.app/)
 >
 > **Documentação:** [Acessar documentação geral](docs/README.md)
 >
 > **Jira:** [Acessar o Jira do projeto](https://fatec-sjc-404-team.atlassian.net/jira/software/projects/FC404/boards/1/backlog)
 >
-> **Demonstração disponível:** [Entrega da Sprint 1](https://www.youtube.com/watch?v=-hMCoe8eivQ&list=PLDRBTDFOFzlE&pp=sAgC)
-
 > **Figma:** [Acessar protótipo](https://www.figma.com/make/JcQ4GQFCl55CO8K9N8atOD/AvoCrdit?code-node-id=0-6&p=f&t=nO38ukySfIU9Z9su-0&fullscreen=1)
 >
 
@@ -301,7 +301,7 @@ python app.py
 | Sprint Review / Planning         | 28/09 a 02/10     |   ✅   |
 | **Sprint 2**                     | **05/10 a 25/10** |   ✅   |
 | Sprint Review / Planning         | 26/10 a 30/10     |   ✅   |
-| **Sprint 3**                     | **02/11 a 22/11** |   ⏳   |
+| **Sprint 3**                     | **02/11 a 22/11** |   ✅   |
 | Sprint Review                    | 23/11 a 27/11     |   ⏳   |
 | Feira de Soluções                | 03/12             |   ⏳   |
 
@@ -395,11 +395,3 @@ python app.py
 O diagrama visual de arquitetura ainda não foi publicado. A definição textual está em [docs/arquitetura/definicao-do-projeto.md](docs/arquitetura/definicao-do-projeto.md).
 
 ---
-
-# 📹 Vídeos das Entregas
-
-|  Sprint  | Vídeo       |
-| :------: | ----------- |
-| Sprint 1 | [Link](https://www.youtube.com/watch?v=-hMCoe8eivQ&list=PLDRBTDFOFzlE&pp=sAgC) |
-| Sprint 2 | Não publicado |
-| Sprint 3 | Não publicado |
