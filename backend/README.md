@@ -24,13 +24,66 @@ source .venv/bin/activate      # Linux/macOS
 pip install -r requirements.txt
 ```
 
-### 3. Subir a API
+### 3. Configurar o `.env` local
+
+Os filtros salvos ficam no MySQL, então a API precisa saber como se conectar
+ao banco. Copie o modelo e preencha com os dados do **seu** MySQL:
+
+```bash
+cp .env.example .env           # Linux/macOS
+copy .env.example .env         # Windows
+```
+
+```dotenv
+# usuário e senha do seu MySQL
+DB_USER=root
+DB_PASSWORD=sua_senha
+# servidor e porta do MySQL (no Windows, 127.0.0.1 conecta mais rápido que localhost)
+DB_HOST=127.0.0.1
+DB_PORT=3306
+# banco criado pelo database/AvoData.sql
+DB_NAME=AvoCredit
+```
+
+- O `python app.py` lê o `backend/.env` sozinho; não precisa exportar as variáveis.
+- Comentários só em linha própria (começando com `#`); não escreva comentário
+  depois do valor, senão ele vira parte do valor.
+- O `.env` está no `.gitignore`: **nunca suba sua senha** para o repositório.
+- Antes de testar, rode o [`database/AvoData.sql`](database/AvoData.sql) no
+  MySQL para criar o banco `AvoCredit` e as tabelas `BCB` e `filtros_salvos`.
+- Sem o `DB_USER`, a API não consegue salvar filtros e a tela mostra
+  "Não foi possível acessar os filtros salvos.".
+- `DB_ROOT_PASSWORD` só é usado pelo `docker-compose.yml`; quem roda o MySQL
+  direto no computador pode ignorar.
+
+### 4. Subir a API
 
 ```bash
 python app.py
 ```
 
-A API fica disponível em `http://localhost:8000`.
+A API fica disponível em `http://localhost:8000`. O modo debug do Flask só liga
+com `FLASK_DEBUG=1 python app.py`; ele nunca deve ficar ligado fora da sua
+máquina.
+
+### Subir tudo com Docker
+
+Com o `.env` preenchido (incluindo `DB_ROOT_PASSWORD`), na pasta `backend/`:
+
+```bash
+docker compose up -d --build
+```
+
+| Serviço | O que faz |
+| ------- | --------- |
+| `db` | MySQL 8.4; na primeira vez roda o `database/AvoData.sql` |
+| `app` | API e páginas com `gunicorn` na porta 8000 |
+| `atualizacao` | atualização semanal dos dados (veja [Atualização semanal](#atualização-semanal)) |
+
+Na primeira subida o banco começa vazio. O serviço `atualizacao` percebe que
+nunca rodou, baixa o ano atual do BCB, trata e importa os dados; até terminar,
+as rotas de dados respondem `503`. Acompanhe com
+`docker compose logs -f atualizacao`.
 
 ## Endpoints
 
@@ -40,6 +93,28 @@ A API fica disponível em `http://localhost:8000`.
 | GET    | `/hello-world` | Retorna uma mensagem de boas-vindas |
 | GET    | `/api/dados` | Dados do BCB só com as linhas que atendem aos filtros |
 | GET    | `/api/indicadores` | Indicadores calculados só com os dados que atendem aos filtros |
+| GET    | `/api/filtros-salvos` | Lista as composições de filtros salvas no MySQL |
+| POST   | `/api/filtros-salvos` | Salva uma composição nomeada no MySQL |
+| PATCH  | `/api/filtros-salvos/{id}` | Renomeia um filtro salvo |
+| DELETE | `/api/filtros-salvos/{id}` | Exclui um filtro salvo |
+| GET    | `/api/relatorio.pdf` | Baixa o relatório em PDF dos filtros |
+
+Erros das rotas `/api/` sempre voltam em JSON (`{"erro": "..."}`), inclusive
+`404`, `405` e `500`. O corpo das requisições é limitado a 16 KB (`413` se
+passar). Filtro repetido na URL (ex.: `?regiao=norte&regiao=nordeste`) devolve
+`400`.
+
+O POST recebe `nome`, `regiao`, `estado`, `periodo` e `tipo_divida`. O nome é
+obrigatório e limitado a 100 caracteres. Região, estado e tipo de dívida sem
+seleção são enviados como `null` e salvos como `NULL` (Todos). Prazo e apostas
+não fazem parte da composição persistida. Os dados são gravados em
+`AvoCredit.filtros_salvos`; o GET lê a tabela diretamente, então os registros
+continuam disponíveis depois que a aplicação reinicia.
+O PATCH recebe o novo `nome`; o DELETE remove o filtro pelo identificador.
+Ambos retornam `404` quando o filtro não existe.
+A tabela é criada pelo [`database/AvoData.sql`](database/AvoData.sql). Em um
+banco que já existe, executar o script de novo só cria o que falta, porque usa
+`CREATE TABLE IF NOT EXISTS`.
 
 Para testar pelo terminal:
 
@@ -68,7 +143,7 @@ Os filtros (`filtros.py`) chegam como parâmetros na URL de `/api/dados` e `/api
 
 ### De onde vêm os dados
 
-`dados.py` lê a tabela `BCB` e soma por mês, UF e tipo de dívida. Se a variável `DB_USER` estiver definida, lê do MySQL; senão, lê o CSV `Tratamento_Dados/saida/scrdata_norte_nordeste_pessoa_fisica_baixa_renda.csv`. O resultado fica 5 minutos na memória, então depois de reimportar o CSV espere esse tempo ou reinicie a API.
+`dados.py` lê a tabela `BCB` e soma por mês, UF e tipo de dívida. Se a variável `DB_USER` estiver definida, lê do MySQL; senão, lê o CSV `Tratamento_Dados/saida/scrdata_norte_nordeste_pessoa_fisica_baixa_renda.csv`. O resultado fica 5 minutos na memória. Quando a fonte é o CSV, trocar o arquivo já faz a API ler de novo; no MySQL, os dados novos aparecem em até 5 minutos. Se a fonte cair depois que os dados já foram lidos, a API continua respondendo com eles e tenta de novo no próximo intervalo. Linhas sem data, com UF fora do Norte/Nordeste ou com valor negativo/inválido não entram nas somas (mesma regra do importador). O detalhe dos erros da fonte fica só no log do servidor; o `503` devolve uma mensagem genérica.
 
 | Variável      | Padrão      | Descrição                  |
 | ------------- | ----------- | -------------------------- |
@@ -97,6 +172,10 @@ DB_USER=root DB_PASSWORD=sua_senha python app.py
 Os valores são somados antes de dividir, então regiões e estados com carteira maior pesam mais. Grupos sem carteira ativa não aparecem. Se houver filtro de `tipoDivida`, os `pct_*` valem só para o que sobrou do filtro. As duas respostas trazem os `filtros` usados e a `ultima_data_base` dos dados.
 
 Os indicadores da US01 que ainda não existem (recuperação rápida, crédito caro e apostas) devem usar `dados_filtrados(filtros)` em `dados.py`, que já devolve a tabela filtrada.
+
+### Relatório em PDF
+
+`/api/relatorio.pdf` aceita os mesmos filtros e baixa um PDF (`relatorio.py`, gerado com o Matplotlib) com três páginas: filtros aplicados e indicadores gerais, potencial de crédito por estado e evolução mensal dos indicadores. Se nenhum dado atender aos filtros, o PDF traz só a página com o aviso. Filtro inválido devolve `400` e fonte de dados fora do ar devolve `503`, como nas outras rotas. Na tela de Gráficos, o botão "Gerar relatório PDF" usa os filtros que estão no formulário.
 
 ### Tipo de dívida
 
@@ -210,8 +289,8 @@ substitui a saída anterior com o mesmo nome.
 
 ## Modelo físico no MySQL
 
-O script [`database/AvoData.sql`](database/AvoData.sql) cria o banco `AvoCredit` e a
-tabela `BCB`, com as 24 colunas do CSV final. Também adiciona uma
+O script [`database/AvoData.sql`](database/AvoData.sql) cria o banco `AvoCredit`,
+as tabelas `BCB` e `filtros_salvos`. Também adiciona uma
 coluna técnica `id` como chave primária, sem precisar que ela exista no CSV.
 Os valores monetários usam `DECIMAL(20, 2)` para manter precisão decimal, e o
 banco/tabela usam `utf8mb4` para armazenar texto.
@@ -224,7 +303,7 @@ Para criar o modelo pelo MySQL Workbench:
 
 1. Abra `backend/database/AvoData.sql`.
 2. Conecte-se ao servidor MySQL e execute o script inteiro.
-3. Atualize a lista de schemas; o banco `AvoCredit` e a tabela `BCB`
+3. Atualize a lista de schemas; o banco `AvoCredit` e as tabelas `BCB` e `filtros_salvos`
    deverão aparecer.
 
 `CREATE TABLE IF NOT EXISTS` não recria uma tabela existente. O `ALTER TABLE`
@@ -244,7 +323,41 @@ execute:
 python database/Importar_csv.py
 ```
 
-O script solicita o usuário e a senha do MySQL no terminal. A carga substitui
+O script solicita o usuário e a senha do MySQL no terminal. Se `DB_USER`
+estiver definido, usa `DB_USER`, `DB_PASSWORD`, `DB_HOST`, `DB_PORT` e `DB_NAME`
+sem perguntar nada (é assim que a atualização semanal e o Docker rodam).
+Valores vazios, `NA` ou negativos viram `NULL`; linhas sem data válida ou
+incompletas são puladas e contadas no final. A carga substitui
 os registros existentes em `BCB` pelos dados do CSV dentro de uma única
 transação; se ocorrer um erro, a transação é revertida e os dados anteriores
 são preservados.
+
+## Atualização semanal
+
+`Tratamento_Dados/atualizacao_semanal.py` faz o caminho todo:
+
+1. baixa o ZIP do ano atual do BCB (`coleta_bcb.py --ano`); em janeiro, se o
+   BCB ainda não publicou o ano, baixa o anterior;
+2. roda `Estados`, `Tipo_Pessoa`, `Renda` e `Validar_Resultado`;
+3. com `DB_USER` definido, importa o CSV final no MySQL.
+
+Roda na segunda-feira, uma vez por dia no máximo. Se nunca rodou, ou se a
+última atualização foi há 7 dias ou mais (falha, servidor desligado), roda na
+hora. Antes de começar guarda uma cópia do CSV final; se qualquer passo falhar,
+volta a cópia e o site continua com os dados da semana anterior. Quando tudo
+dá certo, grava a data em `Tratamento_Dados/saida/ultima_atualizacao.txt`, que
+aparece em "Última atualização" no cabeçalho e na tabela "Base de Dados" de
+Filtros Salvos (fica "Desatualizado" se passar de 8 dias).
+
+```bash
+python -m Tratamento_Dados.atualizacao_semanal           # só roda se for a hora
+python -m Tratamento_Dados.atualizacao_semanal --forcar  # roda agora
+```
+
+Sai com código `1` quando alguma fonte falha. No Docker, o serviço
+`atualizacao` roda o comando a cada 6 horas; fora do Docker, agende com o cron
+(ou o Agendador de Tarefas do Windows), por exemplo todo dia às 3h:
+
+```cron
+0 3 * * * cd /caminho/backend && .venv/bin/python -m Tratamento_Dados.atualizacao_semanal
+```

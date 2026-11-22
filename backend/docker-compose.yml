@@ -1,6 +1,7 @@
 services:
   db:
     image: mysql:8.4
+    restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
       MYSQL_DATABASE: AvoCredit
@@ -18,17 +19,41 @@ services:
   app:
     build: .
     image: avocredit-backend
+    restart: unless-stopped
     ports:
       - "8000:8000"
-    environment:
+    environment: &ambiente
       DB_HOST: db
       DB_PORT: 3306
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
       DB_NAME: AvoCredit
+    volumes:
+      # só leitura: o app usa a data da última atualização que fica aqui
+      - tratamento_saida:/app/Tratamento_Dados/saida:ro
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # Atualização semanal (FC404-112): confere a cada 6 h se já é hora de
+  # atualizar. Na primeira vez que sobe, sem dados, já baixa e importa tudo.
+  atualizacao:
+    build: .
+    image: avocredit-backend
+    restart: unless-stopped
+    command:
+      - sh
+      - -c
+      - while true; do python -m Tratamento_Dados.atualizacao_semanal; sleep 21600; done
+    environment: *ambiente
+    volumes:
+      - tratamento_entrada:/app/Tratamento_Dados/entrada
+      - tratamento_saida:/app/Tratamento_Dados/saida
     depends_on:
       db:
         condition: service_healthy
 
 volumes:
   db_data:
+  tratamento_entrada:
+  tratamento_saida:

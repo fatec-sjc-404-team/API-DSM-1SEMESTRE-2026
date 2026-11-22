@@ -7,6 +7,7 @@
   border-radius: 12px;
   padding: 20px;
   margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .filtros-header {
@@ -79,7 +80,11 @@
   min-width: 900px;
 }
 
-.tabela-filtros-salvos thead tr,
+.tabela-filtros-salvos thead tr {
+  color: #868da0;
+  border-bottom: none;
+}
+
 .tabela-base-dados thead tr {
   color: #868da0;
   border-bottom: 1px solid #e9edf2;
@@ -129,6 +134,34 @@
   border-radius: 2px;
 }
 
+/* Nome longo sem espaço quebra a linha em vez de invadir a coluna Região. */
+.tabela-filtros-salvos td:first-child {
+  max-width: 280px;
+  overflow-wrap: anywhere;
+}
+
+.tabela-filtros-salvos td:last-child {
+  white-space: nowrap;
+}
+
+/* Mensagem de tabela vazia/carregando ocupa a linha toda, alinhada à esquerda. */
+.tabela-filtros-salvos td[colspan] {
+  max-width: none;
+  text-align: left;
+  white-space: normal;
+}
+
+.tabela-filtros-salvos td button.material-symbols-outlined {
+  /* área de toque de pelo menos 32px, mesmo com o ícone pequeno */
+  min-width: 32px;
+  min-height: 32px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
 .filtro-edicao {
   display: flex;
   align-items: center;
@@ -154,6 +187,43 @@
   color: #fff;
   font: inherit;
   cursor: pointer;
+}
+
+/* Linha em edição: selects de região, estado, período e tipo + Salvar/Cancelar. */
+.filtro-em-edicao select {
+  box-sizing: border-box;
+  max-width: 150px;
+  padding: 7px 8px;
+  border: 1px solid #dfe3eb;
+  border-radius: 6px;
+  background: #fff;
+  color: #14213d;
+  font: inherit;
+}
+
+.filtro-em-edicao td:last-child button {
+  margin-left: 6px;
+  padding: 7px 12px;
+  border-radius: 6px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.filtro-edicao-salvar {
+  border: 0;
+  background: #2d7d32;
+  color: #fff;
+}
+
+.filtro-edicao-salvar:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.filtro-edicao-cancelar {
+  border: 1px solid #dfe3eb;
+  background: #fff;
+  color: #526071;
 }
 
 .filtro-modal[hidden] {

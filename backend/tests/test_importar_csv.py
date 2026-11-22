@@ -91,3 +91,41 @@ def test_importar_csv_reverte_a_transacao_se_a_insercao_falhar(
 
     assert conexao.commits == 0
     assert conexao.rollbacks == 1
+
+
+def test_converter_linha_vazio_na_e_negativo_viram_nulo() -> None:
+    resultado = converter_linha(
+        {
+            "numero_de_operacoes": "12,0",
+            "carteira_ativa": "",
+            "carteira_vencida": "NA",
+            "vencido_acima_de_90_dias": "-3,5",
+        },
+        [
+            "numero_de_operacoes",
+            "carteira_ativa",
+            "carteira_vencida",
+            "vencido_acima_de_90_dias",
+        ],
+        {"carteira_ativa", "carteira_vencida", "vencido_acima_de_90_dias"},
+    )
+
+    assert resultado == (12, None, None, None)
+
+
+def test_importar_csv_pula_linha_quebrada_e_importa_o_resto(tmp_path: Path) -> None:
+    arquivo_csv = tmp_path / "dados.csv"
+    arquivo_csv.write_text(
+        "data_base;numero_de_operacoes;carteira_ativa;uf\n"
+        "2026-01-01;42;1234,56;BA\n"
+        ";1;1,00;BA\n"  # sem data
+        "2026-01-01;7\n"  # linha cortada
+        "2026-02-01;;10,00;CE\n",
+        encoding="utf-8",
+    )
+    conexao = ConexaoFalsa()
+
+    total = importar_csv(conexao, arquivo_csv)
+
+    assert total == 2
+    assert conexao.commits == 1

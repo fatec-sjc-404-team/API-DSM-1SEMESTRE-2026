@@ -41,6 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const VERDE = '#2e7d32';
   const URL_INDICADORES = '/api/indicadores';
+  const URL_RELATORIO = '/api/relatorio.pdf';
 
   // Filtros que a API entende (mesmos names do formulário).
   // O "prazo" ainda não existe na API, então não vai.
@@ -231,6 +232,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // Em erro, tira os dados antigos para não parecer que são dos filtros novos.
+  function limparGraficos() {
+    [graficoBarras, graficoLinha].forEach((grafico) => {
+      if (grafico) {
+        grafico.data.labels = [];
+        grafico.data.datasets[0].data = [];
+        grafico.update();
+      }
+    });
+    ultimaResposta = null;
+  }
+
   function desenhar(resposta) {
     desenharBarras(resposta);
     desenharLinha(resposta);
@@ -248,7 +261,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const pedido = ++ultimoPedido;
     try {
       const resposta = await fetch(`${URL_INDICADORES}?${montarParametros()}`);
-      const corpo = await resposta.json();
+      const corpo = await resposta.json().catch(() => ({}));
       if (pedido !== ultimoPedido) {
         return;
       }
@@ -259,11 +272,40 @@ document.addEventListener('DOMContentLoaded', () => {
       desenhar(corpo);
     } catch (erro) {
       if (pedido === ultimoPedido) {
+        limparGraficos();
         mostrarAviso(`Não foi possível carregar os gráficos: ${erro.message}`);
       }
     }
   }
   window.aplicarFiltrosGraficos = aplicarFiltros;
+
+  // Baixa o PDF com os mesmos filtros que estão no formulário agora (FC404-231).
+  // Usa fetch para, em erro, mostrar o aviso em vez de abrir o JSON da API.
+  const botaoRelatorio = document.getElementById('butao-relatorio');
+  if (botaoRelatorio) {
+    botaoRelatorio.addEventListener('click', async () => {
+      botaoRelatorio.disabled = true;
+      try {
+        const resposta = await fetch(`${URL_RELATORIO}?${montarParametros()}`);
+        if (!resposta.ok) {
+          const corpo = await resposta.json().catch(() => ({}));
+          throw new Error(corpo.erro || `erro ${resposta.status}`);
+        }
+        const url = URL.createObjectURL(await resposta.blob());
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'relatorio-potencial-credito.pdf';
+        document.body.append(link);
+        link.click();
+        link.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      } catch (erro) {
+        mostrarAviso(`Não foi possível gerar o relatório: ${erro.message}`);
+      } finally {
+        botaoRelatorio.disabled = false;
+      }
+    });
+  }
 
   const inputSalvar = document.getElementById('input-salvar-filtro');
   const botaoSalvar = document.getElementById('butao-salvar-filtro');
@@ -276,7 +318,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   if (botaoSalvar && formulario && inputSalvar) {
-    botaoSalvar.addEventListener('click', () => {
+    botaoSalvar.addEventListener('click', async () => {
       const nome = inputSalvar.value.trim();
       if (!nome) {
         window.alert('Informe um nome para salvar o filtro.');
@@ -284,36 +326,25 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      const obterValor = (nomeCampo) => formulario.elements[nomeCampo].value;
-      const obterRotulo = (nomeCampo) => {
-        const campo = formulario.elements[nomeCampo];
-        return campo.options[campo.selectedIndex].textContent.trim();
-      };
-      const data = new Date();
-      const criadoEm = new Intl.DateTimeFormat('pt-BR', {
-        dateStyle: 'short',
-        timeStyle: 'short',
-      }).format(data);
-      const filtro = {
-        nome,
-        regiao: obterRotulo('regiao'),
-        estado: obterValor('estado') || 'Todos',
-        periodo: obterRotulo('periodo'),
-        tipoDivida: obterRotulo('tipoDivida'),
-        apostas: 'Todos',
-        criadoEm,
-      };
-
       try {
-        const armazenados = localStorage.getItem('avocredit:filtrosSalvos');
-        const estado = armazenados
-          ? JSON.parse(armazenados)
-          : { inicializado: false, filtros: [] };
-        if (!Array.isArray(estado.filtros)) {
-          throw new Error('Os filtros salvos neste navegador estão em um formato inválido.');
+        const resposta = await fetch('/api/filtros-salvos', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            nome,
+            regiao: formulario.elements.regiao.value === 'todos'
+              ? null : formulario.elements.regiao.value,
+            estado: formulario.elements.estado.value || null,
+            periodo: Number.parseInt(formulario.elements.periodo.value, 10),
+            tipo_divida: formulario.elements.tipoDivida.value === 'todos'
+              ? null : formulario.elements.tipoDivida.value,
+          }),
+        });
+        const corpo = await resposta.json();
+        if (!resposta.ok) {
+          throw new Error(corpo.erro || 'Erro ao salvar o filtro.');
         }
-        estado.filtros.push(filtro);
-        localStorage.setItem('avocredit:filtrosSalvos', JSON.stringify(estado));
+        inputSalvar.value = '';
         window.alert('Filtro salvo com sucesso.');
       } catch (erro) {
         window.alert(`Não foi possível salvar o filtro: ${erro.message}`);

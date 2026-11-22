@@ -5,3 +5,5 @@ __pycache__/
 .env
 **/*.csv
 tests/
+Tratamento_Dados/entrada/*
+Tratamento_Dados/saida/*
