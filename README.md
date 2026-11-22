@@ -22,23 +22,23 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/status-Sprint%202%20em%20andamento-yellow" alt="Status do Projeto">
+  <img src="https://img.shields.io/badge/status-Sprint%203%20em%20andamento-yellow" alt="Status do Projeto">
   <img src="https://img.shields.io/badge/semestre-1º%202026-blue" alt="Semestre">
   <img src="https://img.shields.io/badge/FATEC-SJC-red" alt="FATEC SJC">
 </p>
 
-> **Status do Projeto:** Sprint 2 em andamento ⏳
+> **Status do Projeto:** Sprint 3 em andamento ⏳
 >
 > **Documentação:** [Acessar documentação geral](docs/README.md)
 >
 > **Jira:** [Acessar o Jira do projeto](https://fatec-sjc-404-team.atlassian.net/jira/software/projects/FC404/boards/1/backlog)
 >
-> **Vídeo do Projeto:** [Adicionar link]
+> **Demonstração disponível:** [Entrega da Sprint 1](https://www.youtube.com/watch?v=-hMCoe8eivQ&list=PLDRBTDFOFzlE&pp=sAgC)
 
-> **Figma:** [Acessar prototipo no figma](https://www.figma.com/make/JcQ4GQFCl55CO8K9N8atOD/AvoCrdit?code-node-id=0-6&p=f&t=nO38ukySfIU9Z9su-0&fullscreen=1)
+> **Figma:** [Acessar protótipo](https://www.figma.com/make/JcQ4GQFCl55CO8K9N8atOD/AvoCrdit?code-node-id=0-6&p=f&t=nO38ukySfIU9Z9su-0&fullscreen=1)
 >
 
-> **Colab:** [Acessar funções no Google Colab](https://colab.research.google.com/drive/1uMAxgv1r2Tn69wQsd8uY0oKikeQqMdKA?usp=sharing)
+> **Notebook de análise (material de apoio):** [Acessar no Google Colab](https://colab.research.google.com/drive/1uMAxgv1r2Tn69wQsd8uY0oKikeQqMdKA?usp=sharing)
 >
 ---
 
@@ -56,15 +56,25 @@ Populações historicamente recusadas por grandes instituições financeiras nã
 
 ## 🏅 Desafio <a id="desafio"></a>
 
-Transformar dados econômicos públicos do Banco Central do Brasil (BCB) e BACEN em inteligência territorial para apoiar decisões de crédito mais inclusivas e responsáveis, identificando onde residem o consumo reprimido e a capacidade real de pagamento sustentável.
+Transformar dados públicos de crédito do Banco Central do Brasil (BCB) em indicadores por estado, permitindo explorar diferenças territoriais relacionadas ao crédito. Os resultados são sinais agregados para análise e não representam avaliação de pessoas individualmente.
 
 ---
 
 ## 💡 Solução <a id="solucao"></a>
 
-Um site que identifica regiões com alto potencial de crédito, mas sem acesso ao sistema financeiro tradicional. A partir de dados públicos do **BCB/BACEN**, **IBGE** e **Serasa**, a aplicação calcula um **Score de Oportunidade** por região, permitindo que analistas de crédito visualizem indicadores, apliquem filtros e comparem territórios de forma simples e responsiva.
+O **AvoCredit** é uma aplicação web para explorar indicadores de crédito das regiões Norte e Nordeste. A versão atual utiliza dados do **BCB** e apresenta um Score de Potencial de Crédito de 0 a 100, calculado com os indicadores disponíveis de crédito caro, composição da dívida e atraso inicial. O indicador relacionado a apostas e integrações com IBGE e Serasa ainda não fazem parte da aplicação.
 
-O processamento e a análise dos dados são feitos via **Google Colab**, e os resultados são exibidos em um site desenvolvido com **HTML + CSS + Python (Flask)**.
+Na aplicação, é possível:
+
+- consultar o potencial geral e navegar por região e estado em um mapa interativo;
+- visualizar comparações entre estados e a evolução mensal dos indicadores em gráficos;
+- filtrar consultas por região, estado, período e tipo de dívida;
+- salvar, editar, reutilizar e excluir combinações de filtros;
+- gerar um relatório em PDF e consultar a data e o status de atualização dos dados.
+
+Os dados do BCB são tratados e atualizados por rotinas do backend. O Google Colab disponível neste repositório é material de apoio para análise, não o processo usado pela aplicação para atualizar os dados. O site é desenvolvido com **HTML, CSS, JavaScript e Chart.js**, com backend em **Python/Flask** e banco de dados **MySQL** (com leitura de CSV também disponível).
+
+> **Limitação conhecida:** a tela de gráficos exibe um filtro de prazo, mas ele ainda não é aplicado aos resultados. Os filtros funcionais da consulta são região, estado, período e tipo de dívida.
 
 ---
 
@@ -138,7 +148,7 @@ A definição de arquitetura, componentes, banco de dados e integrações está 
 
 ## Diagrama de Arquitetura
 
-[Adicionar diagrama.]
+A definição textual da arquitetura está em [docs/arquitetura/definicao-do-projeto.md](docs/arquitetura/definicao-do-projeto.md). O diagrama visual ainda não foi publicado.
 
 ---
 
@@ -206,19 +216,13 @@ O fluxo de PR, regras de proteção do GitHub, critérios de Code Review e Defin
 
 # 🧪 Estratégia de Testes
 
-[Definir após o Kick-off.]
+O backend possui testes automatizados para rotas da API, filtros, indicadores, relatórios, tratamento e atualização dos dados. Na pasta `backend/`, com as dependências instaladas, execute:
 
-## Testes de Integração
+```bash
+python -m pytest
+```
 
-[Preencher.]
-
-## Testes de API
-
-[Preencher.]
-
-## Testes de Interface
-
-[Preencher, caso aplicável.]
+Não há testes automatizados de navegador para a interface no momento.
 
 ---
 
@@ -227,6 +231,8 @@ O fluxo de PR, regras de proteção do GitHub, critérios de Code Review e Defin
 ## ⚙️ Pré-requisitos
 
 - [Node.js 22.12+](https://nodejs.org/) — necessário para todos os membros (instala os hooks Git automaticamente)
+- [Python 3.12+](https://www.python.org/downloads/) — necessário para executar o backend
+- [MySQL 8.4](https://dev.mysql.com/downloads/) — necessário para persistir filtros salvos; também pode ser iniciado pelo Docker Compose
 - [Ruff](https://docs.astral.sh/ruff/installation/) — necessário apenas para quem trabalha no backend Python
 
 ---
@@ -268,23 +274,20 @@ Após esse passo, os comandos abaixo ficam disponíveis globalmente no terminal:
 
 ### 4. Configurar ambiente
 
-```text
-[Preencher após o Kick-off — variáveis de ambiente, .env, etc.]
-```
+Para configurar o banco e as variáveis de ambiente do backend, siga o [README do backend](backend/README.md). O arquivo `backend/.env.example` contém o modelo de configuração; não compartilhe nem versione credenciais do arquivo `.env`.
 
-### 4. Executar aplicação
+### 5. Executar aplicação
 
-> **Backend (API Flask):** veja o passo a passo em [backend/README.md](backend/README.md). A API sobe em `http://localhost:8000` e a documentação Swagger fica em `http://localhost:8000/apidocs`.
+Com as dependências e o ambiente configurados, execute na pasta `backend/`:
 
 ```bash
-[COMANDO]
+python app.py
 ```
 
-### 5. Acessar o sistema
+### 6. Acessar o sistema
 
-```text
-[URL / PORTA]
-```
+- Aplicação: [http://localhost:8000](http://localhost:8000)
+- Documentação da API: [http://localhost:8000/apidocs](http://localhost:8000/apidocs)
 
 ---
 
@@ -296,8 +299,8 @@ Após esse passo, os comandos abaixo ficam disponíveis globalmente no terminal:
 | Construção do Backlog / Planning | 31/08 a 04/09     |   ✅   |
 | **Sprint 1**                     | **07/09 a 27/09** |   ✅   |
 | Sprint Review / Planning         | 28/09 a 02/10     |   ✅   |
-| **Sprint 2**                     | **05/10 a 25/10** |   ⏳   |
-| Sprint Review / Planning         | 26/10 a 30/10     |   ⏳   |
+| **Sprint 2**                     | **05/10 a 25/10** |   ✅   |
+| Sprint Review / Planning         | 26/10 a 30/10     |   ✅   |
 | **Sprint 3**                     | **02/11 a 22/11** |   ⏳   |
 | Sprint Review                    | 23/11 a 27/11     |   ⏳   |
 | Feira de Soluções                | 03/12             |   ⏳   |
@@ -310,6 +313,8 @@ Após esse passo, os comandos abaixo ficam disponíveis globalmente no terminal:
 
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=flat&logo=css3&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat&logo=javascript&logoColor=black)
+![Chart.js](https://img.shields.io/badge/Chart.js-FF6384?style=flat&logo=chartdotjs&logoColor=white)
 
 *Backend*
 
@@ -318,9 +323,9 @@ Após esse passo, os comandos abaixo ficam disponíveis globalmente no terminal:
 
 *Banco de Dados*
 
-![SQL](https://img.shields.io/badge/SQL-4479A1?style=flat&logo=postgresql&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=flat&logo=mysql&logoColor=white)
 
-*Análise de Dados*
+*Análise exploratória (material de apoio)*
 
 ![Google Colab](https://img.shields.io/badge/Google%20Colab-F9AB00?style=flat&logo=googlecolab&logoColor=white)
 
@@ -332,10 +337,6 @@ Após esse passo, os comandos abaixo ficam disponíveis globalmente no terminal:
 ![commitlint](https://img.shields.io/badge/commitlint-000000?style=flat)
 ![Jira](https://img.shields.io/badge/Jira-0052CC?style=flat&logo=jira&logoColor=white)
 
-
-## Testes
-
-[Preencher.]
 
 ## Gestão e Qualidade de Código
 
@@ -387,11 +388,11 @@ Após esse passo, os comandos abaixo ficam disponíveis globalmente no terminal:
 
 ## Documentação das Sprints
 
-[Adicionar links.]
+[Planejamento das 3 Sprints](docs/produto/planejamento_sprints.md)
 
 ## Diagramas
 
-[Adicionar links.]
+O diagrama visual de arquitetura ainda não foi publicado. A definição textual está em [docs/arquitetura/definicao-do-projeto.md](docs/arquitetura/definicao-do-projeto.md).
 
 ---
 
@@ -400,5 +401,5 @@ Após esse passo, os comandos abaixo ficam disponíveis globalmente no terminal:
 |  Sprint  | Vídeo       |
 | :------: | ----------- |
 | Sprint 1 | [Link](https://www.youtube.com/watch?v=-hMCoe8eivQ&list=PLDRBTDFOFzlE&pp=sAgC) |
-| Sprint 2 | [Adicionar] |
-| Sprint 3 | [Adicionar] |
+| Sprint 2 | Não publicado |
+| Sprint 3 | Não publicado |
