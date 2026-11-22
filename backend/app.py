@@ -21,7 +21,11 @@ from filtros_salvos import (
     validar_nome_filtro,
 )
 from indicadores import consultar_indicadores
-from Tratamento_Dados.coleta_bcb import ler_ultima_atualizacao
+from relatorio import gerar_relatorio_pdf
+from Tratamento_Dados.atualizacao_semanal import (
+    DIAS_ENTRE_ATUALIZACOES,
+    ler_ultima_atualizacao,
+)
 
 app = Flask(__name__)
 # Os JSONs da API são pequenos (filtro salvo); corpo maior que isso é recusado
